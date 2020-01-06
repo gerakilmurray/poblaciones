@@ -4,7 +4,7 @@ const err = require('@/common/js/err');
 module.exports = {
 	loadHeaderBar(setter) {
 		var loc = this;
-		axios.get(window.host + '/services/authentication/status', {
+		axios.get('/services/authentication/status', {
 				withCredentials: true,
 				params: {}
 			}).then(function(res) {

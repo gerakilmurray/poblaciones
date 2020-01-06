@@ -23,14 +23,14 @@ function ActiveDataset(work, dataset) {
 };
 
 ActiveDataset.prototype.Create = function (workId, caption, successCallback) {
-	let url = window.host + '/services/backoffice/CreateDataset';
+	let url = '/services/backoffice/CreateDataset';
 	this.Work.WorkChanged();
 	return axiosClient.getPromise(url, { 'w': workId, 't': caption },
 						'crear el dataset');
 };
 
 ActiveDataset.prototype.CloneDataset = function (workId, caption) {
-	let url = window.host + '/services/backoffice/CloneDataset';
+	let url = '/services/backoffice/CloneDataset';
 	this.Work.WorkChanged();
 	return axiosClient.getPromise(url, { 'w': workId, 'k': this.properties.Id, 'n': caption },
 		'duplicar el dataset').then(function (data) {
@@ -41,7 +41,7 @@ ActiveDataset.prototype.CloneDataset = function (workId, caption) {
 
 ActiveDataset.prototype.DeleteDataset = function (workId) {
 	var loc = this;
-	let url = window.host + '/services/backoffice/DeleteDataset';
+	let url = '/services/backoffice/DeleteDataset';
 	this.Work.WorkChanged();
 	return axiosClient.getPromise(url, { 'w': workId, 'k': this.properties.Id },
 		'eliminar el dataset').then(function () {
@@ -116,7 +116,7 @@ ActiveDataset.prototype.formatTwoColumnVariableTooltip = function(columnInfo, co
 
 ActiveDataset.prototype.MoveVariableUp = function (level, variable) {
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/MoveVariableUp',
+	return axiosClient.getPromise('/services/backoffice/MoveVariableUp',
 		{ 'v': variable.Id, 'k': this.properties.Id }, 'cambiar la ubicación de la variable')
 		.then(function (data) {
 			arr.MoveUp(level.Variables, variable);
@@ -125,7 +125,7 @@ ActiveDataset.prototype.MoveVariableUp = function (level, variable) {
 
 ActiveDataset.prototype.MoveVariableDown = function (level, variable) {
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/MoveVariableDown',
+	return axiosClient.getPromise('/services/backoffice/MoveVariableDown',
 		{ 'v': variable.Id, 'k': this.properties.Id }, 'cambiar la ubicación de la variable')
 		.then(function (data) {
 			arr.MoveDown(level.Variables, variable);
@@ -146,7 +146,7 @@ ActiveDataset.prototype.GetColumnById = function (id) {
 ActiveDataset.prototype.UpdateRowValues = function (selectedId, setValues) {
 	var loc = this;
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateRowValues',
+	return axiosClient.postPromise('/services/backoffice/UpdateRowValues',
 		{ 'k': this.properties.Id, 'id': selectedId, 'v': setValues }, 'actualizar la fila del dataset'
 		).then(function(data) {
 			loc.ScaleGenerator.Clear();
@@ -156,14 +156,14 @@ ActiveDataset.prototype.UpdateRowValues = function (selectedId, setValues) {
 
 ActiveDataset.prototype.Update = function () {
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateDataset',
+	return axiosClient.postPromise('/services/backoffice/UpdateDataset',
 			{ 'd': this.properties }, 'actualizar los atributos del dataset');
 };
 
 ActiveDataset.prototype.DeleteMetricVersionLevel = function (level) {
 	var loc = this;
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/DeleteMetricVersionLevel',
+	return axiosClient.getPromise('/services/backoffice/DeleteMetricVersionLevel',
 		{ 'k': loc.properties.Id, 'l': level.Id }, 'eliminar el indicador').then(function () {
 			arr.RemoveById(loc.MetricVersionLevels, level.Id);
 			window.Db.LoadWorks();
@@ -175,7 +175,7 @@ ActiveDataset.prototype.DeleteMetricVersionLevel = function (level) {
 ActiveDataset.prototype.DeleteVariable = function (level, variable) {
 	var loc = this;
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/DeleteVariable',
+	return axiosClient.getPromise('/services/backoffice/DeleteVariable',
 		{ 'k': loc.properties.Id, 'l': level.Id, 'v': variable.Id }, 'quitar la variable').then(function () {
 			arr.RemoveById(level.Variables, variable.Id);
 		});
@@ -203,7 +203,7 @@ ActiveDataset.prototype.UpdateVariable = function (level, variable) {
 	variable.Caption = columnText;
 	// graba
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateVariable',
+	return axiosClient.postPromise('/services/backoffice/UpdateVariable',
 		{ 'k': this.properties.Id, 'l': levelNoVariables, 'v': variable }, 'actualizar la variable').then(
 		function (data) {
 			if (variable.Id === null || variable.Id === 0) {
@@ -238,7 +238,7 @@ ActiveDataset.prototype.UpdateMetricVersionLevel = function (level) {
 	levelNoVariables.Variables = null;
 	this.Work.WorkChanged();
 
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateMetricVersionLevel',
+	return axiosClient.postPromise('/services/backoffice/UpdateMetricVersionLevel',
 		{ 'k': this.properties.Id, 'l': levelNoVariables }, 'actualizar el indicador').then(
 			function (data) {
 				var isNew = level.Id === 0 || level.Id === null;
@@ -274,7 +274,7 @@ ActiveDataset.prototype.GetMultilevelDatasets = function () {
 
 ActiveDataset.prototype.UpdateMultilevelMatrix = function (id1, matrix1, id2, matrix2) {
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateMultilevelMatrix',
+	return axiosClient.getPromise('/services/backoffice/UpdateMultilevelMatrix',
 		{ 'd1': id1, 'm1': (matrix1 ? matrix1 : 0), 'd2': id2, 'm2': (matrix2 ? matrix2 : 0) }, 'guardar la relación multinivel');
 };
 
@@ -294,46 +294,46 @@ ActiveDataset.prototype.AcquireMultilevelMatrix = function () {
 
 ActiveDataset.prototype.AutoRecodeValues = function (column, list, newName, newLabel) {
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/AutoRecodeValues',
+	return axiosClient.postPromise('/services/backoffice/AutoRecodeValues',
 			{ 'i': list, 'c': column.Id, 'l': newLabel, 'n': newName }, 'recodificar los valores');
 };
 
 ActiveDataset.prototype.UpdateLabels = function (column, list, deletedList) {
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateLabels',
+	return axiosClient.postPromise('/services/backoffice/UpdateLabels',
 			{ 'i': list, 'c': column.Id, 'd': deletedList }, 'actualizar las etiquetas');
 };
 
 ActiveDataset.prototype.GetStartDatasetDeleteUrl = function () {
-	return window.host + '/services/backoffice/StartDeleteDataset?w=' + this.properties.Id;
+	return '/services/backoffice/StartDeleteDataset?w=' + this.properties.Id;
 };
 
 ActiveDataset.prototype.GetStepDatasetDeleteUrl = function () {
-	return window.host + '/services/backoffice/StepDeleteDataset';
+	return '/services/backoffice/StepDeleteDataset';
 };
 
 ActiveDataset.prototype.GetDataUrl = function () {
-	return window.host + '/services/backoffice/GetDatasetDataPaged?k=' + this.properties.Id;
+	return '/services/backoffice/GetDatasetDataPaged?k=' + this.properties.Id;
 };
 ActiveDataset.prototype.GetErrorsUrl = function () {
-	return window.host + '/services/backoffice/GetDatasetErrors?k=' + this.properties.Id;
+	return '/services/backoffice/GetDatasetErrors?k=' + this.properties.Id;
 };
 
 
 ActiveDataset.prototype.GetMultiGeoreferenceByLatLongUrl = function () {
-	return window.host + '/services/backoffice/CreateMultiGeoreferenceByLatLong';
+	return '/services/backoffice/CreateMultiGeoreferenceByLatLong';
 };
 
 ActiveDataset.prototype.GetMultiGeoreferenceByCodesUrl = function () {
-	return window.host + '/services/backoffice/CreateMultiGeoreferenceByCodes';
+	return '/services/backoffice/CreateMultiGeoreferenceByCodes';
 };
 
 ActiveDataset.prototype.GetMultiGeoreferenceByShapesUrl = function () {
-	return window.host + '/services/backoffice/CreateMultiGeoreferenceByShapes';
+	return '/services/backoffice/CreateMultiGeoreferenceByShapes';
 };
 
 ActiveDataset.prototype.GetStepMultiGeoreferenceUrl = function () {
-	return window.host + '/services/backoffice/StepMultiGeoreference';
+	return '/services/backoffice/StepMultiGeoreference';
 };
 
 ActiveDataset.prototype.Selected = function () {
@@ -361,7 +361,7 @@ ActiveDataset.prototype.CalculateMultilevelMatrix = function () {
 
 ActiveDataset.prototype.ReloadProperties = function () {
 	var loc = this;
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetDataset',
+	return axiosClient.getPromise('/services/backoffice/GetDataset',
 		{ 'k': this.properties.Id }, 'obtener los atributos del dataset').then(function (data) {
 			loc.properties = data;
 		});
@@ -410,7 +410,7 @@ ActiveDataset.prototype.GetColumnFromVariable = function (varName, throwError = 
 
 ActiveDataset.prototype.DeleteColumns = function (columnIds) {
 	this.Work.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/DeleteDatasetColumns',
+	return axiosClient.getPromise('/services/backoffice/DeleteDatasetColumns',
 			{ 'k': this.properties.Id, 'ids': columnIds }, 'eliminar la(s) variable(s)');
 };
 
@@ -420,7 +420,7 @@ ActiveDataset.prototype.SetColumnOrder = function (idsArray,
 	var loc = this;
 	var CancelToken = axios.CancelToken;
 	var retCancel = null;
-	axios.get(window.host + '/services/backoffice/SetColumnOrder', {
+	axios.get('/services/backoffice/SetColumnOrder', {
 			params: {
 				'k': this.properties.Id,
 				'cols': idsArray
@@ -438,14 +438,14 @@ ActiveDataset.prototype.SetColumnOrder = function (idsArray,
 ActiveDataset.prototype.SaveColumn = function (variable) {
 	this.Work.WorkChanged();
 
-	return axiosClient.postPromise(window.host + '/services/backoffice/SaveColumn',
+	return axiosClient.postPromise('/services/backoffice/SaveColumn',
 		{ 'k': this.properties.Id, 'c': variable },
 		'actualizar los atributos de la variable');
 };
 ActiveDataset.prototype.SkipRows = function (rowIds) {
 	var loc = this;
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/OmmitDatasetRows',
+	return axiosClient.postPromise('/services/backoffice/OmmitDatasetRows',
 		{ 'k': this.properties.Id, 'ids': rowIds },  'marcar las filas como omitidas'
 	).then(function(data) {
 		loc.ScaleGenerator.Clear();
@@ -456,7 +456,7 @@ ActiveDataset.prototype.SkipRows = function (rowIds) {
 ActiveDataset.prototype.DeleteRows = function (rowIds) {
 	var loc = this;
 	this.Work.WorkChanged();
-	return axiosClient.postPromise(window.host + '/services/backoffice/DeleteDatasetRows',
+	return axiosClient.postPromise('/services/backoffice/DeleteDatasetRows',
 			{	'k': this.properties.Id, 'ids': rowIds }, 'eliminar las filas seleccionadas'
 	).then(function(data) {
 		loc.ScaleGenerator.Clear();
@@ -513,7 +513,7 @@ ActiveDataset.prototype.EnsureColumnsAndExec = function (callBack) {
 	};
 
 	// Consulta en paralelo las columnas, las etiquetas y los indicadores para recargarlos
-	axios.get(window.host + '/services/backoffice/GetDatasetColumns', {
+	axios.get('/services/backoffice/GetDatasetColumns', {
 		params: { 'k': this.properties.Id },
 	}).then(function (res) {
 		tmpColumns = res.data;
@@ -525,7 +525,7 @@ ActiveDataset.prototype.EnsureColumnsAndExec = function (callBack) {
 		err.errDialog('GetColumns', 'obtener las variables del dataset', error);
 	});
 
-	axios.get(window.host + '/services/backoffice/GetDatasetColumnsLabels', {
+	axios.get('/services/backoffice/GetDatasetColumnsLabels', {
 		params: { 'k': this.properties.Id },
 	}).then(function (res) {
 		tmpLabels = res.data;
@@ -543,7 +543,7 @@ ActiveDataset.prototype.EnsureColumnsAndExec = function (callBack) {
 
 ActiveDataset.prototype.GetRelatedDatasets = function () {
 	var loc = this;
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetRelatedDatasets',
+	return axiosClient.getPromise('/services/backoffice/GetRelatedDatasets',
 		{ 'k': this.properties.Id }, 'obtener los datasets relacionados').then(function (res) {
 			return res;
 		});
@@ -551,7 +551,7 @@ ActiveDataset.prototype.GetRelatedDatasets = function () {
 
 ActiveDataset.prototype.LevelMetrics = function (sourceDatasetId) {
 	var loc = this;
-	return axiosClient.getPromise(window.host + '/services/backoffice/LevelDatasetMetrics',
+	return axiosClient.getPromise('/services/backoffice/LevelDatasetMetrics',
 		{ 'sk': sourceDatasetId, 'tk': this.properties.Id }, 'nivelar los indicadores del dataset').then(function (res) {
 			return loc.LoadMetricVersionLevels();
 		});
@@ -559,7 +559,7 @@ ActiveDataset.prototype.LevelMetrics = function (sourceDatasetId) {
 
 ActiveDataset.prototype.LoadMetricVersionLevels = function () {
 	var loc = this;
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetDatasetMetricVersionLevels',
+	return axiosClient.getPromise('/services/backoffice/GetDatasetMetricVersionLevels',
 		{ 'k': this.properties.Id }, 'obtener los indicadores del dataset').then(function (res) {
 			loc.MetricVersionLevels = res;
 			return res;
@@ -649,7 +649,7 @@ ActiveDataset.prototype.GetTextColumns = function () {
 };
 
 ActiveDataset.prototype.GetDistinctColumnValues = function (columnId) {
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetColumnUniqueValues',
+	return axiosClient.getPromise('/services/backoffice/GetColumnUniqueValues',
 			{ 'k': this.properties.Id, 'c': columnId }, 'obtener los valores para la columna');
 };
 

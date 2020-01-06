@@ -194,7 +194,7 @@
 
 <script>
 import boardal from '@/public/components/widgets/boardal';
-import CloseIcon from 'vue-material-design-icons/close.vue';
+import CloseIcon from 'vue-material-design-icons/Close.vue';
 
 export default {
 	name: 'tour',

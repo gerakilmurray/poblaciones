@@ -135,7 +135,7 @@ name: 'Contenido',
 			return str.AbsoluteUrl(url);
 		},
 		resolveMetadataUrl() {
-	    return window.host + '/services/backoffice/GetMetadataPdf?w=' + this.Work.properties.Id;
+	    return '/services/backoffice/GetMetadataPdf?w=' + this.Work.properties.Id;
 		},
 		formatDate(date) {
 				return f.formatDate(date);

@@ -217,7 +217,7 @@ RestoreRoute.prototype.LoadMetrics = function (metrics, updateRoute) {
 		for (var l = 0; l < metrics.length; l++) {
 			metricIds += metrics[l].Id + (l < metrics.length - 1 ? ',' : '');
 		}
-		window.SegMap.Get(window.host + '/services/metrics/GetSelectedMetrics', {
+		window.SegMap.Get('/services/metrics/GetSelectedMetrics', {
 			params: { l: metricIds },
 		}).then(function (res) {
 			loc.segmentedMap.SaveRoute.Disabled = true;

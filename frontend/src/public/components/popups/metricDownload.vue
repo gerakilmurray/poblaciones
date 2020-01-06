@@ -95,8 +95,8 @@
 <script>
 import axios from 'axios';
 import h from '@/public/js/helper';
-import DownloadIcon from 'vue-material-design-icons/download.vue';
-import CloseIcon from 'vue-material-design-icons/close.vue';
+import DownloadIcon from 'vue-material-design-icons/Download.vue';
+import CloseIcon from 'vue-material-design-icons/Close.vue';
 import creativeCommons from '@/public/components/widgets/creativeCommons.vue';
 import FilePdfIcon from 'vue-material-design-icons/FilePdf.vue';
 import err from '@/common/js/err';
@@ -170,13 +170,13 @@ export default {
 			if (file.Web) {
 				return file.Web;
 			} else if (file.FileId) {
-				return window.host + '/services/metadata/GetMetadataFile?m=' + this.version.Work.MetadataId + '&f=' + file.FileId;
+				return '/services/metadata/GetMetadataFile?m=' + this.version.Work.MetadataId + '&f=' + file.FileId;
 			} else {
 				return '#';
 			}
 		},
 		resolveMetadataUrl() {
-			return window.host + '/services/metadata/GetMetadataPdf?m=' + this.version.Work.MetadataId + '&d=' + this.level.Dataset.Id + '&w=' + this.version.Work.Id;
+			return '/services/metadata/GetMetadataPdf?m=' + this.version.Work.MetadataId + '&d=' + this.level.Dataset.Id + '&w=' + this.version.Work.Id;
 		},
 		getSpatialFormats() {
 			var ret = [];
@@ -252,13 +252,13 @@ export default {
 			});
 		},
 		getFileUrl(type) {
-			return window.host + '/services/download/GetFile?' + this.urlArgs(type);
+			return '/services/download/GetFile?' + this.urlArgs(type);
 		},
 		startDownloadUrl(type) {
-			return window.host + '/services/download/StartDownload?' + this.urlArgs(type);
+			return '/services/download/StartDownload?' + this.urlArgs(type);
 		},
 		stepDownloadUrl() {
-			return window.host + '/services/download/StepDownload';
+			return '/services/download/StepDownload';
 		},
 		urlArgs(type) {
 			var cliId = 0;

@@ -139,7 +139,7 @@ export default {
 	methods: {
 		GetRevisions() {
 			const loc = this;
-			return axios.get(window.host + '/services/GetRevisions', {
+			return axios.get('/services/GetRevisions', {
 				params: {}
 			}).then(function(res) {
 				loc.revisions = res.data.Revisions;
@@ -172,7 +172,7 @@ export default {
 		},
 		StartByDefaultFrameAndClipping(route) {
 			const loc = this;
-			axios.get(window.host + '/services/clipping/GetDefaultFrameAndClipping', {
+			axios.get('/services/clipping/GetDefaultFrameAndClipping', {
 				params: {}
 			}).then(function(res) {
 				var canvas = res.data.clipping.Canvas;
@@ -218,7 +218,7 @@ export default {
 		GetWork(workId) {
 			const loc = this;
 			this.workToLoad = true;
-			axios.get(window.host + '/services/works/GetWork', {
+			axios.get('/services/works/GetWork', {
 				params: { w: workId }
 			}).then(function(res) {
 				loc.work.Current = res.data;

@@ -70,7 +70,7 @@ export default {
   methods:{
 		loadFabMetrics() {
 			const loc = this;
-				axios.get(window.host + '/services/metrics/GetFabMetrics', {
+				axios.get('/services/metrics/GetFabMetrics', {
 					params: { w : window.SegMap.Revisions.FabMetrics }
 				}).then(function (res) {
 					loc.fabMetrics = res.data;

@@ -46,7 +46,7 @@
 
 <script>
 import ClippingSource from '@/public/components/widgets/clippingSource';
-import CloseIcon from 'vue-material-design-icons/close.vue';
+import CloseIcon from 'vue-material-design-icons/Close.vue';
 import AnimatedNumber from './animatedNumber.vue';
 
 export default {

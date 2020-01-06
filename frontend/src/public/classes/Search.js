@@ -17,7 +17,7 @@ Search.prototype.StartSearch = function (t) {
 	var view = this.view;
 	var loc = this;
 	view.loading = true;
-	this.SegMap.Get(window.host + '/services/search', {
+	this.SegMap.Get('/services/search', {
     params: { q: t, w: this.SegMap.Revisions.Search  },
 		cancelToken: new CancelToken(function executor(c) { retCancel = c; })
 		})

@@ -117,7 +117,7 @@ Clipping.prototype.CreateClipping = function (fitRegion, moveCenter) {
 	this.SegmentedMap.RefreshSummaries();
 
 	const loc = this;
-	this.SegmentedMap.Get(window.host + '/services/clipping/CreateClipping', {
+	this.SegmentedMap.Get('/services/clipping/CreateClipping', {
 		params: args,
 		cancelToken: new CancelToken(function executor(c) { loc.cancelCreateClipping = c; }),
 	}).then(function (res) {
@@ -157,7 +157,7 @@ Clipping.prototype.RestoreClipping = function (clippingName, fitRegion) {
 	this.SetClippingRequest('*');
 	this.SegmentedMap.MapsApi.ClearClippingCanvas();
 	this.SegmentedMap.RefreshSummaries();
-	this.SegmentedMap.Get(window.host + '/services/clipping/CreateClippingByName', {
+	this.SegmentedMap.Get('/services/clipping/CreateClippingByName', {
 		params: h.getCreateClippingParamsByName(loc.frame, clippingName, this.SegmentedMap.Revisions.Clipping),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelCreateClipping = c; }),
 	}).then(function (res) {

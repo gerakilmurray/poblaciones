@@ -179,7 +179,7 @@ SegmentedMap.prototype.EndSelecting = function () {
 
 SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset) {
 	const loc = this;
-	window.SegMap.Get(window.host + '/services/metrics/GetInfoWindowData', {
+	window.SegMap.Get('/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
 	}).then(function (res) {
 		var text = '';
@@ -246,7 +246,7 @@ SegmentedMap.prototype.AddMetricById = function (id) {
 
 SegmentedMap.prototype.doAddMetricById = function (id, versionSelector) {
 	const loc = this;
-	this.Get(window.host + '/services/metrics/GetSelectedMetric', {
+	this.Get('/services/metrics/GetSelectedMetric', {
 		params: { l: id }
 	}).then(function (res) {
 		var activeSelectedMetric = new ActiveSelectedMetric(loc.AxiosClone(res.data), false);

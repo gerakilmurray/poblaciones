@@ -55,7 +55,7 @@ TileRequest.prototype.GetTile = function () {
 TileRequest.prototype.startDataRequest = function () {
 	var loc = this;
 	var params = this.selectedMetricOverlay.activeSelectedMetric.getDataServiceParams(this.coord, this.boundsRectRequired);
-	window.SegMap.Get(window.host + '/services/' + this.selectedMetricOverlay.dataService, {
+	window.SegMap.Get('/services/' + this.selectedMetricOverlay.dataService, {
 		params: params,
 		cancelToken: new this.CancelToken1(function executor(c) { loc.cancel1 = c; }),
 	}).then(function (res) {
@@ -90,7 +90,7 @@ TileRequest.prototype.startGeographyRequest = function () {
 	if (this.boundsRectRequired) {
 		geographyParams.b = this.boundsRectRequired;
 	};
-	var url = window.host + '/services/' + this.selectedMetricOverlay.geographyService.url;
+	var url = '/services/' + this.selectedMetricOverlay.geographyService.url;
 	window.SegMap.Get(url, {
 		params: geographyParams,
 		cancelToken: new this.CancelToken2(function executor(c) { loc.cancel2 = c; }),
