@@ -8,6 +8,7 @@ use helena\classes\Session;
 use helena\services\common\BaseService;
 use minga\framework\Context;
 use minga\framework\Profiling;
+use helena\db\frontend\RevisionsModel;
 
 use helena\entities\backoffice\DraftWork;
 use helena\entities\backoffice\structs\WorkInfo;
@@ -15,7 +16,8 @@ use helena\entities\backoffice as entities;
 use helena\services\backoffice\notifications\NotificationManager;
 use helena\services\backoffice\publish\PublishDataTables;
 use helena\services\backoffice\publish\PublishSnapshots;
-
+use helena\services\backoffice\publish\CacheManager;
+use helena\services\backoffice\publish\WorkFlags;
 use minga\framework\ErrorException;
 
 class WorkService extends BaseService
@@ -28,6 +30,7 @@ class WorkService extends BaseService
 
 		$work->setType($type);
 		$work->setImageType('N');
+		$work->setUnfinished(false);
 		$work->setMetadataChanged(false);
 		$work->setDatasetLabelsChanged(false);
 		$work->setDatasetDataChanged(false);
@@ -37,6 +40,9 @@ class WorkService extends BaseService
 		$work->setIsPrivate(false);
 		$work->setShard(Context::Settings()->Shard()->CurrentShard);
 
+		// Crea startup
+		$startup  = $this->CreateStartup();
+		$work->setStartup($startup);
 		// Crea metadatos
 		$metadata = $this->CreateMetadata($type, $title);
 		$work->setMetadata($metadata);
@@ -51,6 +57,16 @@ class WorkService extends BaseService
 
 		return $work;
 	}
+
+	private function CreateStartup()
+	{
+		$startup = new entities\DraftWorkStartup();
+		$startup->setType('D');
+		$startup->setClippingRegionItemSelected(true);
+		App::Orm()->Save($startup);
+		return $startup;
+	}
+
 	private function CreateMetadata($type, $title)
 	{
 		$metadata = new entities\DraftMetadata();
@@ -83,7 +99,6 @@ class WorkService extends BaseService
 		App::Orm()->Save($permissionDefault);
 	}
 
-
 	public function GetWorkInfo($workId)
 	{
 		Profiling::BeginTimer();
@@ -97,8 +112,36 @@ class WorkService extends BaseService
 		$workInfo->Sources = $this->GetSources($workId);
 		$workInfo->Files = $this->GetFiles($workId);
 		$this->CompleteInstitution($workInfo->Work->getMetadata()->getInstitution());
+		$workInfo->StartupExtraInfo = $this->GetStartupExtraInfo($workId);
 		Profiling::EndTimer();
 		return $workInfo;
+	}
+
+	public function GetStartupExtraInfo($workId)
+	{
+		Profiling::BeginTimer();
+		$revisions = new RevisionsModel();
+		$lookupVersion = $revisions->GetLookupRevision();
+		$extraInfo = $this->GetWorkStartupClippingRegionExtra($workId);
+		Profiling::EndTimer();
+		return [ 'LookupVersion' => $lookupVersion, 'RegionExtraInfo' => $extraInfo['extra'], 'RegionCaption' => $extraInfo['caption']];
+	}
+
+	private function GetWorkStartupClippingRegionExtra($workId)
+	{
+		Profiling::BeginTimer();
+
+		$sql = "SELECT clv_caption caption, Replace(clv_full_parent, '\t', ' > ') extra FROM draft_work JOIN draft_work_startup ON wrk_startup_id = wst_id
+							JOIN snapshot_lookup ON wst_clipping_region_item_id = clv_clipping_region_item_id AND wst_clipping_region_item_id IS NOT NULL
+								WHERE wrk_id = ?
+								LIMIT 1";
+		$row = App::Db()->fetchAssoc($sql, array($workId));
+		if ($row === null)
+			$ret = ['extra' => null, 'caption' => null];
+		else
+			$ret = $row;
+		Profiling::EndTimer();
+		return $ret;
 	}
 
 	public function RequestReview($workId)
@@ -108,20 +151,29 @@ class WorkService extends BaseService
 		$nm->NotifyRequestReview($workId);
 		return self::OK;
 	}
-
-	public function UpdateWorkVisibility($workId, $value)
+	public function UpdateStartup($workId, $startup)
+	{
+		App::Orm()->save($startup);
+		WorkFlags::SetMetadataDataChanged($workId);
+		return self::OK;
+	}
+	public function UpdateWorkVisibility($workId, $value, $link = null)
 	{
 		// Cambia el valor
 		$draftWork = App::Orm()->find(entities\DraftWork::class, $workId);
 		$draftWork->setIsPrivate($value);
+		$draftWork->setAccessLink($link);
 		App::Orm()->save($draftWork);
 		// Si existe publicado, lo cambia también
 		$workIdShardified = PublishDataTables::Shardified($workId);
 		$work = App::Orm()->find(entities\Work::class, $workIdShardified);
 		if ($work !== null) {
 			$work->setIsPrivate($value);
+			$work->setAccessLink($link);
 			App::Orm()->save($work);
 		}
+		$caches = new CacheManager();
+		$caches->CleanPdfMetadata($draftWork->getMetadata()->getId());
 		// Actualiza cachés
 		$publisher = new PublishSnapshots();
 		$publisher->UpdateWorkVisibility($workId);
@@ -277,6 +329,7 @@ class WorkService extends BaseService
 								, wrk_is_private IsPrivate
 								, wrk_is_indexed IsIndexed
 								, wrk_type Type
+								, wrk_unfinished Unfinished
 								, (SELECT MIN(wkp_permission) FROM draft_work_permission WHERE wkp_work_id = wrk_id AND wkp_user_id = ?) privileges
 								, (SELECT COUNT(*) FROM draft_dataset d1 WHERE d1.dat_work_id = wrk_id) DatasetCount
 								, (SELECT COUNT(*) FROM draft_dataset d2 WHERE d2.dat_work_id = wrk_id AND dat_geocoded = 1) GeorreferencedCount

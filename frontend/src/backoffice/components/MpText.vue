@@ -1,5 +1,5 @@
 <template>
-	<div :class="this.classSize" :style="(helper.length > 0 ? 'margin-bottom: 20px;' : '')" v-on-clickaway="away">
+	<div :class="this.classSize" :style="(helper && helper.length > 0 ? 'margin-bottom: 20px;' : '')" v-on-clickaway="away">
 		<div class="md-layout">
 			<div class="md-layout-item md-size-75" v-on:dblclick="StartEdit">
 				<md-field style="margin-bottom: 0px">
@@ -77,6 +77,9 @@ export default {
 				var len = this.input.$el.value.length;
 				this.input.$el.selectionStart = 0;
 				this.input.$el.selectionEnd = len;
+			} else {
+				this.input.$el.selectionStart = 0;
+				this.input.$el.selectionEnd = 0;
 			}
 		},
 		htmlEncode(html ) {

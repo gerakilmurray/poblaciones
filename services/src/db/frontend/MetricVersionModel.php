@@ -23,12 +23,14 @@ class MetricVersionModel extends BaseModel
 
 		$sql = 'SELECT	mvl_id,
 										mvl_partial_coverage,
+										AsText(mvl_extents) mvl_extents,
 										geography.*,
 										dat_id,
 										dat_type,
 										dat_caption,
 										dat_caption_column_id,
 										dat_symbol,
+										dat_show_info,
 										carto_meta.met_wiki
 						FROM metric_version_level
 										JOIN dataset ON mvl_dataset_id = dat_id

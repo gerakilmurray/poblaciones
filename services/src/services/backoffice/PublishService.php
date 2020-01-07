@@ -11,6 +11,8 @@ use helena\services\backoffice\publish\WorkFlags;
 use helena\services\backoffice\publish\PublishSnapshots;
 use helena\services\backoffice\publish\RevokeSnapshots;
 use helena\db\admin\WorkModel;
+use helena\classes\App;
+use helena\entities\backoffice as entities;
 use minga\framework\ErrorException;
 
 class PublishService extends BaseService
@@ -22,8 +24,9 @@ class PublishService extends BaseService
 	const STEP_COPY_DATASETS = 4;
 	const STEP_CREATE_SNAPSHOTS_DATASETS = 5;
 	const STEP_CREATE_SNAPSHOTS_METRICS = 6;
-	const STEP_RESET_FLAGS = 7;
-	const STEP_COMPLETED = 8;
+	const STEP_UPDATE_EXTENTS = 7;
+	const STEP_RESET_FLAGS = 8;
+	const STEP_COMPLETED = 9;
 
 	private $state = null;
 
@@ -106,13 +109,20 @@ class PublishService extends BaseService
 				}
 				else
 				{
-					$this->state->NextStep('Completando');
+					$this->state->NextStep('Actualizando extensiones');
 				}
+				break;
+			case self::STEP_UPDATE_EXTENTS:
+				$manager = new PublishSnapshots();
+				$manager->UpdateExtents($workId);
+				$this->state->NextStep('Completando');
 				break;
 			case self::STEP_RESET_FLAGS:
 				$publisher = new PublishDataTables();
+				$publisher->CleanWorkCaches($workId);
 				$publisher->UpdateOnlineDates($workId);
 				$publicUrl = $publisher->UpdatePublicUrl($workId);
+				$publicUrl = $this->AppendPublicLink($workId, $publicUrl);
 				WorkFlags::ClearAll($workId);
 				// Manda un mensaje administrativo avisando del nuevo elemento
 				$nm = new NotificationManager();
@@ -126,6 +136,17 @@ class PublishService extends BaseService
 
 		$done = ($this->state->Step() == self::STEP_COMPLETED);
 		return $this->state->ReturnState($done);
+	}
+
+	private function AppendPublicLink($workId, $publicUrl)
+	{
+		$work = App::Orm()->find(entities\DraftWork::class, $workId);
+		$link = $work->getAccessLink();
+		if ($link)
+		{
+			$publicUrl .= '/' . $link;
+		}
+		return $publicUrl;
 	}
 
 	private function DatasetsChanged($workId)

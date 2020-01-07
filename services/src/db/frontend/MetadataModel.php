@@ -4,7 +4,6 @@ namespace helena\db\frontend;
 
 use minga\framework\Arr;
 use minga\framework\Profiling;
-use helena\db\frontend\GeographyItemModel;
 use helena\classes\App;
 use helena\services\backoffice\publish\snapshots\Variable;
 
@@ -31,7 +30,7 @@ class MetadataModel extends BaseModel
 		Profiling::EndTimer();
 		return $ret;
 	}
-	
+
 	public function GetMetadataByWorkId($workId)
 	{
 		Profiling::BeginTimer();
@@ -60,8 +59,12 @@ class MetadataModel extends BaseModel
 	{
 		Profiling::BeginTimer();
 		$params = array($metadataId);
+		if ($this->draftPreffix)
+			$extents = '';
+		else
+			$extents = 'AsText(met_extents) Extents, ';
 
-		$sql = "SELECT *, (SELECT MIN(wrk_id) FROM " . $this->draftPreffix . "work WHERE wrk_metadata_id = met_id) AS wrk_id
+		$sql = "SELECT *, " . $extents . "(SELECT MIN(wrk_id) FROM " . $this->draftPreffix . "work WHERE wrk_metadata_id = met_id) AS wrk_id
 							FROM " . $this->draftPreffix . "metadata
 							LEFT JOIN " . $this->draftPreffix . "institution ON met_institution_id = ins_id
 							LEFT JOIN " . $this->draftPreffix . "contact ON met_contact_id = con_id
@@ -99,6 +102,17 @@ class MetadataModel extends BaseModel
 		return $ret;
 	}
 
+	public function GetAccessLink($workId)
+	{
+		if (!$workId) return null;
+		Profiling::BeginTimer();
+		$params = array($workId);
+		$sql = "SELECT wrk_access_link FROM " . $this->draftPreffix . "work WHERE wrk_id = ? LIMIT 1";
+		$ret = App::Db()->fetchScalar($sql, $params);
+		Profiling::EndTimer();
+		return $ret;
+	}
+
 	public function GetDatasetMetadata($datasetId)
 	{
 		if ($datasetId == null)
@@ -112,16 +126,16 @@ class MetadataModel extends BaseModel
 		// Trae columnas e indicadores
 		$ret['columns'] = $this->GetDatasetColumnsMetadata($datasetId);
 		$ret['metrics'] = $this->GetDatasetMetricsMetadata($datasetId);
-		
+
 		// Listo
 		Profiling::EndTimer();
 		return $ret;
 	}
-	
+
 	private function GetDatasetMetricsMetadata($datasetId)
 	{
 		Profiling::BeginTimer();
-		$metricToVariableJoin = $this->draftPreffix . "metric 
+		$metricToVariableJoin = $this->draftPreffix . "metric
 								JOIN " . $this->draftPreffix . "metric_version ON mvr_metric_id = mtr_id
 								JOIN " . $this->draftPreffix . "metric_version_level ON mvl_metric_version_id = mvr_id
 								JOIN " . $this->draftPreffix . "variable ON mvv_metric_version_level_id = mvl_id ";
@@ -142,7 +156,7 @@ class MetadataModel extends BaseModel
 		foreach($variables as &$variable)
 		{
 			$variable['mvv_formula'] = Variable::FormulaToString($variable);
-		}		
+		}
 		// Trae las categorías
 		$sql = "select mvv_id, vvl_caption, vvl_fill_color
 								FROM " . $metricToVariableJoin . "
@@ -168,7 +182,7 @@ class MetadataModel extends BaseModel
 		$sql = "SELECT dco_id, dco_variable, dco_label FROM " . $this->draftPreffix . "dataset_column WHERE dco_dataset_id = ? ORDER BY dco_order";
 		$columns = App::Db()->fetchAll($sql, array($datasetId));
 		// Trae las etiquetas
-		$sql = "SELECT dco_id, dla_value, dla_caption FROM " . $this->draftPreffix . "dataset_label JOIN " . $this->draftPreffix . "dataset_column ON dco_id = dla_dataset_column_id WHERE dco_dataset_id = ? ORDER BY dco_order, dla_order, dla_value";
+		$sql = "SELECT dco_id, dla_value, dla_caption FROM " . $this->draftPreffix . "dataset_column_value_label JOIN " . $this->draftPreffix . "dataset_column ON dco_id = dla_dataset_column_id WHERE dco_dataset_id = ? ORDER BY dco_order, dla_order, dla_value";
 		$values = App::Db()->fetchAll($sql, array($datasetId));
 		$diccionary = Arr::FromSortedToKeyed($values, 'dco_id');
 		// Completa etiquetas en columns

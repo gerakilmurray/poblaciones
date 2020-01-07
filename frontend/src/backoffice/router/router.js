@@ -176,7 +176,7 @@ group: 'Metadatos',
 			}
 		]
 	},
-	
+
 	{
 		group: 'Administración',
 		path: '/cartographies/:workId/visibility',
@@ -192,6 +192,23 @@ group: 'Metadatos',
 			}
 		]
 	},
+
+	{
+		group: 'Administración',
+		path: '/cartographies/:workId/customize',
+		component: Layout,
+		redirect: '/cartographies/:workId/customize',
+		icon: 'fas fa-sliders-h',
+		name: 'Personalizar',
+		children: [
+			{
+				path: '/cartographies/:workId/customize',
+				name: 'CustomizeTarget',
+				component: () => import('@/backoffice/views/Customize/Customize.vue'),
+			}
+		]
+	},
+
 
 	{ path: '*', redirect: '/404', hidden: true }
 ];

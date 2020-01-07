@@ -1,9 +1,9 @@
 <template>
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
+
+			<Search/><MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Search/>
-			<MapPanel/>
 			<Fab ref="fabPanel" />
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
@@ -18,6 +18,7 @@
 <script>
 import SegmentedMap from '@/public/classes/SegmentedMap';
 import RestoreRoute from '@/public/classes/RestoreRoute';
+import StartMap from '@/public/classes/StartMap';
 import GoogleMapsApi from '@/public/googleMaps/GoogleMapsApi';
 import WorkPanel from '@/public/components/panels/workPanel';
 import MapPanel from '@/public/components/panels/mapPanel';
@@ -47,21 +48,11 @@ export default {
 	},
 	data() {
 		return {
+			workStartupSetter: null,
 			toolbarStates: { selectionMode: null, tutorialOpened: 0 },
 			clipping: {
 				IsUpdating: false,
 				Region: {
-					Summary: {
-						Id: 0,
-						Name: '',
-						TypeName: '',
-						Location: { Lat: 0.0, Lon: 0.0, },
-						Population: 0,
-						Households: 0,
-						Children: 0,
-						AreaKm2: 0,
-						Empty: true
-					},
 					SelectedLevelIndex: 0,
 					Levels: [],
 					Canvas: null
@@ -88,11 +79,8 @@ export default {
 					Max: { Lat: 0.0, Lon: 0.0, },
 				},
 				Zoom: 0,
-				ClippingRegionId: 0,
-				ClippingCircle: {
-					Center: { Lat: 0.0, Lon: 0.0, },
-					Radius: { Lat: 0.0, Lon: 0.0, },
-				},
+				ClippingRegionId: null,
+				ClippingCircle: null,
 				ClippingFeatureId: null,
 			},
 			metrics: [],
@@ -107,33 +95,12 @@ export default {
 			minSizes: 200,
 			gutterSize: 7
 		});
+
+		this.BindEvents();
 		var loc = this;
 		this.GetRevisions().then(function() {
-			loc.RestoreWork();
-			loc.RegisterErrorHandler();
-			var hash = window.location.hash;
-			var route = null;
-			if (hash.length > 2 && hash.substr(0, 2) === '#/') {
-				route = hash;
-			}
-			if (route && new RestoreRoute(null).RouteHasLocation(hash)) {
-				loc.StartByUrl(hash);
-			} else {
-				loc.StartByDefaultFrameAndClipping(route);
-			}
-			window.onpopstate = function(event) {
-				if (event.state !== null) {
-					loc.workToLoad = false;
-					window.SegMap.RestoreRoute.LoadRoute(event.state.route);
-					loc.RestoreWork();
-				}
-			};
-			window.onresize = function(event) {
-				loc.$refs.workPanel.onResize();
-			};
-			window.onload = function(event) {
-				loc.$refs.workPanel.onResize();
-			};
+			var start = new StartMap(loc.work, loc, loc.SetupMap);
+			start.Start();
 		});
 	},
 	methods: {
@@ -147,67 +114,41 @@ export default {
 				err.errDialog('GetRevisions', 'conectarse con el servidor', error);
 			});
 		},
-		RestoreWork() {
-			var pathArray = window.location.pathname.split('/');
-			if (pathArray.length > 0 && pathArray[pathArray.length - 1] === '') {
-				pathArray.pop();
-			}
-			if (pathArray.length > 0 && pathArray[pathArray.length - 1] === 'map') {
-				pathArray.pop();
-			}
-			if (pathArray.length === 0 || !str.isNumeric(pathArray[pathArray.length - 1])) {
-				this.work.Current = null;
-				return;
-			}
-			var wk = parseInt(pathArray[pathArray.length - 1]);
-			this.GetWork(wk);
-		},
-		StartByUrl(route) {
-			var afterLoaded = function() {
-				window.SegMap.RestoreRoute.LoadRoute(route);
+		BindEvents() {
+			var loc = this;
+			this.RegisterErrorHandler();
+			window.onpopstate = function(event) {
+				if (event.state !== null) {
+					var start = new StartMap(loc.work, loc, loc.SetupMap);
+					start.Start();
+				}
 			};
-			this.SetupMap(afterLoaded);
-			window.SegMap.Tutorial.UpdateOpenTutorial();
-			window.SegMap.RestoreRoute.LoadLocationFromRoute(route);
-		},
-		StartByDefaultFrameAndClipping(route) {
-			const loc = this;
-			axios.get('/services/clipping/GetDefaultFrameAndClipping', {
-				params: {}
-			}).then(function(res) {
-				var canvas = res.data.clipping.Canvas;
-				res.data.clipping.Canvas = null;
-
-				loc.clipping.Region = res.data.clipping;
-				loc.frame = res.data.frame;
-				if (!window.SegMap) {
-					var afterLoaded = function() {
-						window.SegMap.SaveRoute.UpdateRoute();
-						if (route) {
-							window.SegMap.RestoreRoute.LoadRoute(route, true);
-						}
-					};
-					loc.SetupMap(afterLoaded);
-				}
-				if (loc.workToLoad === false) {
-					window.SegMap.Tutorial.CheckOpenTutorial();
-				}
-				window.SegMap.Clipping.FitCurrentRegion();
-				window.SegMap.Clipping.SetClippingCanvas(canvas);
-			}).catch(function(error) {
-				err.errDialog('GetDefaultFrameAndClipping', 'conectarse con el servidor', error);
-			});
+			window.onresize = function(event) {
+				loc.$refs.workPanel.onResize();
+			};
+			window.onload = function(event) {
+				loc.$refs.workPanel.onResize();
+			};
 		},
 		SetupMap(afterLoaded) {
+			if (window.SegMap) {
+				if (window.SegMap.MapIsInitialized) {
+					afterLoaded();
+					return;
+				} else {
+					window.SegMap.afterCallback2 = afterLoaded;
+					return;
+				}
+			}
 			var mapApi = new GoogleMapsApi(window.google);
 			var segMap = new SegmentedMap(mapApi, this.frame, this.clipping, this.toolbarStates, this.metrics, this.revisions);
 			segMap.Work = this.work;
 			segMap.afterCallback = afterLoaded;
-
 			window.SegMap = segMap;
 			this.$refs.fabPanel.loadFabMetrics();
 			mapApi.SetSegmentedMap(segMap);
 			mapApi.Initialize();
+			mapApi.BindEvents();
 			segMap.SetSelectionMode(0);
 		},
 		GetSummaryAll() {
@@ -215,17 +156,7 @@ export default {
 				metric.UpdateSummary();
 			});
 		},
-		GetWork(workId) {
-			const loc = this;
-			this.workToLoad = true;
-			axios.get('/services/works/GetWork', {
-				params: { w: workId }
-			}).then(function(res) {
-				loc.work.Current = res.data;
-			}).catch(function(error) {
-				err.errDialog('GetWork', 'obtener la información del servidor', error);
-			});
-		},
+
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
 			window.onerror = err.HandleError;
@@ -284,7 +215,7 @@ html, body {
 	margin-bottom: 12px;
 }
 
-// settings de split
+/* settings de split */
 .split p, .split-flex p {
 	padding: 20px;
 }
@@ -322,7 +253,7 @@ html, body {
 	height: 100%;
 	float: left;
 }
-// fin de settings de split
+/* fin de settings de split */
 
 .drop
 {
@@ -540,7 +471,7 @@ border-color: #66615B;
 	}
 
 	.always-print {
-		visible: visible;
+		visibility: visible;
 	}
 	.only-print {
 		display: block!important;

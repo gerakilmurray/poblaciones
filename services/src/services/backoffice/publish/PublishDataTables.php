@@ -59,15 +59,20 @@ class PublishDataTables
 																		'children' => array(
 																					array('class' => entities\DatasetColumn::class, 'childKey' => 'dco_dataset_id',
 																							'children' => array(
-																								array('class' => entities\DatasetLabel::class, 'childKey' => 'dla_dataset_column_id'))
+																								array('class' => entities\DatasetColumnValueLabel::class, 'childKey' => 'dla_dataset_column_id'))
 																						)));
 
 		$imageMatrix = array('class' => entities\File::class, 'parentKey' => 'wrk_image_id', 'children' => array(array('class' => entities\FileChunk::class, 'childKey' => 'chu_file_id')));
+
+		$extraMetrics = array('class' => entities\WorkExtraMetric::class, 'childKey' => 'wmt_work_id');
+		$workStartup = array('class' => entities\WorkStartup::class, 'parentKey' => 'wrk_startup_id');
 
 		// Inicia el pasaje
 		$publishMatrix = array('class' => entities\Work::class,
 														'children' => array(
 															$imageMatrix,
+															$extraMetrics,
+															$workStartup,
 															$metadataMatrix,
 															$datasetMatrix,
 															$metricMatrix));
@@ -109,6 +114,15 @@ class PublishDataTables
 		$metadataPublished->setUpdate($last);
 		App::Orm()->save($metadata);
 		App::Orm()->save($metadataPublished);
+	}
+
+	public function CleanWorkCaches($workId)
+	{
+		$work = App::Orm()->find(entities\DraftWork::class, $workId);
+
+		$cacheManager = new CacheManager();
+		$cacheManager->CleanPdfMetadata($work->getMetadata()->getId());
+		$cacheManager->CleanWorkVisiblityCache($workId);
 	}
 
 	public function RevokeOnlineDates($workId)
@@ -289,9 +303,9 @@ class PublishDataTables
 		// Crea la tabla
 		$this->DropTable($target);
 		$create = "CREATE TABLE " . $target . " LIKE " . $table;
-		App::Db()->exec($create);
+		App::Db()->execDDL($create);
 		$alterTable = "ALTER TABLE " . $target . " CHANGE `geography_item_id` `geography_item_id` INT(11) NOT NULL";
-		App::Db()->exec($alterTable);
+		App::Db()->execDDL($alterTable);
 		// Hace el insert
 		$insert = "INSERT " . $target . " SELECT * FROM " . $table . " WHERE ommit = 0";
 
@@ -427,6 +441,7 @@ class PublishDataTables
 		$ret =  RowDuplicator::GetMigrateSqlQueries($entity1, $entity2, $shardifyIds, $staticColumns);
 		return $ret;
 	}
+
 
 	private function ProcessTree($ele, $prevKey = null, $nlevel = 0)
 	{

@@ -59,11 +59,11 @@ GoogleMapsApi.prototype.MoveInfoWindow = function(zoom) {
 	}
 };
 
-GoogleMapsApi.prototype.Write = function(text, location, zIndex, style, innerStyle) {
+GoogleMapsApi.prototype.Write = function(text, location, zIndex, style, innerStyle, ignoreMapMode) {
 	if(!style) {
 		style = 'mapLabels';
 	}
-	if (this.IsSatelliteType()) {
+	if (!ignoreMapMode && this.IsSatelliteType()) {
 		style += ' mapLabelsSat';
 	}
 	var overlay = new TxtOverlay(this.gMap, location, text, style, zIndex, innerStyle);
@@ -111,20 +111,18 @@ GoogleMapsApi.prototype.Initialize = function () {
 	//https://developers.google.com/maps/documentation/javascript/maptypes#Rotating45DegreeImagery
 
 	var loc = this;
-	this.gMap.addListener('dragstart', function () {
-		loc.dragging = true;
+	this.google.maps.event.addListenerOnce(this.gMap, 'idle', function () {
+		loc.segmentedMap.MapInitialized();
 	});
-	this.gMap.addListener('dragend', function () {
-		loc.dragging = false;
-		loc.segmentedMap.DragEnd();
-	});
+};
+
+GoogleMapsApi.prototype.BindEvents = function () {
+	var loc = this;
 	this.gMap.addListener('bounds_changed', function () {
 		if (loc.dragging === false) {
 			loc.segmentedMap.FrameMoved(loc.getBounds());
+			loc.segmentedMap.BoundsChanged();
 		}
-	});
-	this.google.maps.event.addListenerOnce(this.gMap, 'idle', function () {
-		loc.segmentedMap.MapInitialized();
 	});
 	this.gMap.addListener('zoom_changed', function () {
 		//	if (loc.isSettingZoom === false) {
@@ -132,12 +130,19 @@ GoogleMapsApi.prototype.Initialize = function () {
 		//}
 		loc.MoveInfoWindow(loc.gMap.getZoom());
 	});
+	this.gMap.addListener('dragstart', function () {
+		loc.dragging = true;
+	});
+	this.gMap.addListener('dragend', function () {
+		loc.dragging = false;
+		loc.segmentedMap.BoundsChanged();
+	});
 
 	this.gMap.addListener('maptypeid_changed', function () {
 		loc.segmentedMap.MapTypeChanged(loc.GetMapTypeState());
 		loc.UpdateClippingStyle();
 	});
-	this.google.maps.event.addListener(this.drawingManager, 'circlecomplete', function(circle) {
+	this.google.maps.event.addListener(this.drawingManager, 'circlecomplete', function (circle) {
 		loc.CircleCompleted(circle);
 	});
 };
@@ -425,7 +430,8 @@ GoogleMapsApi.prototype.getFeature = function (event) {
 	var position = h.getPosition(event);
 	var ele = document.elementsFromPoint(position.Point.X, position.Point.Y);
 	for (var n = 0; n < ele.length; n++) {
-		if (ele[n].nodeName === 'path' && ele[n].parentElement.attributes['isFIDContainer']) {
+		if (ele[n].nodeName === 'path' && ele[n].parentElement.attributes['isFIDContainer'] &&
+					ele[n].id !== null) {
 			var parentInfo = {
 				MetricName: ele[n].parentElement.attributes['metricName'].value,
 				MetricId: ele[n].parentElement.attributes['metricId'].value,
@@ -450,14 +456,8 @@ GoogleMapsApi.prototype.createTooltipKiller = function () {
 GoogleMapsApi.prototype.resetTooltip = function (feature) {
 	var loc = window.SegMap.MapsApi;
 	if (loc.tooltipKillerTimer !== null) {
-		clearTimeout(loc.tooltipKillerTimer); 
+		clearTimeout(loc.tooltipKillerTimer);
 	}
-/*	if (feature) {
-		if (loc.tooltipCandidate && feature.id === loc.tooltipCandidate.id) {
-			loc.createTooltipKiller();
-			return false;
-		}
-	}*/
 	if (loc.tooltipCandidate === null) {
 		return true;
 	}
@@ -479,14 +479,12 @@ GoogleMapsApi.prototype.resetTooltip = function (feature) {
 GoogleMapsApi.prototype.showTooltip = function () {
 	var loc = window.SegMap.MapsApi;
 	var m = new Mercator();
-	//var coord = m.fromLatLonToGoogleLatLng(loc.tooltipCandidate.position.Coordinate);
-	//var coord = m.fromTextToGoogleLatLng(loc.tooltipCandidate.centroid);
 	var coord = m.fromLatLonToGoogleLatLng(loc.tooltipLocation.Coordinate);
 	var style = 'ibTooltip';
 	if (loc.tooltipMarker) {
 		style += ' ibTooltipNoYOffset';
 	}
-	loc.tooltipOverlay = loc.Write(loc.tooltipCandidate.description, coord, 10000000, null, style);
+	loc.tooltipOverlay = loc.Write(loc.tooltipCandidate.description, coord, 10000000, null, style, true);
 	loc.createTooltipKiller();
 };
 
@@ -530,7 +528,7 @@ GoogleMapsApi.prototype.selectorMoved = function (event) {
 		// Sale porque está en el mismo feature del cual se está mostrando el tooltip
 		return;
 	}
-	if (feature !== null) {
+	if (feature !== null && feature.id) {
 		pointer = 'pointer';
 		loc.startTooltipCandidate(feature);
 	} else {

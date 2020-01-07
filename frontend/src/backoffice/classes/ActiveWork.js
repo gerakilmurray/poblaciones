@@ -18,6 +18,7 @@ function ActiveWork(workInfo, workListMetadata) {
 	this.MetricVersions.Refresh();
 	this.Files = workInfo.Files;
 	this.Permissions = workInfo.Permissions;
+	this.StartupExtraInfo = workInfo.StartupExtraInfo;
 	this.workListMetadata = workListMetadata;
 	if (workInfo.Datasets) {
 		for (var i = 0; i < workInfo.Datasets.length; i++) {
@@ -221,6 +222,15 @@ ActiveWork.prototype.UpdateSource = function (source) {
 		});
 };
 
+ActiveWork.prototype.UpdateStartup = function () {
+	var args = { 'w': this.properties.Id, 's': this.properties.Startup };
+	this.WorkChanged();
+	// Guarda en el servidor lo que esté en this.properties.Startup
+	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateStartup', args,
+		'actualizar los atributos de inicio');
+};
+
+
 ActiveWork.prototype.UpdateMetadata = function () {
 	var args = { 'w': this.properties.Id, 'm': this.properties.Metadata };
 	this.WorkChanged();
@@ -262,8 +272,8 @@ ActiveWork.prototype.RequestReview = function () {
 
 ActiveWork.prototype.UpdateVisibility = function () {
 	var loc = this;
-	return axiosClient.getPromise('/services/backoffice/UpdateWorkVisibility',
-		{ 'w': this.properties.Id, 'p': (this.properties.IsPrivate ? '1' : '0') }, 'actualizar la visibilidad').then(
+	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateWorkVisibility',
+		{ 'w': this.properties.Id, 'l' : this.properties.AccessLink, 'p': (this.properties.IsPrivate ? '1' : '0') }, 'actualizar la visibilidad').then(
 		function () {
 			window.Context.UpdatePrivacy(loc.properties.Id, loc.properties.IsPrivate);
 		});

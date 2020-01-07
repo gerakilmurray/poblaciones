@@ -8,7 +8,6 @@ class Work extends BaseMapModel
 {
 	public $Id;
 	public $Comments;
-	public $StartArgs;
 
 	public $Metadata;
 	public $MetadataId;
@@ -37,7 +36,6 @@ class Work extends BaseMapModel
 	{
 		return array (
 			'wrk_id' => 'Id',
-			'wrk_start_args' => 'StartArgs',
 			'wrk_type' => 'Type',
 			'wrk_metadata_id' => 'MetadataId',
 			'wrk_comments' => 'Comments',

@@ -34,13 +34,6 @@ class DraftWork
     /**
      * @var string
      *
-     * @ORM\Column(name="wrk_start_args", type="string", length=500, precision=0, scale=0, nullable=true, unique=false)
-     */
-    private $StartArgs;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="wrk_image_type", type="string", length=1, precision=0, scale=0, nullable=false, unique=false)
      */
     private $ImageType;
@@ -94,6 +87,17 @@ class DraftWork
      */
     private $Shard;
 
+
+
+		/**
+		 * @var boolean
+		 *
+		 * @ClientReadonly
+		 *
+		 * @ORM\Column(name="wrk_unfinished", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+		 */
+    private $Unfinished;
+
 		/**
 		 * @var boolean
 		 *
@@ -121,6 +125,15 @@ class DraftWork
 		 */
     private $AccessLink;
 
+		/**
+		 * @var string
+		 *
+		 * @ClientReadonly
+		 *
+		 * @ORM\Column(name="wrk_last_access_link", type="string", length=50, precision=0, scale=0, nullable=true, unique=false)
+		 */
+    private $LastAccessLink;
+
     /**
      * @var \helena\entities\backoffice\DraftMetadata
      *
@@ -143,6 +156,15 @@ class DraftWork
      */
     private $Image;
 
+    /**
+     * @var \helena\entities\backoffice\DraftWorkStartup
+     *
+     * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\DraftWorkStartup")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="wrk_startup_id", referencedColumnName="wst_id", nullable=false)
+     * })
+     */
+    private $Startup;
 
     /**
      * Get id
@@ -190,30 +212,6 @@ class DraftWork
     public function getType()
     {
         return $this->Type;
-    }
-
-    /**
-     * Set startArgs
-     *
-     * @param string $startArgs
-     *
-     * @return DraftWork
-     */
-    public function setStartArgs($startArgs)
-    {
-        $this->StartArgs = $startArgs;
-
-        return $this;
-    }
-
-    /**
-     * Get startArgs
-     *
-     * @return string
-     */
-    public function getStartArgs()
-    {
-        return $this->StartArgs;
     }
 
     /**
@@ -289,6 +287,29 @@ class DraftWork
 			return $this->IsPrivate;
     }
 
+    /**
+		 * Set unfinished
+		 *
+		 * @param boolean $unfinished
+		 *
+		 * @return DraftWork
+		 */
+    public function setUnfinished($unfinished)
+    {
+			$this->Unfinished = $unfinished;
+
+			return $this;
+    }
+
+    /**
+		 * Get unfinished
+		 *
+		 * @return boolean
+		 */
+    public function getUnfinished()
+    {
+			return $this->Unfinished;
+    }
 
     /**
 		 * Set isIndexed
@@ -336,6 +357,30 @@ class DraftWork
     public function getAccessLink()
     {
 			return $this->AccessLink;
+    }
+
+		    /**
+		 * Set lastLastAccessLink
+		 *
+		 * @param string $lastLastAccessLink
+		 *
+		 * @return DraftWork
+		 */
+    public function setLastAccessLink($lastLastAccessLink)
+    {
+			$this->LastAccessLink = $lastLastAccessLink;
+
+			return $this;
+    }
+
+    /**
+		 * Get lastLastAccessLink
+		 *
+		 * @return string
+		 */
+    public function getLastAccessLink()
+    {
+			return $this->LastAccessLink;
     }
 
     /**
@@ -528,6 +573,31 @@ class DraftWork
     public function getImage()
     {
         return $this->Image;
+    }
+
+
+    /**
+     * Set startup
+     *
+     * @param \helena\entities\backoffice\DraftWorkStartup $startup
+     *
+     * @return DraftWork
+     */
+    public function setStartup(\helena\entities\backoffice\DraftWorkStartup $startup = null)
+    {
+        $this->Startup = $startup;
+
+        return $this;
+    }
+
+    /**
+     * Get startup
+     *
+     * @return \helena\entities\backoffice\DraftWorkStartup
+     */
+    public function getStartup()
+    {
+        return $this->Startup;
     }
 }
 
