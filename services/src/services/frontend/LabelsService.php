@@ -7,7 +7,7 @@ use helena\classes\GlobalTimer;
 use helena\caches\LabelsCache;
 use helena\services\common\BaseService;
 
-use helena\db\frontend\SnapshotLookupModel;
+use helena\db\frontend\SnapshotSearchModel;
 use helena\entities\frontend\clipping\LabelsDataInfo;
 use helena\entities\frontend\geometries\Envelope;
 use helena\entities\frontend\geometries\Coordinate;
@@ -37,7 +37,7 @@ class LabelsService extends BaseService
 
 	private function CalculateLabels($x, $y, $z, $b)
 	{
-		$table = new SnapshotLookupModel();
+		$table = new SnapshotSearchModel();
 
 		if ($b != null)
 		{
@@ -117,14 +117,14 @@ class LabelsService extends BaseService
 	{
 		$boxWidth = ($row['Size'] < 3 ? 200 : 100);
 		$boxLine =  $boxWidth * 0.5 * $scaleY;
-		$lines = intval(sizeof($row['Caption']) / 16) + 1;
+		$lines = intval(strlen($row['Caption']) / 16) + 1;
 		if ($lines > 3) $lines = 3;
 
 		$widthHalf = ($boxWidth * $scaleX) / 2;
 		return array('x1' => $row['Lon'] - $widthHalf, 'x2' => $row['Lon'] + $widthHalf,
 									'y1' => $row['Lat'] - $boxLine * $lines, 'y2' => $row['Lat']);
 	}
-	
+
 	private function CreateLabelsDataInfo($rows, $z)
 	{
 		$z = 0 + $z;
@@ -146,10 +146,11 @@ class LabelsService extends BaseService
 	private function CalculateSize($z, $size)
 	{
 		// Se establece tamaños iniciales en base a tamaños poblacionales
-		if ($z === 5) {
-			$t = 4;
-		} else if ($z === 6) {
-			$t = 3;
+		if ($z === 4 || $z === 5 || $z === 6) {
+			$t = 4 - ($z - 5);
+			if ($size > 20000)
+				// 20 millones
+				$t -= 2	;
 		} else if ($size > 1000) { // 1 millón
 			$t = 1;
 		} else if ($size > 500) {

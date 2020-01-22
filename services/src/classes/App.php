@@ -53,6 +53,7 @@ class App
 				$twig->addGlobal('tooltip_url', Links::TooltipUrl());
 				$twig->addGlobal('home_url', Links::GetHomeUrl());
 				$twig->addGlobal('application_name', Context::Settings()->applicationName);
+				$twig->addGlobal('google_maps_version', '3.39');
 
 				return $twig;
 			});
@@ -256,8 +257,12 @@ class App
 	}
 	public static function JsonImmutable($value)
 	{
-		Params::GetMandatory('w');
-		return self::Json($value, 1000);
+		$w = Params::GetIntMandatory('w');
+		if ($w === 0)
+			$expireDays = 0;
+		else
+			$expireDays = 1000;
+		return self::Json($value, $expireDays);
 	}
 	public static function Json($value, $daysToExpire = -1)
 	{
@@ -417,6 +422,20 @@ class App
 		return;
 	}
 
+	public static function GetPythonPath()
+	{
+		if (Context::Settings()->Servers()->Python27 === null)
+		{
+			if (array_key_exists('python', self::$app))
+				return self::$app['python'];
+			else
+				return Context::Settings()->Servers()->Python27;
+		}
+		else
+		{
+			return Context::Settings()->Servers()->Python27;
+		}
+	}
 	public static function GetSetting($key)
 	{
 		return self::$app[$key];
@@ -430,6 +449,19 @@ class App
 	public static function GetStorage()
 	{
 		return '';
+	}
+
+	public static function SanitizeUrbanity($paramValue)
+	{
+		// Ordena y limpia lo recibido en urbanity
+		$ret = '';
+		foreach(['U', 'D', 'R', 'L'] as $validFilter)
+		if (Str::Contains($paramValue, $validFilter))
+			$ret .= $validFilter;
+		if ($ret == '' || strlen($ret) === 4)
+			return null;
+		else
+			return $ret;
 	}
 
 	public static function AppendProfilingResults(Request $req, Response $res)

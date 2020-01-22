@@ -23,7 +23,6 @@ class MetricService extends BaseService
 	public function GetNewMetricVersionLevel()
 	{
 		$level = new entities\DraftMetricVersionLevel();
-		$level->setExtents(null);
 		$version = new entities\DraftMetricVersion();
 		$version->setMultilevel(false);
 		$metric = new entities\DraftMetric();
@@ -223,7 +222,7 @@ class MetricService extends BaseService
 											JOIN draft_metric mt1 ON mvr_metric_id = mt1.mtr_id
 											WHERE wkp_user_id = ? AND wkp_permission IN ('A', 'E')
 											AND wrk_type = ?
-									GROUP BY mt1.mtr_id, mt1.mtr_caption
+									GROUP BY mt1.mtr_id, mt1.mtr_caption, mt1.mtr_metric_group_id
 									HAVING COUNT(DISTINCT wrk_id) = (SELECT COUNT(DISTINCT mv2.mvr_work_id)
 																FROM draft_metric mt2
 																JOIN draft_metric_version mv2 ON mv2.mvr_metric_id = mt2.mtr_id

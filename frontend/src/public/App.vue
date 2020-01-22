@@ -177,6 +177,7 @@ html, body {
 	top: 0px !important;
 	right: 0px !important;
 }
+
 .gm-fullscreen-control
 {
 	zoom: 0.8;
