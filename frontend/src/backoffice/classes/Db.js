@@ -103,10 +103,9 @@ Db.prototype.DeleteUser = function (user, callback) {
 };
 
 
-Db.prototype.UpdateUser = function (user) {
-	return axiosClient.postPromise('/services/admin/UpdateUser',
-		{ u: user }, 'actualizar al usuario').then(function () {
-
+Db.prototype.UpdateUser = function (user, password, verification) {
+	return axiosClient.postPromise(window.host + '/services/admin/UpdateUser',
+		{ u: user, p: password, v: verification }, 'actualizar al usuario').then(function () {
 		});
 };
 

@@ -1,6 +1,23 @@
 [CURRENT]
+
+v2.15 (2020-01-21)
+- Deduplicación de entradas en índice fulltext.
+- Separación de regiones y features en la tablas de búsqueda.
+- Revisión de Urbanity en las funciones servidor.
+
+v2.14 (2020-01-18)
+- Fix a tooltips emergentes de ayuda de backoffice.
+- Mejora en el listado administrativo de usuarios (permite actualizar emails y contraseña).
+- Soporte mejorado para MySql 5.7.
+- Build incluye ejemplos de settings.php y htaccess.
+- Configuración simplificada.
+
+v2.13 (2020-01-14)
 - Opciones de inicio para la obra (dinámico, región o punto).
-- Cálculo de extensión por indicador y por obra en la publicación.
+- Cálculo de extensión (extents) por indicador y por obra en la publicación.
+- Fix a puesta en nulo de columnas de latitud y longitud al modificarse la columna de descripción.
+- Fix a ruteo de metadatos.
+- Homologación de título de página entre /handle y /map
 
 v2.12 (2019-12-22)
 - Fix: Los popups del visor perdían su ubicación al ser arrastrados.
