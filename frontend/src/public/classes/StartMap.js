@@ -63,7 +63,7 @@ StartMap.prototype.RestoreWork = function (workId, link) {
 	var loc = this;
 	window.accessWorkId = workId;
 	window.accessLink = link;
-	axios.get(window.host + '/services/works/GetWorkAndDefaultFrame', {
+	axios.get(/*window.host +*/ '/services/works/GetWorkAndDefaultFrame', {
 		params: { w: workId },
 		headers: (window.accessLink ? { 'Access-Link' : window.accessLink } : {})
 	}).then(function(res) {
@@ -113,7 +113,7 @@ StartMap.prototype.StartByUrl = function () {
 
 StartMap.prototype.GetAndStartByDefaultFrame = function () {
 	const loc = this;
-	axios.get(window.host + '/services/clipping/GetDefaultFrame', {
+	axios.get(/*window.host +*/ '/services/clipping/GetDefaultFrame', {
 		params: {}
 	}).then(function(res) {
 		loc.StartByDefaultFrame(res.data);
@@ -151,7 +151,7 @@ StartMap.prototype.StartByDefaultFrame = function (frame) {
 
 StartMap.prototype.StartByDefaultFrameAndClipping = function (route) {
 	const loc = this;
-	axios.get(window.host + '/services/clipping/GetDefaultFrameAndClipping', {
+	axios.get(/*window.host +*/ '/services/clipping/GetDefaultFrameAndClipping', {
 		params: {}
 	}).then(function(res) {
 		var canvas = res.data.clipping.Canvas;

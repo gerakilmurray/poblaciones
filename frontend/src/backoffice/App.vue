@@ -139,7 +139,7 @@ html, body {
 	}
 
 	.always-print {
-		visible: visible;
+		visibility: visible;
 	}
 	.only-print {
 		display: block!important;
@@ -164,6 +164,7 @@ html, body {
 .topBarContainer {
 
 }
+
 .gridStatusBar {
   font-size: 13px;
   padding-top: 3px;

@@ -1,3 +1,6 @@
+DROP table IF EXISTS `snapshot_lookup_clipping_region_item`;
+DROP table IF EXISTS `snapshot_lookup_feature`;
+COMMIT;
 
 CREATE TABLE `snapshot_lookup_clipping_region_item` (
   `clc_id` int(11) NOT NULL,
@@ -53,11 +56,12 @@ INSERT INTO `snapshot_lookup_clipping_region_item`(`clc_clipping_region_item_id`
 select
 `clv_clipping_region_item_id`, `clv_full_parent`, `clv_full_ids`, `clv_caption`, `clv_tooltip`, `clv_feature_ids`, `clv_population`, `clv_min_zoom`, `clv_symbol`, `clv_location`, `clv_max_zoom`, `clv_shard`
 FROM snapshot_lookup
-WHERE clv_type = 'C'
+WHERE clv_type = 'C';
 
-ALTER TABLE `snapshot_lookup_feature` ADD UNIQUE `ux_fid` (`clf_feature_ids`);
+ALTER TABLE `snapshot_lookup_feature` ADD UNIQUE KEY `ux_fid` (`clf_feature_ids`);
 
 truncate table `snapshot_lookup_feature`;
+
 INSERT INTO `snapshot_lookup_feature`(`clf_dataset_id`, `clf_level`, `clf_full_parent`, `clf_caption`, `clf_tooltip`, `clf_feature_ids`, `clf_min_zoom`, `clf_symbol`, `clf_location`, `clf_max_zoom`, `clf_shard`)
 SELECT DISTINCT
 `clv_dataset_id`, `clv_level`, `clv_full_parent`, `clv_caption`, `clv_tooltip`, `clv_feature_ids`, `clv_min_zoom`, `clv_symbol`, `clv_location`, `clv_max_zoom`, `clv_shard`
