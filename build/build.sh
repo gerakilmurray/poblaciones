@@ -93,4 +93,4 @@ tar cjvf $output.tar.bz2 -C $output . >$output-5_tar.log
 
 echo "*** Release generado con �xito"
 
-read -n1 -r -p "Press any key to continue..." key
+#read -n1 -r -p "Press any key to continue..." key
