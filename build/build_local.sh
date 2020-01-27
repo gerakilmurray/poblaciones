@@ -6,6 +6,9 @@ echo -e "\n### Compiling local release #########################################
 
 sudo rm -Rf ./release
 
+mkdir -p ../services/storage/temp/
+touch ../services/storage/temp/XDEBUG_SESSION.txt.lock
+
 ./build.sh
 
 cp -v ./configs/settings.php ./release/config

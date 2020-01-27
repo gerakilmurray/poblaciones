@@ -34,24 +34,23 @@ sudo cp -v /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-avai
 sudo cp -v /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf_bk.$today
 sudo cp -v /etc/apache2/apache2.conf /etc/apache2/apache2.conf_bk.$today
 sudo cp -v /etc/php/7.2/fpm/php.ini /etc/php/7.2/fpm/php.ini_bk.$today
+sudo cp -v /etc/hosts /etc/hosts_bk.$today
 
 echo -e "\n### Copying new configuration files ########################################################################################"
 sudo cp -v ~/ffg_dev/rcr_repo/build/configs/000-default.conf /etc/apache2/sites-available/000-default.conf
 sudo cp -v ~/ffg_dev/rcr_repo/build/configs/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 sudo cp -v ~/ffg_dev/rcr_repo/build/configs/apache2.conf /etc/apache2/apache2.conf
 sudo cp -v ~/ffg_dev/rcr_repo/build/configs/php.ini /etc/php/7.2/fpm/php.ini
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs/hosts /etc/hosts
 
 echo -e "\n### Activating Apache PHP CGI modules and SSL ##############################################################################"
 sudo a2dismod php7.2
 sudo a2enmod proxy_fcgi setenvif
 sudo a2enconf php7.2-fpm
-sudo a2ensite default-ssl
 sudo a2enmod ssl
 sudo a2enmod rewrite
-
-echo -e "\n### Adding local DNS #######################################################################################################"
-echo -e "127.0.0.1       desa.poblaciones.org" | sudo tee -a /etc/hosts
-uniq /etc/hosts | sudo tee /etc/hosts
+sudo a2ensite 000-default.conf
+sudo a2ensite default-ssl.conf
 
 echo -e "\n### Installing dependencies ################################################################################################"
 cd ~/ffg_dev/rcr_repo/frontend
@@ -66,6 +65,7 @@ cp -v ~/ffg_dev/rcr_repo/build/configs/dev.env.js ~/ffg_dev/rcr_repo/frontend/co
 cd ~/ffg_dev/rcr_repo/build
 chmod +x ~/ffg_dev/rcr_repo/build/build.sh
 chmod +x ~/ffg_dev/rcr_repo/build/build_local.sh
-./build_local.sh
 sudo usermod -a -G www-data force
 sudo usermod -a -G force www-data
+
+./build_local.sh
