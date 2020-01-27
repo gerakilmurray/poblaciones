@@ -2,19 +2,19 @@
 # fileencoding=utf8
 # lineends=linux
 
-# Sube relese a servidor de producción o beta
-# parámetros:
+# Sube relese a servidor de producciï¿½n o beta
+# parï¿½metros:
 #    vendor (default false): sube directorio vendor
 #
 
-vendor=false
+vendor=true
 output=./release
 release=true
 
-# manejo de parámetros
+# manejo de parï¿½metros
 
 if [ "$2" == "" ]; then
-	echo "*** Para marcar el tag en git, agregarlo como parámetro ***"
+	echo "*** Para marcar el tag en git, agregarlo como parï¿½metro ***"
 else
 	echo "*** Marcando el tag v$2 ***"
 	git tag v$2
@@ -35,7 +35,7 @@ done
 
 echo "*** Preparando en $output ***"
 
-echo "*** Borra release anterior si había y/o crea el directorio"
+echo "*** Borra release anterior si habï¿½a y/o crea el directorio"
 rm -f $output.tar.bz2
 rm -rf $output
 mkdir -p $output
@@ -91,6 +91,6 @@ cp $output/templates/admins.html.twig $output/templates/frontend/>>$output-4_cop
 echo "*** 5. Crea release comprimido"
 tar cjvf $output.tar.bz2 -C $output . >$output-5_tar.log
 
-echo "*** Release generado con éxito"
+echo "*** Release generado con ï¿½xito"
 
-read -n1 -r -p "Press any key to continue..." key
+#read -n1 -r -p "Press any key to continue..." key

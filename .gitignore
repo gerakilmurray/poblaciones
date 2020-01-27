@@ -11,4 +11,6 @@
 /build/release.tar.bz2
 /build/release
 
+/services/web/.htaccess
+
 thumbs.db

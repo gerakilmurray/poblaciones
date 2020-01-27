@@ -26,9 +26,8 @@ class Db
 		$this->db = $db;
 		if (Context::Settings()->Db()->ForceOnlyFullGroupBy)
 			$this->db->executeQuery("SET sql_mode =(SELECT CONCAT(@@session.sql_mode,',ONLY_FULL_GROUP_BY'));");
-		/*else
-			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY',''));");
-		*/
+		else
+			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY,',''));");
 		if (Profiling::IsProfiling())
 		{
 			$profiler = new SqlLogger();
@@ -214,10 +213,10 @@ class Db
 	}
 	public function execDDL($sql, $params = array())
 	{
-		// Los cambios de estructura finalizan la transacción activa
+		// Los cambios de estructura finalizan la transacciï¿½n activa
 		$wasInTransaction = $this->isInTransaction;
 		if ($wasInTransaction) {
-			// Cierra si había una
+			// Cierra si habï¿½a una
 			$this->commit();
 		}
 		$ret = $this->executeQuery($sql, $params);
