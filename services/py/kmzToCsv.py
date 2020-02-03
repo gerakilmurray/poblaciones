@@ -11,6 +11,7 @@ def main():
         s = BeautifulSoup(f, 'xml')
         with open('out.csv', 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix')
+            writer.writerow(["Coordinates","Name"])
             for coords in s.find_all('Placemark'):
                 row = split_coordinates(coords.find('coordinates').string)
                 row.append(coords.find('name').string)
