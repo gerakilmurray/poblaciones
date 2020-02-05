@@ -4,11 +4,12 @@
 
 echo -e "\n### Creating new dev directory #############################################################################################"
 #mkdir -v ~/ffg_dev
-#cd ~/ffg_dev/rcr_repo/build
+#cd ~/ffg_dev
 
 echo -e "\n### Cloning Dev Git branch #################################################################################################"
 #git clone --recurse-submodules https://bitbucket.org/t4sg/latam-ffg-2019-fundacion-red-comunidades-rurales/src/develop/ rcr_repo
 
+#cd ~/ffg_dev/rcr_repo/build
 #chdmod +x ~/ffg_dev/rcr_repo/build/install_dev.sh
 
 echo -e "\n### APT updates and upgrades ###############################################################################################"
@@ -65,6 +66,7 @@ cp -v ~/ffg_dev/rcr_repo/build/configs/dev.env.js ~/ffg_dev/rcr_repo/frontend/co
 cd ~/ffg_dev/rcr_repo/build
 chmod +x ~/ffg_dev/rcr_repo/build/build.sh
 chmod +x ~/ffg_dev/rcr_repo/build/build_local.sh
+chmod +x ~/ffg_dev/rcr_repo/build/install_python.sh
 sudo usermod -a -G www-data force
 sudo usermod -a -G force www-data
 
