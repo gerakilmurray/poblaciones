@@ -41,13 +41,13 @@ def process_kml(result, kml_file):
         s = BeautifulSoup(kml_file, 'xml')
         with open(result, 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix')
-            writer.writerow(["Latitude","Longitude","Altitude","GeoJson","Name"])
+            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
             doc = Document(s)
             for folder in doc.get_folders():
                 for placemark in folder.get_placemarks():
                     for place in placemark.get_places():    
                         row = place.get_row()
-                        row.append(placemark.get_name())
+                        row.insert(0,placemark.get_name())
                         writer.writerow(row)      
 
         csvfile.close()           
@@ -139,13 +139,12 @@ class Polygon:
     
     def __parse__(self,xml):
         for coordinate in xml.find_all('coordinates'):
-            for coord_strs in coordinate:
-                
-                coord_str = coord_str.strip()
-                coord_str = coord_str.strip('/t')
-                coord_str = coord_str.strip('/n')
-                if coord_str != "":
-                    self.coordinates.append(Coordinate(coord_str))
+            for coord_strs in coordinate:                
+                coord_str = coord_strs.split(' ')
+                for a in coord_str:
+                    a = a.strip('\n')
+                    if a != "":
+                        self.coordinates.append(Coordinate(a))
      
     def get_row(self):
         row = ["","",""]
@@ -166,7 +165,6 @@ class Polygon:
    
 class Coordinate:
     def __init__(self, coord_str):
-        print(coord_str)
         xyz = coord_str.strip().split(",")
         self.x = xyz[0]
         self.y = xyz[1]
