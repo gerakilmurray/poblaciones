@@ -148,15 +148,6 @@ export default {
 			mapApi.Initialize();
 			segMap.SetSelectionMode(0);
 		},
-<<<<<<< HEAD
-		GetSummaryAll() {
-			this.metrics.forEach(function(metric) {
-				metric.UpdateSummary();
-			});
-		},
-
-=======
->>>>>>> upstream/master
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
 			window.onerror = err.HandleError;
