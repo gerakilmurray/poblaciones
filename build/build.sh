@@ -7,7 +7,7 @@
 #    vendor (default false): sube directorio vendor
 #
 
-vendor=true
+vendor=false
 output=./release
 release=true
 

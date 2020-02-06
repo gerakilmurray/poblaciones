@@ -23,7 +23,7 @@ Search.prototype.StartSearch = function (t) {
 	var view = this.view;
 	var loc = this;
 	view.loading = true;
-	axios.get(/*window.host +*/ '/services/search', {
+	axios.get(/*window.host + */ '/services/search', {
     params: { q: t, f: this.searchType, w: this.revision },
 		cancelToken: new CancelToken(function executor(c) { retCancel = c; })
 		})
