@@ -5,12 +5,16 @@
 							title="Guardar como PNG..." v-on:click="capturePng()"><i class="fas fa-camera"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
-		</div>
-		<div class="btn-group">
-			<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
-							v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
-							class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
-		</div>
+	</div>
+	<div class="btn-group">
+		<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
+						v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
+						class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
+	</div>
+	<div class="btn-group">
+		<button type="button" class="btn btn-default btn-xs" title="Comunidades Rurales"
+						v-on:click="changeRurality()" :class="getRuralityActive()"><i class="fas fa-tree"/></button>
+	</div>
 
     <div class="pull-right">
 
@@ -57,6 +61,11 @@ export default {
     tour,
     HelpCircleIcon
 	},
+	data() {
+		return {
+			rurality: false
+		};
+	},
 	methods: {
 		selectionModes() {
 			if (this.frame && this.frame.Zoom >= 10) {
@@ -67,12 +76,12 @@ export default {
 				return [];
 			}
 		},
-    showTutorial() {
-      this.$refs.Tour.toggleModal();
-    },
-    useExtraToolbar() {
-      return window.UISettings_ExtraToolbar;
-    },
+		showTutorial() {
+		this.$refs.Tour.toggleModal();
+		},
+		useExtraToolbar() {
+		return window.UISettings_ExtraToolbar;
+		},
 		ignore(ele) {
 			return (ele.nodeName === 'IFRAME');
 		},
@@ -99,9 +108,7 @@ export default {
 			return navigator && navigator.geolocation;
 		},
 		geolocate() {
-
 			if (navigator.geolocation) {
-
 				navigator.geolocation.getCurrentPosition(function (position) {
 					var coord = { Lat: position.coords.latitude, Lon: position.coords.longitude };
 					window.SegMap.SetMyLocation(coord);
@@ -112,7 +119,7 @@ export default {
 			alert('no implementado');
 		},
 		login() {
-      alert('no implementado');
+      		alert('no implementado');
 		},
 		setMode(mode) {
 			window.SegMap.SetSelectionMode(mode);
@@ -122,6 +129,16 @@ export default {
 				return ' active';
 			}
 			return '';
+		},
+		getRuralityActive() {
+			if(this.rurality) {
+				return ' active';
+			}
+			return '';
+		},
+		changeRurality() {
+			this.rurality = !this.rurality;
+			// call cut fun(this.rurality)
 		},
 	},
 	watch: {
