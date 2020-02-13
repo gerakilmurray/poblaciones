@@ -11,9 +11,8 @@
 						v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
 						class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
 	</div>
-	<div class="btn-group">
-		<button type="button" class="btn btn-default btn-xs" title="Comunidades Rurales"
-						v-on:click="changeRurality()" :class="getRuralityActive()"><i class="fas fa-tree"/></button>
+	<div class="btn btn-default btn-xs" title="Comunidades Rurales"
+						v-on:click="changeRurality()" :class="getRuralityActive()"><i class="fas fa-tree"/>
 	</div>
 
     <div class="pull-right">
