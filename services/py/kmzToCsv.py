@@ -18,7 +18,7 @@ def main(file):
         kml_file = open(file,'r')
         route = name.split('/')
         file_name = route[len(route)-1]
-        process_kml(tmp_dir  + '/' + file_name + 'out.csv'  , kml_file)
+        process_kml(tmp_dir  + '/' + file_name + '_out.csv'  , kml_file)
         kml_file.close()
     elif extension == ".kmz":
         process_kmz(tmp_dir, file)
@@ -41,21 +41,21 @@ def process_kml(result, kml_file):
         s = BeautifulSoup(kml_file, 'xml')
         with open(result, 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix')
-            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
+            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
             doc = Document(s)
             for folder in doc.get_folders():
-                for placemark in folder.get_placemarks():
+                for placemark in folder.get_placemarks(): 
                     for place in placemark.get_places():    
                         row = place.get_row()
                         row.insert(0,placemark.get_name())
+                        row.insert(5,placemark.get_extended_data())
                         writer.writerow(row)      
-
         csvfile.close()           
 
 class Document:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.folders = []
         self.__parse__(xml)
     
@@ -69,7 +69,7 @@ class Document:
 class Folder:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.placemarks = []
         self.__parse__(xml)
     
@@ -83,18 +83,21 @@ class Folder:
 class Placemark:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.places = []
+        self.extended_data = []
         self.__parse__(xml)
     
     def __parse__(self,xml):
         self.name = xml.find('name').string
-        self.descritption = xml.find('descritption')    
+        self.description = xml.find('description')
         for point in xml.find_all('Point'):
             self.places.append(Point(point))
         for polygon in xml.find_all('Polygon'):
             self.places.append(Polygon(polygon))
-                
+        for extended_data in xml.find_all('ExtendedData'):
+            self.extended_data.append(ExtendedData(extended_data).get_data()) 
+        
     def get_places(self):
         return self.places
 
@@ -102,12 +105,16 @@ class Placemark:
         return self.name
         
     def get_description(self):
-        return self.descritption
+        return self.description
+    
+    def get_extended_data(self):
+        print(self.extended_data)
+        return self.extended_data
      
 class Point:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.coordinates = []
         self.__parse__(xml)
     
@@ -133,7 +140,7 @@ class Point:
 class Polygon:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.coordinates = []
         self.__parse__(xml)
     
@@ -141,10 +148,10 @@ class Polygon:
         for coordinate in xml.find_all('coordinates'):
             for coord_strs in coordinate:                
                 coord_str = coord_strs.split(' ')
-                for a in coord_str:
-                    a = a.strip('\n')
-                    if a != "":
-                        self.coordinates.append(Coordinate(a))
+                for string_with_coordinate in coord_str:
+                    string_with_coordinate = string_with_coordinate.strip('\n')
+                    if string_with_coordinate != "":
+                        self.coordinates.append(Coordinate(string_with_coordinate))
      
     def get_row(self):
         row = ["","",""]
@@ -176,7 +183,32 @@ class Coordinate:
     def get_xy_row(self):
         return [self.x, self.y]
         
+class ExtendedData:
+    def __init__(self,xml):
+        self.data = []
+        self.__parse__(xml)
+
+    def __parse__(self, xml):
+        for data in xml.find_all('Data'):
+            data_value = data.find('value').contents
+            if len(data_value) != 0 :
+                data_value = data_value[0]
+                data_value = data_value.replace('\n','')
+                data_value = data_value.replace('\xa0','')
+                self.data.append({"Information":data["name"],"Value":data_value})
+            
+            
+    def get_data(self):
+        return self.data
+
+    def get_row(self):
+        return self.data
+
+
 if __name__ == "__main__":
     main(sys.argv[1])
+
+
+
     
     
