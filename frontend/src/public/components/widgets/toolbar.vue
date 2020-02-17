@@ -2,7 +2,7 @@
 	<div class="toolbar no-print" style="display: block">
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-xs"
-							title="Guardar como PNG..." v-on:click="capturePng()"><i class="fas fa-camera"/></button>
+							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		</div>
