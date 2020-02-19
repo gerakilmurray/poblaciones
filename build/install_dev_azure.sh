@@ -59,7 +59,7 @@ cd ~/ffg_dev/rcr_repo/build
 chmod +x ~/ffg_dev/rcr_repo/build/build.sh
 chmod +x ~/ffg_dev/rcr_repo/build/build_local.sh
 chmod +x ~/ffg_dev/rcr_repo/build/install_python.sh
-sudo usermod -a -G www-data force
-sudo usermod -a -G force www-data
+sudo usermod -a -G www-data webtomcatserver
+sudo usermod -a -G webtomcatserver www-data
 
 ./build_local.sh
