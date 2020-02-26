@@ -2,7 +2,7 @@
 	<div class="toolbar no-print" style="display: block">
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-xs"
-							title="Guardar como PNG..." v-on:click="capturePng()"><i class="fas fa-camera"/></button>
+							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 	</div>
@@ -97,6 +97,25 @@ export default {
 					// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
 					a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
 					a.download = 'mapa.png';
+					document.body.appendChild(a);
+					a.click();
+					a.parentNode.removeChild(a);
+				});
+			}, 100);
+		},
+		captureFullPng() {
+			var loc = this;
+			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
+			window.setTimeout(function() {
+				var mapObj = document.querySelector("#holder");
+				mapObj.style.overflow = 'unset';
+				html2canvas(mapObj, { useCORS: true }).then(function(canvas) {
+					mapObj.style.overflow = 'hidden';
+					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
+					var a = document.createElement('a');
+					// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
+					a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+					a.download = 'mapa_full.png';
 					document.body.appendChild(a);
 					a.click();
 					a.parentNode.removeChild(a);
