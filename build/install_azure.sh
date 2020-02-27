@@ -57,4 +57,4 @@ chmod +x ~/ffg_dev/rcr_repo/build/install_python.sh
 sudo usermod -a www-data -G $user_id
 sudo usermod -a $user_id -G www-data
 
-./build_local.sh
+./build_azure.sh
