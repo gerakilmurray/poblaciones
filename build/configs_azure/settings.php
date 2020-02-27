@@ -9,7 +9,7 @@ use minga\framework\settings\MailSettings;
 App::SetDebug(true);
 
 // **** Servidores
-Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.westus.cloudapp.azure.com", "https://desa-poblaciones.westus.cloudapp.azure.com");
+Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.eastus.cloudapp.azure.com", "https://desa-poblaciones.eastus.cloudapp.azure.com");
 
 // **** Keys de terceros
 Context::Settings()->Keys()->GoogleMapsKey = "AIzaSyCvwo3r7L_WUENLJQgqlwQT3D4XUyvIpSc";
