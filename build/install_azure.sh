@@ -2,16 +2,6 @@
 # fileencoding=utf8
 # lineends=linux
 
-echo -e "\n### Creating new dev directory #############################################################################################"
-#mkdir -v ~/ffg_dev
-#cd ~/ffg_dev
-
-echo -e "\n### Cloning Dev Git branch #################################################################################################"
-#git clone --recurse-submodules https://bitbucket.org/t4sg/latam-ffg-2019-fundacion-red-comunidades-rurales/src/develop/ rcr_repo
-
-#cd ~/ffg_dev/rcr_repo/build
-#chdmod +x ~/ffg_dev/rcr_repo/build/install_dev.sh
-
 echo -e "\n### APT updates and upgrades ###############################################################################################"
 sudo apt update
 sudo apt upgrade -y
@@ -20,8 +10,12 @@ sudo apt autoremove -y
 
 echo -e "\n### Installing NodeJS 12 ###################################################################################################"
 sudo apt install build-essential apt-transport-https lsb-release ca-certificates curl -y
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt install nodejs -y
+sudo npm install -g n
+sudo n 12.16.1
+
+echo -e "\n### Installing MySQL ######################################################################################################"
+sudo apt-get install mysql-server -y
 
 echo -e "\n### Installing Apache ######################################################################################################"
 sudo apt install apache2 apache2-utils -y
@@ -55,11 +49,12 @@ sudo a2ensite default-ssl.conf
 
 echo -e "\n### Building local ########################################################################################################"
 
+user_id=`whoami`
 cd ~/ffg_dev/rcr_repo/build
 chmod +x ~/ffg_dev/rcr_repo/build/build.sh
 chmod +x ~/ffg_dev/rcr_repo/build/build_local.sh
 chmod +x ~/ffg_dev/rcr_repo/build/install_python.sh
-sudo usermod -a -G www-data webtomcatserver
-sudo usermod -a -G webtomcatserver www-data
+sudo usermod -a www-data -G $user_id
+sudo usermod -a $user_id -G www-data
 
 ./build_local.sh
