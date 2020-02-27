@@ -10,7 +10,8 @@ sudo apt autoremove -y
 
 echo -e "\n### Installing NodeJS 12 ###################################################################################################"
 sudo apt install build-essential apt-transport-https lsb-release ca-certificates curl -y
-sudo apt install nodejs npm -y
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt install nodejs -y
 sudo npm install -g n
 PATH="$PATH"
 sudo n 12.16.1
