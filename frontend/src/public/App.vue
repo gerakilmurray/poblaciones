@@ -1,10 +1,10 @@
 <template>
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
-
+			<LogoFloat/>
 			<Search/><MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" />
+			<Fab ref="fabPanel" />			
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
@@ -21,10 +21,11 @@ import StartMap from '@/public/classes/StartMap';
 import GoogleMapsApi from '@/public/googleMaps/GoogleMapsApi';
 import WorkPanel from '@/public/components/panels/workPanel';
 import MapPanel from '@/public/components/panels/mapPanel';
-import Fab from '@/public/components/panels/fabPanel';
-import Edit from '@/public/components/panels/editPanel';
+import Fab from '@/public/components/widgets/fabButton';
+import Edit from '@/public/components/widgets/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/search';
+import LogoFloat from '@/public/components/widgets/logoFloat';
 import Split from 'split.js';
 import axios from 'axios';
 import Vue from 'vue';
@@ -38,7 +39,8 @@ export default {
 		MapPanel,
 		Edit,
 		Fab,
-		WorkPanel
+		WorkPanel,
+		LogoFloat
 	},
 	created() {
 		window.Popups = {};
