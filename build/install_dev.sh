@@ -10,8 +10,9 @@ sudo apt autoremove -y
 
 echo -e "\n### Installing NodeJS 12 ###################################################################################################"
 sudo apt install build-essential apt-transport-https lsb-release ca-certificates curl -y
-sudo apt install nodejs -y
+sudo apt install nodejs npm -y
 sudo npm install -g n
+PATH="$PATH"
 sudo n 12.16.1
 
 echo -e "\n### Installing Apache ######################################################################################################"
