@@ -15,6 +15,7 @@ sudo apt install nodejs -y
 sudo npm install -g n
 PATH="$PATH"
 sudo n 12.16.1
+sudo chown -R $USER:$(id -gn $USER) /home/force/.config
 
 echo -e "\n### Installing Apache ######################################################################################################"
 sudo apt install apache2 apache2-utils -y

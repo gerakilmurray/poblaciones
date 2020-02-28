@@ -15,6 +15,7 @@ sudo apt install nodejs -y
 sudo npm install -g n
 PATH="$PATH"
 sudo n 12.16.1
+sudo chown -R $USER:$(id -gn $USER) /home/force/.config
 
 echo -e "\n### Installing MySQL ######################################################################################################"
 sudo apt-get install mysql-server -y
