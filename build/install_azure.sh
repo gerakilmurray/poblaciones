@@ -34,11 +34,11 @@ sudo cp -v /etc/php/7.2/fpm/php.ini /etc/php/7.2/fpm/php.ini_bk.$today
 sudo cp -v /etc/hosts /etc/hosts_bk.$today
 
 echo -e "\n### Copying new configuration files ########################################################################################"
-sudo cp -v ~/ffg_dev/rcr_repo/build/configs/000-default.conf /etc/apache2/sites-available/000-default.conf
-sudo cp -v ~/ffg_dev/rcr_repo/build/configs/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-sudo cp -v ~/ffg_dev/rcr_repo/build/configs/apache2.conf /etc/apache2/apache2.conf
-sudo cp -v ~/ffg_dev/rcr_repo/build/configs/php.ini /etc/php/7.2/fpm/php.ini
-sudo cp -v ~/ffg_dev/rcr_repo/build/configs/hosts /etc/hosts
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs_azure/000-default.conf /etc/apache2/sites-available/000-default.conf
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs_azure/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs_azure/apache2.conf /etc/apache2/apache2.conf
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs_azure/php.ini /etc/php/7.2/fpm/php.ini
+sudo cp -v ~/ffg_dev/rcr_repo/build/configs_azure/hosts /etc/hosts
 
 echo -e "\n### Activating Apache PHP CGI modules and SSL ##############################################################################"
 sudo a2dismod php7.2
@@ -54,7 +54,7 @@ echo -e "\n### Building local ##################################################
 user_id=`whoami`
 cd ~/ffg_dev/rcr_repo/build
 chmod +x ~/ffg_dev/rcr_repo/build/build.sh
-chmod +x ~/ffg_dev/rcr_repo/build/build_local.sh
+chmod +x ~/ffg_dev/rcr_repo/build/build_azure.sh
 chmod +x ~/ffg_dev/rcr_repo/build/install_python.sh
 sudo usermod -a www-data -G $user_id
 sudo usermod -a $user_id -G www-data
