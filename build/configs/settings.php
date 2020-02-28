@@ -27,6 +27,9 @@ Context::Settings()->Mail()->NotifyAddressErrors = '';
 Context::Settings()->Mail()->SMTPSecure = "";
 Context::Settings()->Mail()->SMTPHost = "localhost";
 
+// **** Región de inicio
+Context::Settings()->Map()->DefaultClippingRegion = 15476;
+
 // Base de datos MySQL
 Context::Settings()->Db()->SetDatabase("54.173.213.1", "ffg_maps_desa", "u_ffg_dev", "uffG.2019");
 

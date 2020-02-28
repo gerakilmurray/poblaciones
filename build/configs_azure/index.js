@@ -7,7 +7,7 @@ if(process.env.npm_config_lamp) {
 }
 
 // TODO - GK - Remove before merge
-var devenv_url = 'https://desa-poblaciones.westus.cloudapp.azure.com';
+var devenv_url = 'https://desa-poblaciones.eastus.cloudapp.azure.com';
 
 module.exports = {
 	build: {

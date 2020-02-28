@@ -9,7 +9,7 @@ use minga\framework\settings\MailSettings;
 App::SetDebug(true);
 
 // **** Servidores
-Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.westus.cloudapp.azure.com", "https://desa-poblaciones.westus.cloudapp.azure.com");
+Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.eastus.cloudapp.azure.com", "https://desa-poblaciones.eastus.cloudapp.azure.com");
 
 // **** Keys de terceros
 Context::Settings()->Keys()->GoogleMapsKey = "AIzaSyCvwo3r7L_WUENLJQgqlwQT3D4XUyvIpSc";
@@ -27,6 +27,9 @@ Context::Settings()->Mail()->From = 'no-responder@aacademica.org';
 Context::Settings()->Mail()->NotifyAddressErrors = '';
 Context::Settings()->Mail()->SMTPSecure = "";
 Context::Settings()->Mail()->SMTPHost = "localhost";
+
+// **** Región de inicio
+Context::Settings()->Map()->DefaultClippingRegion = 15476;
 
 // Base de datos MySQL
 Context::Settings()->Db()->SetDatabase("localhost", "ffg_maps_desa", "u_ffg_dev", "uffG.2019");
