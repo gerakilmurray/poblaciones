@@ -48,7 +48,7 @@ class UserService extends BaseService
 		{
 			if ($password !== $verification)
 			{
-				throw new ErrorException("La verificaci�n no coincide con la constrase�a.");
+				throw new ErrorException("La verificación no coincide con la constraseña.");
 			}
 			$account = new Account();
 			$account->user = $user->getEmail();
