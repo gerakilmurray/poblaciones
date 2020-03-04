@@ -33,5 +33,5 @@ Context::Settings()->Map()->DefaultClippingRegion = 15476;
 // Base de datos MySQL
 Context::Settings()->Db()->SetDatabase("54.173.213.1", "ffg_maps_desa", "u_ffg_dev", "uffG.2019");
 
-// Ubicaci�n de python
+// Ubicación de python
 Context::Settings()->Servers()->Python27 = '/usr/bin/python';
