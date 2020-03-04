@@ -16,7 +16,8 @@ class UserService extends BaseService
 {
 	public function GetNewUser()
 	{
-		$entity = new entities\User();
+		$entity = new entities\User();		
+		$entity->setDeleted(false);
 		$entity->setPrivileges('P');
 		return $entity;
 	}
@@ -41,12 +42,13 @@ class UserService extends BaseService
 	public function UpdateUser($user, $password, $verification)
 	{
 		Profiling::BeginTimer();
+		$user->setDeleted(false);
 		App::Orm()->Save($user);
 		if ($password !== null && strlen($password) > 0)
 		{
 			if ($password !== $verification)
 			{
-				throw new ErrorException("La verificación no coincide con la constraseña.");
+				throw new ErrorException("La verificaciÃ³n no coincide con la constraseÃ±a.");
 			}
 			$account = new Account();
 			$account->user = $user->getEmail();
