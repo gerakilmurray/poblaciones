@@ -13,18 +13,18 @@ export default {
 <style scoped>
 .logoDiv {
   opacity: 75%;
-  height: 8%;
+  height: 5.5rem;
   overflow: hidden;
-  top: 89.6%;
+  bottom: 2.5rem;
   right: 46px;
-	min-width: 200px;
-	z-index: 1;
-  position:absolute;
-  background:seashell;
+  min-height: 40px;
+  z-index: 1;
+  position: absolute;
+  background: seashell;
   border-radius: 21px;
-  padding: 5px;
+  padding: 0.25em;
 }
-.logoIcon{
+.logoIcon {
   width: auto;
   height: 100%;
 }
