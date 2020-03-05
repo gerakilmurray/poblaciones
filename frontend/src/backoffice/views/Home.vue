@@ -101,6 +101,8 @@ export default {
 
 .transparentTab {
 	background-color: #fafafa; padding: 4px;
-	margin-top: -10px;
+	//margin-top: -10px;
+	min-height: 70%;
+	height: 100%;
 }
 </style>

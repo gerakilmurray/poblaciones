@@ -12,16 +12,17 @@ export default {
 
 <style scoped>
 .logoDiv {
-  float: right;
-  position: fixed;
-  z-index: 1;
   opacity: 75%;
-  width: calc(75% - 55px);
   height: 8%;
   overflow: hidden;
-  bottom: 20px;
-  left: 0;
-  text-align: right;
+  top: 89.6%;
+  right: 46px;
+	min-width: 200px;
+	z-index: 1;
+  position:absolute;
+  background:seashell;
+  border-radius: 21px;
+  padding: 5px;
 }
 .logoIcon{
   width: auto;
