@@ -1,10 +1,10 @@
 <template>
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
-			<LogoFloat/>
 			<Search/><MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" />			
+			<Fab ref="fabPanel" />
+			<LogoFloat/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
