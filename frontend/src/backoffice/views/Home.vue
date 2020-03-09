@@ -100,9 +100,13 @@ export default {
 }
 
 .transparentTab {
-	background-color: #fafafa; padding: 4px;
+	background-color: #fafafa;
+	padding: 4px;
 	//margin-top: -10px;
-	min-height: 70%;
-	height: 100%;
+}
+
+.md-layout, .md-tabs, .md-tab-group, .md-content, .md-tabs-content, .md-theme-default, .md-content.md-theme-default, .md-tab { 
+	min-height: 300px;
+	height: 100% !important;
 }
 </style>
