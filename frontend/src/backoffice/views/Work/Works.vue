@@ -25,7 +25,7 @@
 			<md-radio v-model="timeFilter" class="md-primary" @change="refreshWorks" :value="90">Últimos 90 días</md-radio>
 		</div>
 			<div class="md-layout-item md-size-100">
-				<md-table style="max-width: 1000px; height: 90%;" v-if="list.length > 0" v-model="list" md-sort="title" md-sort-order="asc" md-card>
+				<md-table style="max-width: 1000px;" v-if="list.length > 0" v-model="list" md-sort="title" md-sort-order="asc" md-card>
 						<md-table-row slot="md-table-row" slot-scope="{ item }">
 							<md-table-cell @click.native="select(item)" class="selectable" md-label="Título" md-sort-by="title">
 								<a :href="getWorkUri(item, true)" class="normalTextLink">{{ item.Caption }}</a>
