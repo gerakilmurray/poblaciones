@@ -147,7 +147,7 @@ class SnapshotMetricVersionItemVariableModel
 		else
 			throw new ErrorException("Invalid dataset type.");
 		// Envelopes
-		$sql .= "Envelope(" . $envelopeTarget . "), ";
+		$sql .= "PolygonEnvelope(" . $envelopeTarget . "), ";
 		$sql .= "RichEnvelope(" . $envelopeTarget . ", " . $metricVersionLevel["mvr_id"] . ", gei_geography_id), ";
 		// Location
 		$sql .= $location;
