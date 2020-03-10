@@ -125,17 +125,17 @@ LocationsGeojsonComposer.prototype.bindStyles = function (dataMetric, tileKey) {
 			params.icon.fillOpacity = 1;
 			params.icon.path = Svg.markerPinche;
 
-			var adjust = 21;
+			var adjust = 4;
 			var n = h.getScaleFactor(z) / adjust;
 
 			var symbol = loc.activeSelectedMetric.GetSymbolInfo();
 
 			params.icon.scale = n;
 			params.icon.anchor = new loc.MapsApi.google.maps.Point(10.5, 32);
-			params.icon.labelOrigin = new loc.MapsApi.google.maps.Point(11.5, 11);
+			params.icon.labelOrigin = new loc.MapsApi.google.maps.Point(11.5, 10);
 			params.label = {
 				color: 'white',
-				fontSize: (12 * n) + 'px',
+				fontSize: (17 * n) + 'px',
 				fontWeight: symbol['weight'],
 				fontFamily: symbol['family'],
 				text: symbol['unicode']
