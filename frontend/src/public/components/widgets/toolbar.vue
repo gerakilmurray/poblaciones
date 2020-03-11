@@ -170,28 +170,28 @@ export default {
 			return '';
 		},
 		getRuralityTextActive() {
-			if(this.rurality == 'N') {
+			if(this.rurality === 'N') {
 				return '';
-			}else if(this.rurality == 'U') {
+			}else if(this.rurality === 'U') {
 				return ' - Urbano';
-			}else if(this.rurality == 'D') {
+			}else if(this.rurality === 'D') {
 				return ' - Urbano disperso';
-			}else if(this.rurality == 'R') {
+			}else if(this.rurality === 'R') {
 				return ' - Rural';
-			}else if(this.rurality == 'L') {
+			}else if(this.rurality === 'L') {
 				 return ' - Rural disperso';
 			}
 		},
 		changeRurality(mode) {
-			if(mode == 'N') {
+			if(mode === 'N') {
 				// call cut fun(this.rurality)
-			}else if(mode == 'U') {
+			}else if(mode === 'U') {
 				// call cut fun(this.rurality)
-			}else if(mode == 'D') {
+			}else if(mode === 'D') {
 				// call cut fun(this.rurality)
-			}else if(mode == 'R') {
+			}else if(mode === 'R') {
 				// call cut fun(this.rurality)
-			}else if(mode == 'L') {
+			}else if(mode === 'L') {
 				// call cut fun(this.rurality)
 			}
 			this.rurality = mode;
