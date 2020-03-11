@@ -11,24 +11,45 @@
 						v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
 						class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
 	</div>
-	<div class="btn btn-default btn-xs" title="Comunidades Rurales"
-						v-on:click="changeRurality()" :class="getRuralityActive()"><i class="fas fa-tree"/>
-	</div>
+
+	<span class="dropdown">
+		<button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Comunidades Rurales">
+			<i class="fas fa-tree" v-text="getRuralityTextActive()"/>
+		</button>
+		<ul class="dropdown-menu">
+			<li>
+				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('N')">Todo</button>
+			</li>
+			<li>
+				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('U')">Urbano</button>
+			</li>
+			<li>
+				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('D')">Urbano disperso</button>
+			</li>
+			<li>
+				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('R')">Rural</button>
+			</li>
+			<li>
+				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('L')">Rural disperso</button>
+			</li>
+		</ul>
+	</span>
+
 
     <div class="pull-right">
 
-      <span class="dropdown">
-      <button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Compartir">
-        <i class="fas fa-share-alt"/>
-      </button>
-      <ul class="shareIt dropdown-menu">
-        <li>
-          <div class="dToolboxBox">
-            <div class="addthis_inline_share_toolbox"></div>
-          </div>
-        </li>
-      </ul>
-    </span>
+		<span class="dropdown">
+			<button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Compartir">
+				<i class="fas fa-share-alt"/>
+			</button>
+			<ul class="shareIt dropdown-menu">
+				<li>
+				<div class="dToolboxBox">
+					<div class="addthis_inline_share_toolbox"></div>
+				</div>
+				</li>
+			</ul>
+		</span>
 
       <button type="button" class="btn btn-default btn-xs" title="Guía de uso" v-on:click="showTutorial()">
         <help-circle-icon title="Guía de uso"/>
@@ -62,7 +83,7 @@ export default {
 	},
 	data() {
 		return {
-			rurality: false
+			rurality: ''
 		};
 	},
 	methods: {
@@ -148,15 +169,32 @@ export default {
 			}
 			return '';
 		},
-		getRuralityActive() {
-			if(this.rurality) {
-				return ' active';
+		getRuralityTextActive() {
+			if(this.rurality == 'N') {
+				return '';
+			}else if(this.rurality == 'U') {
+				return ' - Urbano';
+			}else if(this.rurality == 'D') {
+				return ' - Urbano disperso';
+			}else if(this.rurality == 'R') {
+				return ' - Rural';
+			}else if(this.rurality == 'L') {
+				 return ' - Rural disperso';
 			}
-			return '';
 		},
-		changeRurality() {
-			this.rurality = !this.rurality;
-			// call cut fun(this.rurality)
+		changeRurality(mode) {
+			if(mode == 'N') {
+				// call cut fun(this.rurality)
+			}else if(mode == 'U') {
+				// call cut fun(this.rurality)
+			}else if(mode == 'D') {
+				// call cut fun(this.rurality)
+			}else if(mode == 'R') {
+				// call cut fun(this.rurality)
+			}else if(mode == 'L') {
+				// call cut fun(this.rurality)
+			}
+			this.rurality = mode;
 		},
 	},
 	watch: {
