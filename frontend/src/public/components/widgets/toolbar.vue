@@ -18,19 +18,19 @@
 		</button>
 		<ul class="dropdown-menu">
 			<li>
-				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('N')">Todo</button>
+				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('N')">Todo</button>
 			</li>
 			<li>
-				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('U')">Urbano</button>
+				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('U')">Urbano</button>
 			</li>
 			<li>
-				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('D')">Urbano disperso</button>
+				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('D')">Urbano disperso</button>
 			</li>
 			<li>
-				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('R')">Rural</button>
+				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('R')">Rural</button>
 			</li>
 			<li>
-				<button type="button" class="btn btn-default btn-xs" v-on:click="changeRurality('L')">Rural disperso</button>
+				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('L')">Rural disperso</button>
 			</li>
 		</ul>
 	</span>
@@ -242,5 +242,8 @@ export default {
   min-width: 37px;
   margin-top: 8px;
   margin-left: -5px;
+}
+.btn-full {
+	width: 100%;
 }
 </style>
