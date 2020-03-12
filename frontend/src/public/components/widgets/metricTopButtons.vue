@@ -22,6 +22,29 @@
 					<i class="fas fa-expand-arrows-alt" style="margin-left: 2px;" />
 				</button>
 
+				<span class="dropdown span-margin">
+					<button type="button" class="close lightButton" data-toggle="dropdown" title="Comunidades Rurales">
+						<i class="fas fa-tree" v-text="getRuralityTextActive()"/>
+					</button>
+					<ul class="dropdown-menu">
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('N')">Todo</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('U')">Urbano</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('D')">Urbano disperso</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('R')">Rural</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('L')">Rural disperso</button>
+						</li>
+					</ul>
+				</span>
+
 			</h4>
 		</div>
 	</div>
@@ -47,6 +70,7 @@ export default {
 	data() {
 		return {
 			work: {},
+			rurality: '',
 		};
 	},
 	methods: {
@@ -77,6 +101,25 @@ export default {
 			window.SegMap.MapsApi.FitEnvelope(extents);
 			this.$refs.zoomExtentsBtn.blur();
 		},
+		getRuralityTextActive() {
+			if(this.rurality === 'N') {
+				return '';
+			}else if(this.rurality === 'U') {
+				return ' - Urbano';
+			}else if(this.rurality === 'D') {
+				return ' - Urbano disperso';
+			}else if(this.rurality === 'R') {
+				return ' - Rural';
+			}else if(this.rurality === 'L') {
+				 return ' - Rural disperso';
+			}
+		},
+		changeRurality(mode) {
+			this.metric.properties.SelectedUrbanity = mode;
+			window.SegMap.SaveRoute.UpdateRoute();
+			window.SegMap.UpdateMap();
+			this.rurality = mode;
+		},
 	},
 	computed: {
 
@@ -105,5 +148,11 @@ export default {
 
 .activeButton {
 	opacity: .45;
+}
+.btn-full {
+	width: 100%;
+}
+.span-margin {
+	margin-right: 40px;
 }
 </style>
