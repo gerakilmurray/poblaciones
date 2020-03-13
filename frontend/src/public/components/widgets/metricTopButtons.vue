@@ -22,11 +22,11 @@
 					<i class="fas fa-expand-arrows-alt" style="margin-left: 2px;" />
 				</button>
 
-				<span class="dropdown span-margin">
+				<span class="dropdown">
 					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbanidad">
 						<i class="fas fa-tree" v-text="getUrbanityTextActive()"/>
 					</button>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu dropdownMargin">
 						<li>
 							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('N')">Todo</button>
 						</li>
@@ -105,13 +105,13 @@ export default {
 			if(this.urbanity === 'N') {
 				return '';
 			}else if(this.urbanity === 'U') {
-				return ' - Urbano';
+				return ' - U';
 			}else if(this.urbanity === 'D') {
-				return ' - Urbano disperso';
+				return ' - UD';
 			}else if(this.urbanity === 'R') {
-				return ' - Rural';
+				return ' - R';
 			}else if(this.urbanity === 'L') {
-				 return ' - Rural disperso';
+				return ' - RD';
 			}
 		},
 		changeUrbanity(mode) {
@@ -152,7 +152,9 @@ export default {
 .btn-full {
 	width: 100%;
 }
-.span-margin {
-	margin-right: 40px;
+.dropdownMargin {
+	left: -70px;
+    right: auto;
+    margin-top: 25px;
 }
 </style>
