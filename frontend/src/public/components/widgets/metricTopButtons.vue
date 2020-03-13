@@ -23,24 +23,24 @@
 				</button>
 
 				<span class="dropdown span-margin">
-					<button type="button" class="close lightButton" data-toggle="dropdown" title="Comunidades Rurales">
-						<i class="fas fa-tree" v-text="getRuralityTextActive()"/>
+					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbanidad">
+						<i class="fas fa-tree" v-text="getUrbanityTextActive()"/>
 					</button>
 					<ul class="dropdown-menu">
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('N')">Todo</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('N')">Todo</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('U')">Urbano</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('U')">Urbano</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('D')">Urbano disperso</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('D')">Urbano disperso</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('R')">Rural</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('R')">Rural</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeRurality('L')">Rural disperso</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('L')">Rural disperso</button>
 						</li>
 					</ul>
 				</span>
@@ -70,7 +70,7 @@ export default {
 	data() {
 		return {
 			work: {},
-			rurality: '',
+			urbanity: '',
 		};
 	},
 	methods: {
@@ -101,24 +101,24 @@ export default {
 			window.SegMap.MapsApi.FitEnvelope(extents);
 			this.$refs.zoomExtentsBtn.blur();
 		},
-		getRuralityTextActive() {
-			if(this.rurality === 'N') {
+		getUrbanityTextActive() {
+			if(this.urbanity === 'N') {
 				return '';
-			}else if(this.rurality === 'U') {
+			}else if(this.urbanity === 'U') {
 				return ' - Urbano';
-			}else if(this.rurality === 'D') {
+			}else if(this.urbanity === 'D') {
 				return ' - Urbano disperso';
-			}else if(this.rurality === 'R') {
+			}else if(this.urbanity === 'R') {
 				return ' - Rural';
-			}else if(this.rurality === 'L') {
+			}else if(this.urbanity === 'L') {
 				 return ' - Rural disperso';
 			}
 		},
-		changeRurality(mode) {
+		changeUrbanity(mode) {
 			this.metric.properties.SelectedUrbanity = mode;
 			window.SegMap.SaveRoute.UpdateRoute();
 			window.SegMap.UpdateMap();
-			this.rurality = mode;
+			this.urbanity = mode;
 		},
 	},
 	computed: {
