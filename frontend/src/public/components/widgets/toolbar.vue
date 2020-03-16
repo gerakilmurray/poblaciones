@@ -12,30 +12,6 @@
 						class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
 	</div>
 
-	<span class="dropdown">
-		<button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Comunidades Rurales">
-			<i class="fas fa-tree" v-text="getRuralityTextActive()"/>
-		</button>
-		<ul class="dropdown-menu">
-			<li>
-				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('N')">Todo</button>
-			</li>
-			<li>
-				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('U')">Urbano</button>
-			</li>
-			<li>
-				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('D')">Urbano disperso</button>
-			</li>
-			<li>
-				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('R')">Rural</button>
-			</li>
-			<li>
-				<button type="button" class="btn btn-default btn-xs btn-full" v-on:click="changeRurality('L')">Rural disperso</button>
-			</li>
-		</ul>
-	</span>
-
-
     <div class="pull-right">
 
 		<span class="dropdown">
@@ -80,11 +56,6 @@ export default {
 	components: {
     tour,
     HelpCircleIcon
-	},
-	data() {
-		return {
-			rurality: ''
-		};
 	},
 	methods: {
 		selectionModes() {
@@ -169,33 +140,6 @@ export default {
 			}
 			return '';
 		},
-		getRuralityTextActive() {
-			if(this.rurality === 'N') {
-				return '';
-			}else if(this.rurality === 'U') {
-				return ' - Urbano';
-			}else if(this.rurality === 'D') {
-				return ' - Urbano disperso';
-			}else if(this.rurality === 'R') {
-				return ' - Rural';
-			}else if(this.rurality === 'L') {
-				 return ' - Rural disperso';
-			}
-		},
-		changeRurality(mode) {
-			if(mode === 'N') {
-				// call cut fun(this.rurality)
-			}else if(mode === 'U') {
-				// call cut fun(this.rurality)
-			}else if(mode === 'D') {
-				// call cut fun(this.rurality)
-			}else if(mode === 'R') {
-				// call cut fun(this.rurality)
-			}else if(mode === 'L') {
-				// call cut fun(this.rurality)
-			}
-			this.rurality = mode;
-		},
 	},
 	watch: {
     'toolbarStates.tutorialOpened'(opened) {
@@ -242,8 +186,5 @@ export default {
   min-width: 37px;
   margin-top: 8px;
   margin-left: -5px;
-}
-.btn-full {
-	width: 100%;
 }
 </style>
