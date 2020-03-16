@@ -24,7 +24,7 @@
 
 				<span class="dropdown">
 					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbanidad">
-						<i class="fas fa-tree" v-text="getUrbanityTextActive()"/>
+						<i class="fas fa-users" v-text="getUrbanityTextActive()"/>
 					</button>
 					<ul class="dropdown-menu dropdownMargin">
 						<li>
