@@ -153,7 +153,7 @@ export default {
 	width: 100%;
 }
 .dropdownMargin {
-	left: -70px;
+    left: -70px;
     right: auto;
     margin-top: 25px;
 }
