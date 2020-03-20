@@ -13,6 +13,8 @@
               (SPSS).
             </li>
             <li>Archivos de texto separados por comas (.csv).</li>
+            <!--Agregamos nueva extension de archivos-->
+            <li>Archivos de texto estructurados en tags (.kml/.kmz).</li>
           </ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
