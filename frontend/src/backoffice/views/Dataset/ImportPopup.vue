@@ -82,7 +82,7 @@ export default {
         thumbnailWidth: 150,
         withCredentials: true,
 				maxFiles: 1,
-				acceptedFiles: '.csv,.txt,.sav',
+				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz',
 				dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
     		forceChunking: true,
 		    chunking: true,
