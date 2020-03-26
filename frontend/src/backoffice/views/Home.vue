@@ -25,13 +25,19 @@
 						</md-tab>
 						<md-tab class="transparentTab" id="public-tab" v-if="showPublic" to="/public" :md-active="isPath('/public')" md-label="Datos públicos"
 										:md-template-data="{ help: `
-											<p>
+										<p>
 											Los datos públicos reúnen información de carácter general sobre el territorio o la
 											población descripta por la plataforma. Son datos típicamente producidos por fuentes
 											estatales y son ofrecidos en el sitio a través del botón de acceso rápido en el
 											visor del mapa.
-											</p>` }">
+										</p>` }">
 							<works filter="P"></works>
+						</md-tab>
+						<md-tab class="transparentTab" id="config-tab" to="/userconfig" :md-active="isPath('/userconfig')" md-label="Configuración"
+										:md-template-data="{ help: `
+										<p>
+											Permite personalizar los colores e imágenes del usuario a usar en todas las cartografías. 
+										</p>` }">							
 						</md-tab>
 					</md-tabs>
 				</div>
