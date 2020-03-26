@@ -138,8 +138,8 @@ export default {
       let bucketId = this.getBucketId();
       let datasetId = this.Dataset.properties.Id;
       let extension = this.extension;
-			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt') {
-				alert('La extensión del archivo debe ser SAV, CSV o TXT.');
+			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt' && extension !== 'kml' && extension !== 'kmz') {
+				alert('La extensión del archivo debe ser SAV, CSV, TXT, KML o KMZ.');
 				return;
 			}
 			stepper.args = { b: bucketId, d: datasetId, fe: extension };
