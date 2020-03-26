@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Red de Escuelas Rurales Remotas de Jujuy</name>
+    <description/>
+    <Style id="icon-1899-0288D1-nodesc-normal">
+      <IconStyle>
+        <color>ffd18802</color>
+        <scale>1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="icon-1899-0288D1-nodesc-highlight">
+      <IconStyle>
+        <color>ffd18802</color>
+        <scale>1</scale>
+        <Icon>
+          <href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1</scale>
+      </LabelStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="icon-1899-0288D1-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-1899-0288D1-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-1899-0288D1-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Folder>
+      <name>Capa sin título</name>
+      <Placemark>
+        <name>Escuela 337 - El Palmar</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.5838,-24.0699,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 318 - Villa Montes</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.4013,-24.1028,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 188 - Real de los Toros</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.3311,-24.0047,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 220 Sauce Guacho</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.6406,-24.2715,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 104 - Ojo de Agua</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.3101499999995,-24.2571600000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 74 - Villa Carolina</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.7318899999999,-24.2715600000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 125 - El Puesto</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.7909499999999,-24.1986100000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 151 - El Lobaton</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.8340497,-24.3985952,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela El Hacheral</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.8017999999999,-24.4031600000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 288 - San Juan de Dios</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.70856658,-24.49977701,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 356 - Santa Clara</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.66095586,-24.30970637,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 92 - El Sauzal </name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.95845198,-24.29914568,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 313 - San Lucas</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.8718699999999,-24.2672600000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 230 - Lote San Antonio</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.80743188,-24.22027842,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 200 - La Lucrecia</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.5404899999998,-23.7317100000057,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 142 - El Bananal</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.5033799999998,-23.5620900000057,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 233 - Valle Grande</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -65.00498,-23.6231000000056,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 148 - San Lucas (Valle Grande)</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -65.04423,-23.6113800000057,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 130 - Alto Calilegua</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -64.89713769,-23.56311433,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Escuela 234 - Pampichuela</name>
+        <styleUrl>#icon-1899-0288D1-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -65.0074299999999,-23.5541500000057,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
