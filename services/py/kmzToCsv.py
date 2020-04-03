@@ -8,6 +8,7 @@ import re
 
 # python3 kmzToCsv.py test.kmz
 
+
 def main(file): 
     tmp_dir = os.getcwd() + '/tmp'
     name, extension = os.path.splitext(file)
@@ -15,10 +16,10 @@ def main(file):
         if (os.path.exists(tmp_dir)):
             shutil.rmtree(tmp_dir)
         os.mkdir(tmp_dir)
-        kml_file = open(file,'r')
+        kml_file = open(file,'r', encoding="utf8")
         route = name.split('/')
         file_name = route[len(route)-1]
-        process_kml(tmp_dir  + '/' + file_name + '_out.csv'  , kml_file)
+        process_kml(tmp_dir  + '/' + file_name + 'out.csv'  , kml_file)
         kml_file.close()
     elif extension == ".kmz":
         process_kmz(tmp_dir, file)
@@ -31,31 +32,36 @@ def process_kmz(tmp_dir, file_name):
         for file in files:
             name, extension = os.path.splitext(file)
             if extension == '.kml':
-                kml_file = open(tmp_dir + '/' + file,'r')
+                kml_file = open(tmp_dir + '/' + file,'r', encoding="utf8")
                 route = name.split('/')
                 kml_name = route[len(route)-1]
-                process_kml(tmp_dir +  '/' + kml_name + 'out.csv', kml_file)
+                process_kml(tmp_dir +  '/' + kml_name + 'out.csv', kml_file, tmp_dir)
                 kml_file.close()
     
-def process_kml(result, kml_file):
+def process_kml(result, kml_file, tmp_dir):
+        kml_file = kml_file.read().replace("’","'").replace("“","\"").replace("”","\"")
         s = BeautifulSoup(kml_file, 'xml')
         with open(result, 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix')
-            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
+            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
             doc = Document(s)
             for folder in doc.get_folders():
-                for placemark in folder.get_placemarks(): 
-                    for place in placemark.get_places():    
-                        row = place.get_row()
-                        row.insert(0,placemark.get_name())
-                        row.insert(5,placemark.get_extended_data())
-                        writer.writerow(row)      
+                print(folder.get_name())
+                with open(tmp_dir +  '/' + folder.get_name() + 'out.csv', 'w') as acsvfile:
+                    awriter = csv.writer(acsvfile, dialect='unix')
+                    for placemark in folder.get_placemarks():
+                        for place in placemark.get_places():    
+                            row = place.get_row()
+                            row.insert(0,placemark.get_name())
+                            writer.writerow(row)      
+                            awriter.writerow(row)
+                acsvfile.close()
         csvfile.close()           
 
 class Document:
     def __init__(self, xml):
         self.name = ""
-        self.description = ""
+        self.descritption = ""
         self.folders = []
         self.__parse__(xml)
     
@@ -69,16 +75,24 @@ class Document:
 class Folder:
     def __init__(self, xml):
         self.name = ""
-        self.description = ""
+        self.descritption = ""
         self.placemarks = []
         self.__parse__(xml)
     
     def __parse__(self,xml):
+        self.descritption = xml.find('descritption')   
+        self.name = xml.find('name')    		
         for placemark in xml.find_all('Placemark'):
             self.placemarks.append(Placemark(placemark))
 
+    def get_name(self):
+        return self.name.text
+
     def get_placemarks(self):
         return self.placemarks
+		
+    def get_description(self):
+        return self.descritption
 
 class Placemark:
     def __init__(self, xml):
