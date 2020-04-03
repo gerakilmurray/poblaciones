@@ -52,8 +52,8 @@ def process_kml(result, kml_file, tmp_dir):
                         for place in placemark.get_places():    
                             row = place.get_row()
                             row.insert(0,placemark.get_name())
-							row.insert(5,placemark.get_extended_data())
-                            writer.writerow(row)      
+                            row.insert(5,placemark.get_extended_data())
+                            writer.writerow(row)
                             awriter.writerow(row)
                 acsvfile.close()
         csvfile.close()           
@@ -122,7 +122,6 @@ class Placemark:
         return self.description
     
     def get_extended_data(self):
-        print(self.extended_data)
         return self.extended_data
      
 class Point:
