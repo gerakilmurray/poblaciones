@@ -4,7 +4,7 @@
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button type="button" class="btn btn-default btn-xs"
-							title="Guardar como PDF..." v-on:click="captureMapPdf()"><i class="fas fa-file-pdf"/></button>
+							title="Guardar como PDF..." v-on:click="captureMapPdf(metrics)"><i class="fas fa-file-pdf"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 	</div>
@@ -54,7 +54,8 @@ export default {
 	name: 'toolbar',
 	props: [
 		'frame',
-		'toolbarStates'
+		'toolbarStates',
+		'metrics'
 	],
 	components: {
     tour,
@@ -117,7 +118,7 @@ export default {
 				});
 			}, 100);
 		},
-		captureMapPdf() {
+		captureMapPdf(metrics) {
 			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
 			window.setTimeout(function() {
 				var doc = new jsPDF({ orientation: 'landscape' });
@@ -126,8 +127,20 @@ export default {
 				html2canvas(mapObj, { useCORS: true }).then(function(canvas) {
 					mapObj.style.overflow = 'hidden';
 					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
-					const img = canvas.toDataURL('image/jpeg');
-    			doc.addImage(img,'JPEG',20,20);
+					var img = canvas.toDataURL('image/jpeg');
+					if(metrics.length > 0) {
+						doc.setFontSize(20);
+						doc.text(20, 20, 'Poblaciones');
+						var metricNames = metrics.map(m => m.properties.Metric.Name);
+						doc.setFontSize(10);
+						doc.text(20, 28, metricNames.join(' - '));
+					} else {
+						doc.setFontSize(30);
+						doc.text(20, 25, 'Poblaciones');
+					}
+					doc.addImage(img,'JPEG', 20, 35, 260, 155);
+					doc.setFontSize(10);
+					doc.text(20, 200, window.location.href);
     			doc.save("MapaPoblaciones.pdf");
 				});
 			}, 100);

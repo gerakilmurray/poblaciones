@@ -1,6 +1,6 @@
 <template>
 	<div style="background-color: white">
-		<Toolbar :frame="frame" :toolbarStates="toolbarStates" />
+		<Toolbar :metrics="metrics" :frame="frame" :toolbarStates="toolbarStates" />
 		<div v-if="clipping.Region.Summary" v-show="!clipping.Region.Summary.Empty" class="panel card panel-body"
 				 style="background-color: transparent; padding-bottom: 13px">
 			<Clipping :clipping="clipping" :frame="frame" />
