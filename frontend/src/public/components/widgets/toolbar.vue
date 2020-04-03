@@ -3,6 +3,8 @@
 	<div class="btn-group">
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
+		<button type="button" class="btn btn-default btn-xs"
+							title="Guardar como PDF..." v-on:click="captureMapPdf()"><i class="fas fa-file-pdf"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 	</div>
@@ -43,6 +45,7 @@
 </template>
 
 <script>
+import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import HelpCircleIcon from 'vue-material-design-icons/HelpCircle.vue';
 import tour from '@/public/components/popups/tour';
@@ -111,6 +114,21 @@ export default {
 					document.body.appendChild(a);
 					a.click();
 					a.parentNode.removeChild(a);
+				});
+			}, 100);
+		},
+		captureMapPdf() {
+			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
+			window.setTimeout(function() {
+				var doc = new jsPDF({ orientation: 'landscape' });
+				var mapObj = document.querySelector("#panMain");
+				mapObj.style.overflow = 'unset';
+				html2canvas(mapObj, { useCORS: true }).then(function(canvas) {
+					mapObj.style.overflow = 'hidden';
+					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
+					const img = canvas.toDataURL('image/jpeg');
+    			doc.addImage(img,'JPEG',20,20);
+    			doc.save("MapaPoblaciones.pdf");
 				});
 			}, 100);
 		},
