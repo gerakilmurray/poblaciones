@@ -8,7 +8,6 @@ import re
 
 # python3 kmzToCsv.py test.kmz
 
-
 def main(file): 
     tmp_dir = os.getcwd() + '/tmp'
     name, extension = os.path.splitext(file)
@@ -19,7 +18,7 @@ def main(file):
         kml_file = open(file,'r', encoding="utf8")
         route = name.split('/')
         file_name = route[len(route)-1]
-        process_kml(tmp_dir  + '/' + file_name + 'out.csv'  , kml_file)
+        process_kml(tmp_dir  + '/' + file_name + '_out.csv'  , kml_file)
         kml_file.close()
     elif extension == ".kmz":
         process_kmz(tmp_dir, file)
@@ -43,7 +42,7 @@ def process_kml(result, kml_file, tmp_dir):
         s = BeautifulSoup(kml_file, 'xml')
         with open(result, 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix')
-            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
+            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
             doc = Document(s)
             for folder in doc.get_folders():
                 print(folder.get_name())
@@ -53,6 +52,7 @@ def process_kml(result, kml_file, tmp_dir):
                         for place in placemark.get_places():    
                             row = place.get_row()
                             row.insert(0,placemark.get_name())
+							row.insert(5,placemark.get_extended_data())
                             writer.writerow(row)      
                             awriter.writerow(row)
                 acsvfile.close()
@@ -61,7 +61,7 @@ def process_kml(result, kml_file, tmp_dir):
 class Document:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.folders = []
         self.__parse__(xml)
     
@@ -75,12 +75,12 @@ class Document:
 class Folder:
     def __init__(self, xml):
         self.name = ""
-        self.descritption = ""
+        self.description = ""
         self.placemarks = []
         self.__parse__(xml)
     
     def __parse__(self,xml):
-        self.descritption = xml.find('descritption')   
+        self.description = xml.find('description')   
         self.name = xml.find('name')    		
         for placemark in xml.find_all('Placemark'):
             self.placemarks.append(Placemark(placemark))
@@ -92,7 +92,7 @@ class Folder:
         return self.placemarks
 		
     def get_description(self):
-        return self.descritption
+        return self.description
 
 class Placemark:
     def __init__(self, xml):
