@@ -109,9 +109,11 @@ class Placemark:
             self.places.append(Point(point))
         for polygon in xml.find_all('Polygon'):
             self.places.append(Polygon(polygon))
+        for address in xml.find_all('address'):
+            self.places.append(Address(address))
         for extended_data in xml.find_all('ExtendedData'):
             self.extended_data.append(ExtendedData(extended_data).get_data()) 
-        
+		
     def get_places(self):
         return self.places
 
@@ -149,7 +151,33 @@ class Point:
         	"type": "Point",
             "coordinates": [ coords ]
         }
-     
+		
+class Address:
+    def __init__(self, xml):
+        self.name = ""
+        self.description = ""
+        self.coordinates = []
+        self.__parse__(xml)
+    
+    def __parse__(self,xml):
+        xy = xml.text.strip().split(" ")
+        coord_str = xy[0] + "," + xy[1] + ",0"
+        self.coordinates.append(Coordinate(coord_str))
+             
+    def get_row(self):
+        row = self.coordinates[0].get_xyz_row()     
+        row.append(self.__get_geodata())
+        return row     
+
+    def __get_geodata(self):
+        coords = []
+        for coord in self.coordinates:
+            coords.append(coord.get_xyz_row())
+        return {
+        	"type": "Point",
+            "coordinates": [ coords ]
+        }
+		
 class Polygon:
     def __init__(self, xml):
         self.name = ""
