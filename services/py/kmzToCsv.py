@@ -43,13 +43,13 @@ def process_kml(result, kml_file, tmp_dir):
         with open(result, 'w') as csvfile:
             writer = csv.writer(csvfile, dialect='unix', delimiter =',')
             #writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
-            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
+            writer.writerow(["Name","Longitude","Latitude","Altitude","GeoJson"])
             doc = Document(s)
             for folder in doc.get_folders():
                 print(folder.get_name())
                 with open(tmp_dir +  '/' + folder.get_name() + 'out.csv', 'w') as acsvfile:
                     awriter = csv.writer(acsvfile, dialect='unix', delimiter =',')
-                    awriter.writerow(["Name","Latitude","Longitude","Altitude","GeoJson"])
+                    awriter.writerow(["Name","Longitude","Latitude","Altitude","GeoJson"])
                     for placemark in folder.get_placemarks():
                         for place in placemark.get_places():    
                             row = place.get_row()
@@ -163,7 +163,7 @@ class Address:
     
     def __parse__(self,xml):
         xy = xml.text.strip().split(" ")
-        coord_str = xy[0] + "," + xy[1] + ",0"
+        coord_str = xy[1] + "," + xy[0] + ",0"
         self.coordinates.append(Coordinate(coord_str))
              
     def get_row(self):
