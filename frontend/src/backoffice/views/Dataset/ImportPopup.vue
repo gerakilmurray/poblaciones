@@ -13,6 +13,8 @@
               (SPSS).
             </li>
             <li>Archivos de texto separados por comas (.csv).</li>
+            <!--Agregamos nueva extension de archivos-->
+            <li>Archivos de texto estructurados en tags (.kml/.kmz).</li>
           </ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
@@ -80,7 +82,7 @@ export default {
         thumbnailWidth: 150,
         withCredentials: true,
 				maxFiles: 1,
-				acceptedFiles: '.csv,.txt,.sav',
+				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz',
 				dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
     		forceChunking: true,
 		    chunking: true,
@@ -136,8 +138,8 @@ export default {
       let bucketId = this.getBucketId();
       let datasetId = this.Dataset.properties.Id;
       let extension = this.extension;
-			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt') {
-				alert('La extensión del archivo debe ser SAV, CSV o TXT.');
+			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt' && extension !== 'kml' && extension !== 'kmz') {
+				alert('La extensión del archivo debe ser SAV, CSV, TXT, KML o KMZ.');
 				return;
 			}
 			stepper.args = { b: bucketId, d: datasetId, fe: extension };
