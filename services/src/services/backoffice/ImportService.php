@@ -52,7 +52,7 @@ class ImportService extends BaseService
 		}
 		else if ($fileExtension == "kml" || $fileExtension == "kmz")
 		{
-			return $this->ConvertKMX($bucket);
+			return $this->ConvertKMX($bucket, $fileExtension);
 		}
 
 		throw new ErrorException('La extensión del archivo debe ser .SAV, .CSV, .KML, .KMZ . Extensión recibida: ' . $fileExtension);
@@ -210,11 +210,11 @@ class ImportService extends BaseService
 		return $this->state->ReturnState(false);
 	}
 
-	private function ConvertKMX($bucket)
+	private function ConvertKMX($bucket, $fileExtension)
 	{
 		$folder = $this->state->GetFileFolder();
 		$uploadFolder = $bucket->path;
-		$sourceFile =  $uploadFolder . '/file.dat';
+		$sourceFile =  $uploadFolder . '/file' . $fileExtension;
 		$python = App::GetPythonPath();
 		if (IO::Exists($python) === false) {
 			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
@@ -222,7 +222,7 @@ class ImportService extends BaseService
 		$lines = array();
 
 		$ret = System::Execute(App::GetPythonPath(), array(
-			Paths::GetPythonScriptsPath() .'/kmzToCsv.py',
+			Paths::GetPythonScriptsPath() .'/kmx2csv.py',
 			$sourceFile,
 			$folder
 		), $lines);
@@ -230,7 +230,7 @@ class ImportService extends BaseService
 		if($ret !== 0)
 		{
 			$err = '';
-			$detail = "\nScript: " . Paths::GetPythonScriptsPath() .'/kmzToCsv.py'
+			$detail = "\nScript: " . Paths::GetPythonScriptsPath() .'/kmx2csv.py'
 				. "\nSource: " . $sourceFile
 				. "\nFolder: " . $folder
 				. "\nScript Output was: \n----------------------\n" . implode("\n", $lines) . "\n----------------------\n";
@@ -241,7 +241,7 @@ class ImportService extends BaseService
 			{
 				Log::HandleSilentException(new ErrorException($detail));
 			}
-			throw new ErrorException('Error en la subida de archivo kml/kmz.' . $err);
+			throw new ErrorException('Error en la subida de archivo KML/KMZ.' . $err);
 		}
 
 		$this->state->SetStep(self::STEP_CONVERTED, 'Creando tablas');
