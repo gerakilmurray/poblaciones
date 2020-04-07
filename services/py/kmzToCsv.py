@@ -15,7 +15,7 @@ def main(file):
         if (os.path.exists(tmp_dir)):
             shutil.rmtree(tmp_dir)
         os.mkdir(tmp_dir)
-        kml_file = open(file,'r')
+        kml_file = open(file,'r', encoding="utf8")
         route = name.split('/')
         file_name = route[len(route)-1]
         process_kml(tmp_dir  + '/' + file_name + '_out.csv'  , kml_file)
@@ -31,25 +31,33 @@ def process_kmz(tmp_dir, file_name):
         for file in files:
             name, extension = os.path.splitext(file)
             if extension == '.kml':
-                kml_file = open(tmp_dir + '/' + file,'r')
+                kml_file = open(tmp_dir + '/' + file,'r', encoding="utf8")
                 route = name.split('/')
                 kml_name = route[len(route)-1]
-                process_kml(tmp_dir +  '/' + kml_name + 'out.csv', kml_file)
+                process_kml(tmp_dir +  '/' + kml_name + 'out.csv', kml_file, tmp_dir)
                 kml_file.close()
     
-def process_kml(result, kml_file):
+def process_kml(result, kml_file, tmp_dir):
+        kml_file = kml_file.read().replace("’","'").replace("“","\"").replace("”","\"")
         s = BeautifulSoup(kml_file, 'xml')
         with open(result, 'w') as csvfile:
-            writer = csv.writer(csvfile, dialect='unix')
-            writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
+            writer = csv.writer(csvfile, dialect='unix', delimiter =',')
+            #writer.writerow(["Name","Latitude","Longitude","Altitude","GeoJson","ExtendedData"])
+            writer.writerow(["Name","Longitude","Latitude","Altitude","GeoJson"])
             doc = Document(s)
             for folder in doc.get_folders():
-                for placemark in folder.get_placemarks(): 
-                    for place in placemark.get_places():    
-                        row = place.get_row()
-                        row.insert(0,placemark.get_name())
-                        row.insert(5,placemark.get_extended_data())
-                        writer.writerow(row)      
+                print(folder.get_name())
+                with open(tmp_dir +  '/' + folder.get_name() + 'out.csv', 'w') as acsvfile:
+                    awriter = csv.writer(acsvfile, dialect='unix', delimiter =',')
+                    awriter.writerow(["Name","Longitude","Latitude","Altitude","GeoJson"])
+                    for placemark in folder.get_placemarks():
+                        for place in placemark.get_places():    
+                            row = place.get_row()
+                            row.insert(0,placemark.get_name())
+                            #row.insert(5,placemark.get_extended_data())
+                            writer.writerow(row)
+                            awriter.writerow(row)
+                acsvfile.close()
         csvfile.close()           
 
 class Document:
@@ -74,11 +82,19 @@ class Folder:
         self.__parse__(xml)
     
     def __parse__(self,xml):
+        self.description = xml.find('description')   
+        self.name = xml.find('name')    		
         for placemark in xml.find_all('Placemark'):
             self.placemarks.append(Placemark(placemark))
 
+    def get_name(self):
+        return self.name.text
+
     def get_placemarks(self):
         return self.placemarks
+		
+    def get_description(self):
+        return self.description
 
 class Placemark:
     def __init__(self, xml):
@@ -95,9 +111,11 @@ class Placemark:
             self.places.append(Point(point))
         for polygon in xml.find_all('Polygon'):
             self.places.append(Polygon(polygon))
+        for address in xml.find_all('address'):
+            self.places.append(Address(address))
         for extended_data in xml.find_all('ExtendedData'):
             self.extended_data.append(ExtendedData(extended_data).get_data()) 
-        
+		
     def get_places(self):
         return self.places
 
@@ -108,7 +126,6 @@ class Placemark:
         return self.description
     
     def get_extended_data(self):
-        print(self.extended_data)
         return self.extended_data
      
 class Point:
@@ -136,7 +153,33 @@ class Point:
         	"type": "Point",
             "coordinates": [ coords ]
         }
-     
+		
+class Address:
+    def __init__(self, xml):
+        self.name = ""
+        self.description = ""
+        self.coordinates = []
+        self.__parse__(xml)
+    
+    def __parse__(self,xml):
+        xy = xml.text.strip().split(" ")
+        coord_str = xy[1] + "," + xy[0] + ",0"
+        self.coordinates.append(Coordinate(coord_str))
+             
+    def get_row(self):
+        row = self.coordinates[0].get_xyz_row()     
+        row.append(self.__get_geodata())
+        return row     
+
+    def __get_geodata(self):
+        coords = []
+        for coord in self.coordinates:
+            coords.append(coord.get_xyz_row())
+        return {
+        	"type": "Point",
+            "coordinates": [ coords ]
+        }
+		
 class Polygon:
     def __init__(self, xml):
         self.name = ""
@@ -173,9 +216,9 @@ class Polygon:
 class Coordinate:
     def __init__(self, coord_str):
         xyz = coord_str.strip().split(",")
-        self.x = xyz[0]
-        self.y = xyz[1]
-        self.z = xyz[2]
+        self.x = xyz[0].replace(',','.')
+        self.y = xyz[1].replace(',','.')
+        self.z = xyz[2].replace(',','.')
     
     def get_xyz_row(self):
         return [self.x, self.y, self.z]
