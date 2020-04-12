@@ -6,7 +6,7 @@ echo -e "\n### Installing Python Pip ###########################################
 sudo apt install python-pip
 
 echo -e "\n### Installing dependencies ################################################################################################"
-sudo pip install savReaderWriter ijson numpy bs4
+sudo pip install savReaderWriter ijson numpy bs4 lxml
 
 echo -e "\n### Installing dependencies ################################################################################################"
 pip freeze

@@ -1,8 +1,7 @@
 from bs4 import BeautifulSoup
 from zipfile import ZipFile
 import traceback
-import csv
-import shutil
+import unicodecsv as csv
 import os
 import sys
 import re
@@ -12,68 +11,68 @@ import re
 
 
 def main():
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print ('Usage: ' + sys.argv[0] + ' inputfile [outputpath]')
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print ('Usage: ' + sys.argv[0] +
+               ' file_extesion inputfile [outputpath]')
         os._exit(1)
 
-    if len(sys.argv) == 2:
-        sys.argv.append('')
+    if len(sys.argv) == 3:
+        sys.argv.append('.')
 
-    print ('Args:' + sys.argv[0] + ' - ' + sys.argv[1] + ' - ' + sys.argv[2])
+    print (
+        'Args:' + sys.argv[0] + ' - ' + sys.argv[1] + ' - ' + sys.argv[2] + ' - ' + sys.argv[3])
 
     try:
-        in_file = sys.argv[1]
-        out_file = sys.argv[2]
-        os.remove(out_file)
-        _, extension = os.path.splitext(in_file)
+        file_extesion = sys.argv[1]
+        in_file = sys.argv[2]
+        out_path = sys.argv[3]
+        out_file = in_file + '_out.csv'
 
-        if extension == '.kml':
+        if file_extesion == 'kml':
             process_kml(in_file, out_file)
-        elif extension == '.kmz':
-            process_kmz(in_file, out_file)
+        elif file_extesion == 'kmz':
+            process_kmz(in_file, out_file, out_path)
 
-        print 'File ' + sys.argv[3] + ' successfully created.'
     except:
         print 'Error: ', sys.exc_info()
         traceback.print_exc()
         os._exit(1)
 
 
-def process_kmz(file_name, result):
+def process_kmz(in_file, out_file, out_path):
     ''' Extrae todos los KML de un KMZ y los procesa a todos en un directorio temporal '''
-    # Obtengo un nombre de directorio en base al nombre de out esperado
-    tmp_dir = os.path.splitext(result)[0]
-    # Si existe lo borro por completo
-    if (os.path.exists(tmp_dir)):
-        shutil.rmtree(tmp_dir)
-    os.mkdir(tmp_dir)
     # Descomprimo el KMZ
-    kmz = ZipFile(file_name, 'r')
-    kmz.extractall(tmp_dir)
+    kmz = ZipFile(in_file, 'r')
+    kmz.extractall(out_path)
 
-    for _, _, files in os.walk(tmp_dir):
-        for i in len(n_file in files:
-            name, extension = os.path.splitext(in_file)
+    for _, _, files in os.walk(out_path):
+        for i, a_file in enumerate(files):
+            _, extension = os.path.splitext(a_file)
             if extension == '.kml':
-                process_kml(in_file, name + '_out.csv')
+                process_kml(a_file, out_file + str(i).zfill(3))
 
 
-def process_kml(file_name, result):
+def process_kml(in_file, out_file):
     ''' Procesa un archivo KML '''
-    with open(file_name, 'r') as kml_file:
+    with open(in_file, 'r') as kml_file:
         s = BeautifulSoup(kml_file, 'xml')
-        with open(result, 'w') as csvfile:
-            writer = csv.writer(csvfile, dialect='unix')
+        with open(out_file, 'w') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',',
+                                quotechar='"',
+                                doublequote=True,
+                                skipinitialspace=False,
+                                lineterminator='\n',
+                                quoting=csv.QUOTE_ALL)
             writer.writerow(
-                ['Name', 'Latitude', 'Longitude', 'Altitude', 'GeoJson', 'ExtendedData'])
+                ['Name', 'Longitude', 'Latitude', 'Altitude', 'GeoJson'])
             doc = Document(s)
             for folder in doc.get_folders():
                 for placemark in folder.get_placemarks():
                     for place in placemark.get_places():
                         row = place.get_row()
                         row.insert(0, placemark.get_name())
-                        row.insert(5, placemark.get_extended_data())
                         writer.writerow(row)
+    print out_file
 
 
 class Document:
@@ -99,11 +98,19 @@ class Folder:
         self.__parse__(xml)
 
     def __parse__(self, xml):
+        self.description = xml.find('description')
+        self.name = xml.find('name')
         for placemark in xml.find_all('Placemark'):
             self.placemarks.append(Placemark(placemark))
 
+    def get_name(self):
+        return self.name.text
+
     def get_placemarks(self):
         return self.placemarks
+
+    def get_description(self):
+        return self.description
 
 
 class Placemark:
@@ -121,6 +128,8 @@ class Placemark:
             self.places.append(Point(point))
         for polygon in xml.find_all('Polygon'):
             self.places.append(Polygon(polygon))
+        for address in xml.find_all('address'):
+            self.places.append(Address(address))
         for extended_data in xml.find_all('ExtendedData'):
             self.extended_data.append(ExtendedData(extended_data).get_data())
 
@@ -134,7 +143,6 @@ class Placemark:
         return self.description
 
     def get_extended_data(self):
-        print(self.extended_data)
         return self.extended_data
 
 
@@ -149,6 +157,34 @@ class Point:
         for coordinate in xml.find_all('coordinates'):
             for coord_str in coordinate:
                 self.coordinates.append(Coordinate(coord_str))
+
+    def get_row(self):
+        row = self.coordinates[0].get_xyz_row()
+        row.append(self.__get_geodata())
+        return row
+
+    def __get_geodata(self):
+        coords = []
+        for coord in self.coordinates:
+            coords.append(coord.get_xyz_row())
+        return {
+            'type': 'Point',
+            'coordinates': [coords]
+        }
+
+
+class Address:
+
+    def __init__(self, xml):
+        self.name = ''
+        self.description = ''
+        self.coordinates = []
+        self.__parse__(xml)
+
+    def __parse__(self, xml):
+        xy = xml.text.strip().split(' ')
+        coord_str = xy[1] + ',' + xy[0] + ',0'
+        self.coordinates.append(Coordinate(coord_str))
 
     def get_row(self):
         row = self.coordinates[0].get_xyz_row()
@@ -203,9 +239,9 @@ class Polygon:
 class Coordinate:
     def __init__(self, coord_str):
         xyz = coord_str.strip().split(',')
-        self.x = xyz[0]
-        self.y = xyz[1]
-        self.z = xyz[2]
+        self.x = xyz[0].replace(',', '.')
+        self.y = xyz[1].replace(',', '.')
+        self.z = xyz[2].replace(',', '.')
 
     def get_xyz_row(self):
         return [self.x, self.y, self.z]
@@ -225,7 +261,7 @@ class ExtendedData:
             if len(data_value) != 0:
                 data_value = data_value[0]
                 data_value = data_value.replace('\n', '')
-                data_value = data_value.replace('\xa0', '')
+                #data_value = data_value.replace('\xa0', '')
                 self.data.append(
                     {'Information': data['name'], 'Value': data_value})
 
@@ -236,5 +272,5 @@ class ExtendedData:
         return self.data
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
