@@ -15,6 +15,9 @@
             <li>Archivos de texto separados por comas (.csv).</li>
             <!--Agregamos nueva extension de archivos-->
             <li>Archivos de texto estructurados en tags (.kml/.kmz).</li>
+            <a href="/static/download/kmx2csv.zip" download>
+							<blockquote>Haga click aqui si quiere descargar el conversor kml/kmz a csv</blockquote>
+					  </a>
           </ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
