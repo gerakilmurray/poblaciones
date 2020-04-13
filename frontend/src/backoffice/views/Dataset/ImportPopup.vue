@@ -16,7 +16,7 @@
             <!--Agregamos nueva extension de archivos-->
             <li>Archivos de texto estructurados en tags (.kml/.kmz).</li>
             <a href="/static/download/kmx2csv.zip" download>
-							<blockquote>Haga click aqui si quiere descargar el conversor kml/kmz a csv</blockquote>
+							<blockquote>Haga click aquí si quiere descargar el conversor KML/KMZ a CSV</blockquote>
 					  </a>
           </ul>
 					<!--
