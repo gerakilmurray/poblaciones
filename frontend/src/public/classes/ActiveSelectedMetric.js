@@ -155,7 +155,7 @@ ActiveSelectedMetric.prototype.UpdateRanking = function () {
 	}
 	this.IsUpdatingRanking = true;
 
-	window.SegMap.Get(/*window.host + */'/services/metrics/GetRanking', {
+	window.SegMap.Get(window.host + '/services/metrics/GetRanking', {
 		params: h.getRankingParams(metric, window.SegMap.frame, this.RankingSize, this.RankingDirection),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateRanking = c; }),
 	}).then(function (res) {
