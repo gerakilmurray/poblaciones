@@ -202,9 +202,6 @@ class App
 
 	public static function OrmJson($entity){
 		$value = self::OrmSerialize($entity);
-
-		//Mock::SaveText($value);
-
 		$response = new Response($value);
 		$response->headers->set('Content-Type', 'application/json');
 		return $response;
@@ -270,8 +267,8 @@ class App
 		$sessionTime = gmdate('D, d M Y H:i:s', intval($sessionStarted)) . ' GMT';
 		//
 		if (version_compare(phpversion(), '7.1', '>=')) {
-			ini_set( 'precision', 17 );
-			ini_set( 'serialize_precision', -1);
+			ini_set('precision', '17');
+			ini_set('serialize_precision', '-1');
 		}
 		if ($daysToExpire === -1 || self::Debug())
 			$headers = [ 'Cache-control' => 'private',

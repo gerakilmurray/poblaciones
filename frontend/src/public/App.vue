@@ -2,14 +2,16 @@
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
 
-			<Search/><MapPanel/>
+			<Search/>
+			<LeftPanel/>
+			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" />
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
 			<SummaryPanel :metrics="metrics"
-				:clipping="clipping" :frame="frame"
+				:clipping="clipping" :frame="frame" :user="user"
 				:toolbarStates="toolbarStates"></SummaryPanel>
 		</div>
 	</div>
@@ -22,6 +24,7 @@ import GoogleMapsApi from '@/public/googleMaps/GoogleMapsApi';
 import WorkPanel from '@/public/components/panels/workPanel';
 import MapPanel from '@/public/components/panels/mapPanel';
 import Fab from '@/public/components/widgets/fabButton';
+import LeftPanel from '@/public/components/panels/leftPanel';
 import Edit from '@/public/components/widgets/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/search';
@@ -38,6 +41,7 @@ export default {
 		MapPanel,
 		Edit,
 		Fab,
+		LeftPanel,
 		WorkPanel
 	},
 	created() {
@@ -70,6 +74,9 @@ export default {
 					Canvas: null
 				}
 			},
+			user: {
+				Logged: false
+			},
 			frame: {
 				Envelope: {
 					Min: { Lat: 0.0, Lon: 0.0, },
@@ -95,7 +102,7 @@ export default {
 
 		this.BindEvents();
 		var loc = this;
-		this.GetConfiguration().then(function() {
+		this.GetConfiguration().then(function () {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
 		});
@@ -107,6 +114,7 @@ export default {
 				params: {}
 			}).then(function(res) {
 				loc.config = res.data;
+				loc.user = res.data.User;
 			}).catch(function(error) {
 				err.errDialog('GetConfiguration', 'conectarse con el servidor', error);
 			});
@@ -168,7 +176,9 @@ html, body {
 	top: 0px !important;
 	right: 0px !important;
 }
-
+.gAlpha {
+	opacity: 0;
+}
 .gm-fullscreen-control
 {
 	zoom: 0.8;
@@ -429,6 +439,38 @@ text-decoration: underline;
 	padding-bottom: 4px;
 }
 
+.dropdown-menu > li:last-child > a {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+.dropdown-menu > li:first-child > a {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.dropdown-menu > li > a {
+	padding: 8px 15px;
+}
+
+.dropdown-menu, .dropdown.open .dropdown-menu {
+	transform: translate3d(5px, 1px, 0px);
+	background-color: white;
+}
+@media (max-width: 991px) {
+	.dropdown-menu {
+		display: block;
+	}
+	.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+		background-color: #66615B;
+	}
+	.dropdown-menu .divider {
+		background-color: #F1EAE0;
+	}
+}
+.dropdown-menu {
+	border-radius: 4px;
+}
 
 .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover {
 border-color: #66615B;

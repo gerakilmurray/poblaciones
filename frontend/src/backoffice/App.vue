@@ -1,6 +1,6 @@
 <template>
 	<div style="height: 100%">
-		<div v-if="user && user.logged == true" id="app">
+		<div v-if="user && user.Logged == true" id="app">
 			<router-view></router-view>
 		</div>
 		<invoker ref="invoker" />
@@ -451,6 +451,16 @@ a.normalTextLink:hover {
 .split.split-horizontal, .gutter.gutter-horizontal {
 	height: 100%;
 	float: left;
+}
+
+.md-tabs-content {
+	height: auto !important;
+}
+
+.highlightBox {
+	position: absolute;
+  border-radius: 5px;
+  border: 2px solid #00a0d2;
 }
 
 .superSmallButton {

@@ -105,6 +105,8 @@ ActiveSelectedMetric.prototype.UpdateSummary = function () {
 		this.cancelUpdateSummary('cancelled');
 	}
 	this.IsUpdatingSummary = true;
+	this.IsUpdatingRanking = true;
+
 	window.SegMap.Get(window.host + '/services/metrics/GetSummary', {
 		params: h.getSummaryParams(metric, window.SegMap.frame),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateSummary = c; }),
@@ -496,7 +498,7 @@ ActiveSelectedMetric.prototype.GetStyleColorList = function() {
 	var ret = [];
 	for (let i = 0; i < variable.ValueLabels.length; i++) {
 		var value = variable.ValueLabels[i];
-		ret.push({ cs: 'cs' + value['Id'], className: 'c' + value['Id'], fillColor: value.FillColor });
+		ret.push({ cs: 'cs' + value['Id'], className: value['Id'], fillColor: value.FillColor });
 	}
 	return ret;
 };
