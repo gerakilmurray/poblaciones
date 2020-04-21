@@ -19,6 +19,7 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 	this.Tutorial = new Tutorial(toolbarStates);
 	this.Clipping = new Clipping(this, frame, clipping);
 	this.Revisions = config.Revisions;
+	this.User = config.User;
 	this.MapsApi = mapsApi;
 	this.Work = null;
 	this.Popups = {};
@@ -38,6 +39,7 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 	} else {
 		this.tileDataBlockSize = null;
 	}
+	this.UseGradients = config.UseGradients;
 	this.Queue = new Queue(config.MaxQueueRequests);
 };
 
