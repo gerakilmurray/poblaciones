@@ -8,6 +8,7 @@ npm install
 
 echo -e "\n### Installing PHP dependencies #############################################################################################"
 cd ~/ffg_dev/rcr_repo/services
+php composer.phar update
 php composer.phar install
 
 echo -e "\n### Copying configuration files #############################################################################################"
