@@ -2,7 +2,6 @@
 
 namespace helena\services\frontend;
 
-use helena\classes\App;
 use minga\framework\Profiling;
 
 use minga\framework\Performance;
@@ -82,7 +81,7 @@ class TileDataService extends BaseService
 		$level = $version->GetLevel($levelId);
 
 		$table = new SnapshotMetricVersionItemVariableModel();
-		$geographyId = $level->GeographyId;
+		$gradientId = $level->GeographyId;
 
 		if ($b != null)
 		{
@@ -96,15 +95,15 @@ class TileDataService extends BaseService
 
 		if ($frame->ClippingCircle != NULL)
 		{
-			$rows = $table->GetMetricVersionTileDataByCircle($metricVersionId, $geographyId, $urbanity, $envelope, $frame->ClippingCircle, $level->Dataset->Type, $hasDescriptions);
+			$rows = $table->GetMetricVersionTileDataByCircle($metricVersionId, $gradientId, $urbanity, $envelope, $frame->ClippingCircle, $level->Dataset->Type, $hasDescriptions);
 		}
 		else if ($frame->ClippingRegionId != NULL)
 		{
-			$rows = $table->GetMetricVersionTileDataByRegionId($metricVersionId, $geographyId, $urbanity, $envelope, $frame->ClippingRegionId, $frame->ClippingCircle, $level->Dataset->Type, $hasDescriptions);
+			$rows = $table->GetMetricVersionTileDataByRegionId($metricVersionId, $gradientId, $urbanity, $envelope, $frame->ClippingRegionId, $frame->ClippingCircle, $level->Dataset->Type, $hasDescriptions);
 		}
 		else
 		{
-			$rows = $table->GetMetricVersionTileDataByEnvelope($metricVersionId,  $geographyId, $urbanity, $envelope, $level->Dataset->Type, $hasDescriptions);
+			$rows = $table->GetMetricVersionTileDataByEnvelope($metricVersionId,  $gradientId, $urbanity, $envelope, $level->Dataset->Type, $hasDescriptions);
 		}
 
 		$data = $this->CreateTileDataInfo($rows);

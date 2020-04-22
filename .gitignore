@@ -15,3 +15,5 @@
 
 thumbs.db
 .vscode/settings.json
+.ignore
+tags

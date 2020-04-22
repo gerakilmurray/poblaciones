@@ -1,5 +1,19 @@
 [CURRENT]
+- Fix: detección de encoding en CSV identificaba como mac-files archivos con mayúsculas acentuadas acentos.
+- La grilla de datos del dataset en backoffice hace encoding del html que pueda estar en las celdas.
+- Mejoras crawling segmentado.
+- Autogeneración de carpetas de storage.
+- Fix: la publicación pisaba los extents si no había modificaciones de datos.
+- Administración: listado de regiones.
+- Al seleccionar una región o círculo de buffer se perdía el fijado de nivel.
+- Fix: 'zoom al indicador' cuando había un clipping pequeño (< 90% de la cobertura del indicador) no liberaba la selección.
+
+
+v2.18 (2020-04-15)
 - Posibilidad de agregar indicadores externos en una cartografía a la lista de indicadores del panel superior.
+- Se puede indicar qué indicadores aparecen activos en el mapa al ingresarse por las rutas de cartografía.
+- Se pueden importar datos en formato excel (xls y xlsx).
+- Se pueden importar archivos sin crear previamente un dataset.
 
 v2.17 (2020-03-21)
 - Fix a colocación de panel de cartografía en la vista de mapa (hasta cambiar el tamaño de la ventana, se veía mal en chrome y en firefox).

@@ -25,7 +25,7 @@ Search.prototype.StartSearch = function (t) {
 	var loc = this;
 	view.loading = true;
 
-	axios.get(/*window.host + */ + '/services/search', {
+	axios.get(/*window.host + */'/services/search', {
     params: { q: t, f: this.searchType, w: this.revision, b: (this.inBackoffice ? '1' : '0') },
 		cancelToken: new CancelToken(function executor(c) { retCancel = c; })
 		})
