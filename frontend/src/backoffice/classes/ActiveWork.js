@@ -67,12 +67,12 @@ ActiveWork.prototype.ThisWorkLabel = function () {
 };
 
 ActiveWork.prototype.CanEdit = function () {
-	if (window.Context.User.privileges === 'A' ||
-		(this.IsPublicData() && window.Context.User.privileges === 'E')) {
+	if (window.Context.User.Privileges === 'A' ||
+		(this.IsPublicData() && window.Context.User.Privileges === 'E')) {
 		return true;
 	}
 	for (var i = 0; i < this.Permissions.length; i++) {
-		if (this.Permissions[i].User.Email === window.Context.User.user
+		if (this.Permissions[i].User.Email === window.Context.User.User
 			&& this.Permissions[i].Permission !== 'V') {
 			return true;
 		}
@@ -87,16 +87,19 @@ ActiveWork.prototype.HasChanges = function () {
 		this.properties.MetricDataChanged;
 };
 
-ActiveWork.prototype.GetWorkMetrics = function () {
-
+ActiveWork.prototype.GetMetricsList = function () {
+	// Trae sus variables
+	var args = { 'w': this.properties.Id };
+	return axiosClient.getPromise(window.host + '/services/backoffice/GetWorkMetricsList', args,
+		'obtener la lista de métricas');
 };
 
 ActiveWork.prototype.CanAdmin = function () {
-	if (window.Context.User.privileges === 'A') {
+	if (window.Context.User.Privileges === 'A') {
 		return true;
 	}
 	for (var i = 0; i < this.Permissions.length; i++) {
-		if (this.Permissions[i].User.Email === window.Context.User.user && this.Permissions[i].Permission === 'A') {
+		if (this.Permissions[i].User.Email === window.Context.User.User && this.Permissions[i].Permission === 'A') {
 			return true;
 		}
 	}
@@ -232,6 +235,13 @@ ActiveWork.prototype.AppendExtraMetric = function (metric) {
 	this.WorkChanged();
 	return axiosClient.getPromise(/*window.host + */ '/services/backoffice/AppendExtraMetric', args,
 		'agregar el indicador adicional');
+};
+
+ActiveWork.prototype.UpdateExtraMetricStart = function (metric) {
+	var args = { 'w': this.properties.Id, 'm': metric.Id, 'a': (metric.StartActive ? 1 : 0) };
+	this.WorkChanged();
+	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateExtraMetricStart', args,
+		'actualizar el indicador adicional');
 };
 
 ActiveWork.prototype.RemoveExtraMetric = function (metric) {

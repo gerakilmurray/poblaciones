@@ -7,13 +7,13 @@
 				</button>
 
 				<button title="Opciones" type="button" class="close "
-								v-on:click="clickCustomize" style="margin-right: 3px; margin-left: -4px; font-size: 15px">
-					<dots-vertical-icon title="Personalizar" />
-				</button>
+								v-on:click="clickCustomize" style="margin-right: 7px; margin-left: -2px; margin-top: 4px;
+font-size: 12px">
+					<i class="fas fa-sliders-h"></i>				</button>
 
 				<button type="button" v-on:click="toogleRankings" v-if="metric.useRankings()" onmouseup="this.blur()"
 								class="close lightButton" :class="(metric.ShowRanking ? 'activeButton' : '')" :title="(metric.ShowRanking ? 'Ocultar ranking' : 'Mostrar ranking')">
-					<i class="fa fa-signal" style="margin-left: -4px;" />
+					<i class="fa fa-signal" style="margin-left: -6px;" />
 				</button>
 				<span v-else style="width: 2px; height: 1px; float:right">&nbsp;</span>
 
@@ -52,7 +52,6 @@
 
 <script>
 import CloseIcon from 'vue-material-design-icons/Close.vue';
-import DotsVerticalIcon from 'vue-material-design-icons/DotsVertical.vue';
 import Mercator from '@/public/js/Mercator';
 
 // https://materialdesignicons.com/cdn/1.9.32/
@@ -64,8 +63,7 @@ export default {
 		'clipping',
 	],
 	components: {
-		DotsVerticalIcon,
-    CloseIcon
+		CloseIcon
 	},
 	data() {
 		return {
@@ -96,7 +94,19 @@ export default {
 			var extents = this.metric.SelectedLevel().Extents;
 			if (!window.SegMap.Clipping.FrameHasNoClipping()) {
 				var m = new Mercator();
-				extents = m.rectanglesIntersection(extents, this.clipping.Region.Envelope);
+				if (window.SegMap.Clipping.FrameHasClippingCircle()) {
+					var intersect = m.rectanglesIntersection(extents, this.clipping.Region.Envelope);
+					if (this.shouldClearSelection(intersect, extents)) {
+						window.SegMap.Clipping.ResetClippingCircle();
+					}
+				}
+				if (window.SegMap.Clipping.FrameHasClippingCircle() == false &&
+								window.SegMap.Clipping.FrameHasClippingRegionId()) {
+					var intersect = m.rectanglesIntersection(extents, this.clipping.Region.Envelope);
+					if (this.shouldClearSelection(intersect, extents)) {
+						window.SegMap.Clipping.ResetClippingRegion();
+					}
+				}
 			}
 			window.SegMap.MapsApi.FitEnvelope(extents);
 			this.$refs.zoomExtentsBtn.blur();
@@ -120,13 +130,22 @@ export default {
 			window.SegMap.UpdateMap();
 			this.urbanity = mode;
 		},
+		shouldClearSelection(intersect, extents) {
+			if (intersect === null) {
+				return true;
+			}
+			var m = new Mercator();
+			// Se fija si el área de intersección es menor al área del indicador
+			// con 10% de tolerancia
+			var area1 = m.rectanglePixelArea(intersect);
+			var area2 = m.rectanglePixelArea(extents);
+			return area1 < area2 * .9;
+		}
 	},
 	computed: {
 
 	}
-};
-
-</script>
+};</script>
 
 <style scoped>
   .vellipsis:after {

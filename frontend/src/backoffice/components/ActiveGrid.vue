@@ -17,7 +17,7 @@
       <JqxGrid
         ref="activeGrid"
         :width="700"
-				:height="(showingErrors ? 300 : 500)"
+				:height="(showingErrors ? 300 : 350)"
         @bindingcomplete="bindingcomplete($event)"
         :virtualmode="true"
         :pageable="usePagedGrid"
@@ -28,6 +28,7 @@
 				@rowselect="selectionChanged"
         @rowunselect="selectionChanged"
         :showfilterrow="true"
+				:rowsheight="22"
         :filterable="true"
         :columnsresize="true"
         :sortable="true"
