@@ -22,6 +22,29 @@
 					<i class="fas fa-expand-arrows-alt" style="margin-left: 2px;" />
 				</button>
 
+				<span class="dropdown">
+					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbanidad">
+						<i class="fas fa-users" v-text="getUrbanityTextActive()"/>
+					</button>
+					<ul class="dropdown-menu dropdownMargin">
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('N')">Todo</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('U')">Urbano</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('D')">Urbano disperso</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('R')">Rural</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('L')">Rural disperso</button>
+						</li>
+					</ul>
+				</span>
+
 			</h4>
 		</div>
 	</div>
@@ -47,6 +70,7 @@ export default {
 	data() {
 		return {
 			work: {},
+			urbanity: '',
 		};
 	},
 	methods: {
@@ -77,6 +101,25 @@ export default {
 			window.SegMap.MapsApi.FitEnvelope(extents);
 			this.$refs.zoomExtentsBtn.blur();
 		},
+		getUrbanityTextActive() {
+			if(this.urbanity === 'N') {
+				return '';
+			}else if(this.urbanity === 'U') {
+				return ' - U';
+			}else if(this.urbanity === 'D') {
+				return ' - UD';
+			}else if(this.urbanity === 'R') {
+				return ' - R';
+			}else if(this.urbanity === 'L') {
+				return ' - RD';
+			}
+		},
+		changeUrbanity(mode) {
+			this.metric.properties.SelectedUrbanity = mode;
+			window.SegMap.SaveRoute.UpdateRoute();
+			window.SegMap.UpdateMap();
+			this.urbanity = mode;
+		},
 	},
 	computed: {
 
@@ -105,5 +148,13 @@ export default {
 
 .activeButton {
 	opacity: .45;
+}
+.btn-full {
+	width: 100%;
+}
+.dropdownMargin {
+	left: -70px;
+	right: auto;
+	margin-top: 25px;
 }
 </style>
