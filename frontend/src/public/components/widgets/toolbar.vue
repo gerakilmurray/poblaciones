@@ -7,37 +7,52 @@
 							title="Guardar como PDF..." v-on:click="captureMapPdf(metrics)"><i class="fas fa-file-pdf"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
+		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
+							title="Máscara poblacional" v-on:click="changeGradientOpacity(.25)"><i class="fas fa-satellite"/></button>
 	</div>
-	<div class="btn-group">
-		<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
-						v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
-						class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
-	</div>
+		<div class="btn-group">
+			<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
+							v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
+							class="btn btn-default btn-xs" :class="getActive(index)" :title="mode.Name"><i :class="mode.Icon"/></button>
+		</div>
 
-    <div class="pull-right">
-
-		<span class="dropdown">
-			<button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Compartir">
-				<i class="fas fa-share-alt"/>
+		<div class="pull-right">
+			<span class="dropdown">
+				<button type="button" class="btn btn-default btn-xs" data-toggle="dropdown" title="Compartir">
+					<i class="fas fa-share-alt" />
+				</button>
+				<ul class="shareIt dropdown-menu">
+					<li>
+						<div class="dToolboxBox">
+							<div class="addthis_inline_share_toolbox"></div>
+						</div>
+					</li>
+				</ul>
+			</span>
+			<button type="button" class="btn btn-default btn-xs" title="Guía de uso" v-on:click="showTutorial()">
+				<help-circle-icon title="Guía de uso" />
 			</button>
-			<ul class="shareIt dropdown-menu">
-				<li>
-				<div class="dToolboxBox">
-					<div class="addthis_inline_share_toolbox"></div>
-				</div>
-				</li>
-			</ul>
-		</span>
-
-      <button type="button" class="btn btn-default btn-xs" title="Guía de uso" v-on:click="showTutorial()">
-        <help-circle-icon title="Guía de uso"/>
-      </button>
-
-      <button v-if='this.useExtraToolbar()' type="button" class="btn btn-default btn-xs" title="Agregar a favoritos..." v-on:click="setFavorite()">
-				<i class="far fa-heart"/>
+			<button v-if='user.Logged && this.useExtraToolbar()' type="button" class="btn btn-default btn-xs" title="Agregar a favoritos..." v-on:click="setFavorite()">
+				<i class="far fa-heart" />
 			</button>
 
-			<button v-if='this.useExtraToolbar()' type="button" class="btn btn-default btn-xs" v-on:click="login()">Ingresar</button>
+			<button v-if='!user.Logged' type="button" class="btn btn-default btn-xs" title="Ingresar/Registrarse"
+							v-on:click="authenticate.redirectLogin()"><i class="fas fa-sign-in-alt"></i></button>
+			<span v-else="" class="dropdown">
+				<button v-if='this.useExtraToolbar()' type="button"
+								id="dropdownMenuButton" class="btn btn-default btn-xs dropdown-toggle"
+								data-toggle="dropdown" :title="userTooltip">
+					<i class="fas fa-user" />
+
+					<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+						<li><a @click="authenticate.redirectBackoffice">Mis cartografías</a></li>
+						<li v-if="user.Privileges === 'A'"><a @click="authenticate.redirectAdmin">Administración</a></li>
+						<li><a href="#">Cuenta</a></li>
+						<li class="divider"></li>
+						<li><a @click="authenticate.logoff">Cerrar sesión</a></li>
+					</ul>
+				</button>
+			</span>
 		</div>
 		<div style="clear: both"></div>
     <tour ref="Tour"></tour>
@@ -49,13 +64,15 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import HelpCircleIcon from 'vue-material-design-icons/HelpCircle.vue';
 import tour from '@/public/components/popups/tour';
+import h from '@/public/js/helper';
+import a from '@/common/js/authentication';
 
 export default {
 	name: 'toolbar',
 	props: [
 		'frame',
-		'toolbarStates',
-		'metrics'
+		'user',
+		'toolbarStates'
 	],
 	components: {
     tour,
@@ -72,10 +89,10 @@ export default {
 			}
 		},
 		showTutorial() {
-		this.$refs.Tour.toggleModal();
+			this.$refs.Tour.toggleModal();
 		},
 		useExtraToolbar() {
-		return window.UISettings_ExtraToolbar;
+			return window.UISettings_ExtraToolbar;
 		},
 		ignore(ele) {
 			return (ele.nodeName === 'IFRAME');
@@ -159,9 +176,6 @@ export default {
 		setFavorite() {
 			alert('no implementado');
 		},
-		login() {
-      		alert('no implementado');
-		},
 		setMode(mode) {
 			window.SegMap.SetSelectionMode(mode);
 		},
@@ -171,6 +185,36 @@ export default {
 			}
 			return '';
 		},
+		changeGradientOpacity(delta) {
+			var rule = h.getCssRule(document, '.gAlpha');
+			if (rule) {
+				var result = parseFloat(rule.style.opacity) + delta;
+				if (result > 1) {
+					result = 0.1;
+				}
+				rule.style.opacity = result;
+			}
+		}
+	},
+	computed: {
+		useGradients() {
+			return true;
+		},
+		authenticate() {
+			return a;
+		},
+		userTooltip() {
+			if (!this.user.Logged) {
+				return '';
+			}
+			var ret = this.user.Firstname + ' ' + this.user.Lastname;
+			ret = ret.trim();
+			if (ret) {
+				ret += '\n';
+			}
+			ret += this.user.User;
+			return ret;
+		}
 	},
 	watch: {
     'toolbarStates.tutorialOpened'(opened) {

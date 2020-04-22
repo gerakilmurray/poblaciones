@@ -52,6 +52,13 @@ class DraftMetadata
      */
     private $Status;
 
+		/**
+     * @var geometry
+     *
+     * @ORM\Column(name="met_extents", type="geometry", precision=0, scale=0, nullable=true, unique=false)
+     */
+    private $Extents;
+
     /**
      * @var string
      *
@@ -241,7 +248,7 @@ class DraftMetadata
     /**
      * Set onlineSince
      *
-     * @param string $onlineSince
+     * @param \DateTime $onlineSince
      *
      * @return DraftMetadata
      */
@@ -255,7 +262,7 @@ class DraftMetadata
     /**
      * Get onlineSince
      *
-     * @return string
+     * @return \DateTime
      */
     public function getOnlineSince()
     {
@@ -266,7 +273,7 @@ class DraftMetadata
     /**
      * Set lastOnline
      *
-     * @param string $lastOnline
+     * @param \DateTime $lastOnline
      *
      * @return DraftMetadata
      */
@@ -280,7 +287,7 @@ class DraftMetadata
     /**
      * Get lastOnline
      *
-     * @return string
+     * @return \DateTime
      */
     public function getLastOnline()
     {
@@ -334,6 +341,32 @@ class DraftMetadata
     {
         return $this->Abstract;
     }
+
+		 /**
+     * Set extents
+     *
+     * @param geometry $extents
+     *
+     * @return DraftMetadata
+     */
+    public function setExtents($extents)
+    {
+        $this->Extents = $extents;
+
+        return $this;
+    }
+
+    /**
+     * Get extents
+     *
+     * @return geometry
+     */
+    public function getExtents()
+    {
+        return $this->Extents;
+    }
+
+
 
     /**
      * Set status

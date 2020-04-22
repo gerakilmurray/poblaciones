@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Dataset">
+  <div>
     <md-dialog :md-active.sync="openImport">
       <md-dialog-title>Importar datos</md-dialog-title>
 
@@ -7,18 +7,12 @@
       <md-dialog-content>
         <div>
           <p>Seleccione el archivo que desea importar. Los tipos de archivo aceptados son:</p>
-          <ul>
-            <li>
-              Archivos de datos de SPSS (.sav)
-              (SPSS).
-            </li>
-            <li>Archivos de texto separados por comas (.csv).</li>
-            <!--Agregamos nueva extension de archivos-->
-            <li>Archivos de texto estructurados en tags (.kml/.kmz).</li>
-            <a href="/static/download/kmx2csv.zip" download>
-							<blockquote>Haga click aquí si quiere descargar el conversor KML/KMZ a CSV</blockquote>
-					  </a>
-          </ul>
+					<ul>
+						<li>Archivos Excel (.xls, xlsx)</li>
+						<li>Archivos de datos de SPSS (.sav)</li>
+						<li>Archivos de texto separados por comas (.csv)</li>
+						<li>Archivos de texto estructurados en tags (.kml/.kmz). <a href="/static/download/kmx2csv.zip" download><blockquote>Haga click aquí si quiere descargar el conversor KML/KMZ a CSV</blockquote></a></li>
+					</ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
 						-->
@@ -40,7 +34,7 @@
 							<md-icon>close</md-icon>
 						</md-button>
           </div>
-					<div v-if="Dataset.Columns !== null && Dataset.Columns.length > 0" class="md-layout-item md-size-100" style="margin-top: -10px; margin-bottom: 12px;">
+					<div v-if="Dataset !== null && Dataset.Columns !== null && Dataset.Columns.length > 0" class="md-layout-item md-size-100" style="margin-top: -10px; margin-bottom: 12px;">
 						<p>
 							<md-switch class="md-primary" v-model="keepLabels">
 								Mantener etiquetas de variables coincidentes
@@ -55,6 +49,8 @@
 
 				</div>
       </md-dialog-content>
+			<input-popup ref="datasetDialog" @selected="CreateDataset" />
+			<invoker ref="invoker"></invoker>
 
       <md-dialog-actions>
         <md-button @click="openImport = false">Cancelar</md-button>
@@ -65,12 +61,17 @@
 </template>
 
 <script>
-import Context from "@/backoffice/classes/Context";
-import vue2Dropzone from "vue2-dropzone";
+import InputPopup from "@/backoffice/components/InputPopup";
+import vueDropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
+import h from '@/public/js/helper';
 
 export default {
   name: "General",
+	components: {
+		vueDropzone,
+		InputPopup
+	},
   data() {
     return {
       openImport: false,
@@ -79,13 +80,15 @@ export default {
 			hasFiles: false,
       bucketId: 0,
 			keepLabels: true,
-      saveRequested: false,
-      dropzoneOptions: {
+			saveRequested: false,
+			createdDataset: null,
+			forceCreateNewDataset: false,
+			dropzoneOptions: {
         url: this.getCreateFileUrl,
         thumbnailWidth: 150,
         withCredentials: true,
 				maxFiles: 1,
-				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz',
+				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
 				dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
     		forceChunking: true,
 		    chunking: true,
@@ -101,7 +104,7 @@ export default {
       return window.Context.CurrentWork;
     },
     Dataset() {
-      return window.Context.CurrentDataset;
+			return (this.forceCreateNewDataset ? null : window.Context.CurrentDataset);
     },
   },
   methods: {
@@ -112,8 +115,10 @@ export default {
       return this.bucketId;
     },
     beforeSending(file) {
-      this.extension = file.name.split(".").pop().toLowerCase();
-      this.sending = true;
+			this.extension = h.extractFileExtension(file.name);
+			this.filename = h.extractFilename(file.name);
+			this.createdDataset = null;
+			this.sending = true;
     },
 		maxfilesexceeded(file) {
 			this.$refs.myVueDropzone.removeAllFiles();
@@ -134,23 +139,34 @@ export default {
       this.sending = false;
 			this.hasFiles = true;
     },
-    save() {
+		save() {
       var stepper = this.$refs.stepper;
       stepper.startUrl = this.Work.GetDatasetFileImportUrl(this.keepLabels);
       stepper.stepUrl = this.Work.GetStepDatasetFileImportUrl();
       let bucketId = this.getBucketId();
-      let datasetId = this.Dataset.properties.Id;
       let extension = this.extension;
-			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt' && extension !== 'kml' && extension !== 'kmz') {
-				alert('La extensión del archivo debe ser SAV, CSV, TXT, KML o KMZ.');
+			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
+						&& extension !== 'xls' && extension !== 'xlsx'
+						&& extension !== 'kml' && extension !== 'kmz') {
+				alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
 				return;
 			}
+			if (!this.Dataset && !this.createdDataset) {
+				this.RequestDataset();
+				return;
+			}
+			let datasetId = (this.Dataset ? this.Dataset.properties.Id : this.createdDataset.Id);
 			stepper.args = { b: bucketId, d: datasetId, fe: extension };
 			let loc = this;
 			stepper.Start().then(function() {
 				loc.Work.WorkChanged();
-				loc.Dataset.ReloadProperties();
-				loc.Dataset.ReloadColumns();
+				if (loc.Dataset) {
+					loc.Dataset.ReloadProperties();
+					loc.Dataset.ReloadColumns();
+				} else {
+					loc.$refs.invoker.do(window.Db, window.Db.RebindAndFocusLastDataset, loc.$router);
+				}
+
 			});
 		},
 		onCloseStepper(success) {
@@ -158,20 +174,34 @@ export default {
 				this.openImport = false;
 			}
 		},
+		RequestDataset() {
+			this.$refs.datasetDialog.show('Importar', 'Indique un nombre para el dataset',
+								'', 'Ej. Escuelas primarias.', this.filename, 100);
+		},
+		CreateDataset(name) {
+			var loc = this;
+			this.$refs.invoker.do(this.Work,
+				this.Work.CreateNewDataset,
+				name.trim())
+				.then(function (dataset) {
+					loc.createdDataset = dataset;
+					loc.save();
+				});
+
+		},
 		generateBucketId() {
 			this.bucketId = new Date().getTime() * 10000;
 		},
-		show() {
+		show(forceCreateNewDataset) {
 			this.extension = '';
 			this.generateBucketId();
 			this.sending = false;
 			this.hasFiles = false;
 			this.openImport = true;
+			this.createdDataset = null;
+			this.forceCreateNewDataset = forceCreateNewDataset;
 		}
 	},
-	components: {
-		vueDropzone: vue2Dropzone
-	}
 };
 </script>
 
