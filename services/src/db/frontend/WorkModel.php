@@ -57,7 +57,7 @@ class WorkModel extends BaseModel
 	{
 		Profiling::BeginTimer();
 		$params = array($workId);
-		$sql = "SELECT work.*, metadata.*, ins_caption, wst_type, x(wst_center) wst_center_lon, y(wst_center) wst_center_lat, wst_zoom,
+		$sql = "SELECT work.*, metadata.*, ins_caption, wst_type, ST_X(wst_center) wst_center_lon, ST_Y(wst_center) wst_center_lat, wst_zoom,
 								wst_clipping_region_item_id, wst_clipping_region_item_selected FROM work " . $this->MetadataJoins() . " JOIN work_startup ON wrk_startup_id = wst_id "
 							. " WHERE wrk_id = ? LIMIT 1";
 
@@ -68,15 +68,22 @@ class WorkModel extends BaseModel
 	public function GetWorkMetricsInfo($workId)
 	{
 		Profiling::BeginTimer();
-		$params = array($workId);
+		$params = array($workId, $workId, $workId);
 
 		$sql = "SELECT mtr_id Id, mtr_caption Name,
 								GROUP_CONCAT(DISTINCT mvr_caption ORDER BY mvr_caption DESC SEPARATOR '\t')
-								Versions
-								FROM dataset JOIN metric_version_level ON mvl_dataset_id = dat_id
+								Versions,
+                GROUP_CONCAT(DISTINCT (CASE WHEN mvr_work_id = ? THEN mvr_caption ELSE '' END) ORDER BY mvr_caption DESC SEPARATOR '\t')
+								LocalVersions
+								FROM
+								(SELECT wmt_metric_id metricId FROM work_extra_metric WHERE wmt_work_id = ?
+								UNION
+								SELECT DISTINCT mvr_metric_id metricId FROM dataset
+								JOIN metric_version_level ON mvl_dataset_id = dat_id
 								JOIN metric_version ON mvl_metric_version_id = mvr_id
-								JOIN metric ON mvr_metric_id = mtr_id
-								WHERE dat_work_id = ?
+								WHERE dat_work_id = ?) wMetrics
+								JOIN metric_version ON mvr_metric_id = metricId
+								JOIN metric ON mtr_id = metricId
 								GROUP BY mtr_id, mtr_caption ORDER BY mtr_caption";
 
 		$ret = App::Db()->fetchAll($sql, $params);
