@@ -2,7 +2,7 @@
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
 			<Search/>
-			<LeftPanel/>
+			<LeftPanel v-show="config.UsePanels" ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" />
@@ -10,7 +10,7 @@
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
-			<SummaryPanel :metrics="metrics"
+			<SummaryPanel :metrics="metrics" :config="config"
 				:clipping="clipping" :frame="frame" :user="user"
 				:toolbarStates="toolbarStates"></SummaryPanel>
 		</div>
@@ -48,6 +48,7 @@ export default {
 	},
 	created() {
 		window.Popups = {};
+		window.Panels = {};
 	},
 	data() {
 		return {
@@ -108,6 +109,7 @@ export default {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
 		});
+		window.Panels.Left = this.$refs.leftPanel;
 	},
 	methods: {
 		GetConfiguration() {
@@ -152,6 +154,7 @@ export default {
 			segMap.Work = this.work;
 			segMap.afterCallback = afterLoaded;
 			window.SegMap = segMap;
+
 			this.$refs.fabPanel.loadFabMetrics();
 			mapApi.SetSegmentedMap(segMap);
 			segMap.SaveRoute.DisableOnce = true;
