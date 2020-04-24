@@ -6,7 +6,7 @@
 					 z-index="1000000095"
 					 :enable-rotation="false"
 					 :position="position"
-					 :bg-color="bgColor"
+					 :bg-color="getCustomBgColor() || bgColor"
 					 :actions="fabActions"
 					 @selected0="selected(0)"
 					 @selected1="selected(1)"
@@ -37,16 +37,16 @@ export default {
 	components: {
 		fab
 	},
-	data(){
-      return {
-          bgColor: '#00A0D2',
-					action: {
-						Metrics: []
-					},
-					fabMetrics: [],
-          position: 'bottom-left',
-      };
-		},
+	data() {
+		return {
+				bgColor: '#00A0D2',
+				action: {
+					Metrics: []
+				},
+				fabMetrics: [],
+				position: 'bottom-left',
+		};
+	},
 	created () {
 		window.addEventListener('keydown', this.keyProcess);
 	},
@@ -67,7 +67,14 @@ export default {
 			return ret;
 		}
 	},
-  methods:{
+	props: [
+		'work',
+	],
+  methods: {
+		getCustomBgColor() {
+			const work = this.work.Current;
+			return work && work.Styles && work.Styles['background-color'];
+		},
 		loadFabMetrics() {
 			const loc = this;
 				axios.get('/services/metrics/GetFabMetrics', {

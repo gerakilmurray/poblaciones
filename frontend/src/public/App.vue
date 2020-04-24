@@ -5,8 +5,8 @@
 			<LeftPanel v-show="config.UsePanels" ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" />
-			<LogoFloat/>
+			<Fab ref="fabPanel" :work="work"/>
+			<LogoFloat v-if="work.Current" :work="work"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">

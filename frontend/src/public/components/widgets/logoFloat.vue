@@ -1,12 +1,15 @@
 <template>
-  <div class="logoDiv">
-    <img class="logoIcon" src="/static/img/rcr.png" />
+  <div v-if="work.Current.Logo" class="logoDiv">
+    <img class="logoIcon" :src="work.Current.Logo" />
   </div>
 </template>
 
 <script>
 export default {
-  name: "logoFloat"
+  name: "logoFloat",
+  props: [
+		'work',
+	]
 };
 </script>
 
