@@ -5,6 +5,7 @@ namespace helena\services\backoffice;
 use minga\framework\Params;
 use minga\framework\ErrorException;
 use minga\framework\Profiling;
+use minga\framework\Date;
 
 use helena\classes\App;
 use helena\caches\DatasetColumnCache;
@@ -17,6 +18,39 @@ use helena\caches\BackofficeDownloadCache;
 
 class DatasetService extends DbSession
 {
+	public function CreateDatasetWithDefaultMetric($workId, $caption = '')
+	{
+		// Crea el dataset
+		$caption = trim($caption);
+		$dataset = $this->Create($workId, $caption);
+
+		// Crea el metric, metricVersion y metricVersionLevel
+		$metricService = new MetricService();
+
+		$level = $metricService->GetNewMetricVersionLevel();
+		$level->setDataset($dataset);
+
+		$version = $level->getMetricVersion();
+		$work = $dataset->getWork();
+		$version->setWork($work);
+
+		$metric = $version->getMetric();
+		$metric->setCaption($caption);
+		$metric->setIsBasicMetric(false);
+		$metricService->UpdateMetricVersionLevel($dataset->getId(), $level);
+
+		// Crea la variable default
+		$variable = $metricService->GetNewVariable();
+		$variable->setIsDefault(true);
+		$variable->setOrder(1);
+		$variable->setCaption('');
+		$variable->setData('N');
+		$variable->setMetricVersionLevel($level);
+
+		$metricService->UpdateVariable($dataset->getId(), $level, $variable);
+
+		return $dataset;
+	}
 	public function Create($workId, $caption = '')
 	{
 		Profiling::BeginTimer();
@@ -435,8 +469,6 @@ class DatasetService extends DbSession
 
 		// Borra el metric version level
 		App::Orm()->delete($metricVersionLevel);
-
-		// Borra los metric sin verisones
 		$this->DeleteOrphanMetricVersion($metricVersion);
 
 		// Borra los metric sin verisones
@@ -476,6 +508,9 @@ class DatasetService extends DbSession
 		$sibilings = App::Db()->fetchScalarInt($childrenSql, array($metric->getId()));
 		if ($sibilings == 0)
 		{
+			// Borra sus usos como extra metric
+			App::Db()->exec("DELETE FROM draft_work_extra_metric WHERE wmt_metric_id = ?", array($metric->getId()));
+			// Lo borra
 			App::Orm()->delete($metric);
 		}
 		Profiling::EndTimer();

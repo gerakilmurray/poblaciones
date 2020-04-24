@@ -38,9 +38,8 @@ Clipping.prototype.ProcessFrameMoved = function (bounds) {
 	}
 };
 
-Clipping.prototype.SetClippingRegionCircle = function (clippingCircle) {
+Clipping.prototype.SetClippingCircle = function (clippingCircle) {
 	this.frame.ClippingCircle = clippingCircle;
-	this.SegmentedMap.ReleasePins();
 	this.SegmentedMap.ClearMyLocation();
 	this.CreateClipping(true, true);
 };
@@ -90,7 +89,6 @@ Clipping.prototype.ResetClippingRegion = function () {
 };
 Clipping.prototype.SetClippingRegion = function (clippingRegionId, moveCenter, clipForZoomOnly) {
 	this.frame.ClippingCircle = null;
-	this.SegmentedMap.ReleasePins();
 	this.SegmentedMap.ClearMyLocation();
 	this.frame.ClippingRegionId = clippingRegionId;
 	this.CreateClipping(true, moveCenter, clipForZoomOnly);
@@ -112,6 +110,7 @@ Clipping.prototype.CreateClipping = function (fitRegion, moveCenter, clipForZoom
 		this.cancelCreateClipping('cancelled');
 	}
 	this.SetClippingRequest(args);
+	this.SegmentedMap.InvalidateSummaries();
 
 	const loc = this;
 	this.SegmentedMap.Get('/services/clipping/CreateClipping', {
@@ -125,8 +124,8 @@ Clipping.prototype.CreateClipping = function (fitRegion, moveCenter, clipForZoom
 		}
 		if (!doNotUpdateMap) {
 			loc.SegmentedMap.UpdateMap();
-			loc.SegmentedMap.RefreshSummaries();
 		}
+		loc.SegmentedMap.RefreshSummaries();
 }).catch(function (error) {
 		loc.ResetClippingRequest(args);
 		err.errDialog('CreateClipping', 'crear la región seleccionada', error);

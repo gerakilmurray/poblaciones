@@ -3,10 +3,11 @@ import axios from 'axios';
 
 export default Search;
 
-function Search(view, revision, searchType) {
+function Search(view, revision, searchType, inBackoffice) {
 	this.view = view;
 	this.searchType = searchType;
 	this.revision = revision;
+	this.inBackoffice = inBackoffice;
 };
 
 Search.prototype.StartSearch = function (t) {
@@ -23,8 +24,9 @@ Search.prototype.StartSearch = function (t) {
 	var view = this.view;
 	var loc = this;
 	view.loading = true;
-	axios.get(/*window.host + */ '/services/search', {
-    params: { q: t, f: this.searchType, w: this.revision },
+
+	axios.get(/*window.host + */'/services/search', {
+    params: { q: t, f: this.searchType, w: this.revision, b: (this.inBackoffice ? '1' : '0') },
 		cancelToken: new CancelToken(function executor(c) { retCancel = c; })
 		})
 		.then(function(res) {
@@ -44,14 +46,14 @@ Search.prototype.preSearch = function (text) {
 		return false;
 	}
 	var item = {
-		id: null,
-		caption: ret.display,
-		type: "P",
-		extraIds: "",
-		symbol: "fas fa-map-marker-alt",
+		Id: null,
+		Caption: ret.display,
+		Type: "P",
+		ExtraIds: "",
+		Symbol: "fas fa-map-marker-alt",
 		Lat: ret.result.y,
 		Lon: ret.result.x,
-		extra: "Ubicación"
+		Extra: "Ubicación"
 	};
 	this.LoadResults([item], text);
 	return true;
@@ -61,14 +63,15 @@ Search.prototype.LoadResults = function(list, t) {
 	var view = this.view;
 	view.searched = t;
 	view.autolist = list.map(function (el) {
-		el.highlighted = el.caption;
-		el.class = '';
+		el.Highlighted = el.Caption;
+		el.Class = '';
 		return el;
 	});
 	if (view.autolist.length === 0) {
 		view.autolist = [{
-			type: 'N',
-			highlighted: 'No se encontraron resultados.',
+			Type: 'N',
+			Caption: 'No se encontraron resultados.',
+			Highlighted: 'No se encontraron resultados.',
 		}];
 	}
 };

@@ -9,6 +9,8 @@ use minga\framework\FileBucket;
 use minga\framework\ErrorException;
 use minga\framework\System;
 
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+
 use helena\services\common\BaseService;
 use helena\classes\Paths;
 use helena\classes\App;
@@ -42,16 +44,25 @@ class ImportService extends BaseService
 		$this->PrepareNewState($datasetId, $keepLabels, $bucketId);
 		$this->state->SetTotalSteps(self::STEP_END);
 		$fileExtension = Str::ToLower($fileExtension);
-		if ($fileExtension == "csv" || $fileExtension == "txt")
+		if ($fileExtension == "csv" || $fileExtension == "txt"
+				|| $fileExtension == "xlsx"  || $fileExtension == "xls")
 		{
-			return $this->ConvertCSV($bucket);
+			if ($fileExtension == "xlsx"  || $fileExtension == "xls")
+			{
+				$this->ExcelToCsv($fileExtension, $bucket);
+			}
+			return $this->CSVtoJson($bucket);
 		}
 		else if ($fileExtension == "sav")
 		{
-			return $this->ConvertSPSS($bucket);
+			return $this->SPSStoJson($bucket);
+		}
+		else if ($fileExtension == "kml" || $fileExtension == "kmz")
+		{
+			return $this->ConvertKMX($bucket, $fileExtension);
 		}
 
-		throw new ErrorException('La extensión del archivo debe ser .SAV o .CSV. Extensión recibida: ' . $fileExtension);
+		throw new ErrorException('La extensión del archivo debe ser SAV, CSV, KML o KMZ. Extensión recibida: ' . $fileExtension);
 	}
 
 	public function FileChunkImport($bucketId) {
@@ -158,7 +169,25 @@ class ImportService extends BaseService
 		$datasetColumns->InsertColumnDescriptions($datasetId);
 	}
 
-	private function ConvertCSV($bucket)
+	private function ExcelToCsv($fileExtension, $bucket)
+	{
+		$uploadFolder = $bucket->path;
+		$sourceFile =  $uploadFolder . '/file.dat';
+		$xlsFile =  $uploadFolder . '/file_xls.dat';
+		IO::Move($sourceFile, $xlsFile);
+
+		$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($xlsFile);
+		$loadedSheetNames = $spreadsheet->getSheetNames();
+		$writer = new Csv($spreadsheet);
+
+		foreach($loadedSheetNames as $sheetIndex => $loadedSheetName) {
+				$writer->setSheetIndex($sheetIndex);
+				$writer->save($sourceFile);
+				break;
+		}
+	}
+
+	private function CSVtoJson($bucket)
 	{
 		$folder = $this->state->GetFileFolder();
 		$uploadFolder = $bucket->path;
@@ -168,7 +197,7 @@ class ImportService extends BaseService
 		return $this->state->ReturnState(false);
 	}
 
-	private function ConvertSPSS($bucket)
+	private function SPSStoJson($bucket)
 	{
 		$folder = $this->state->GetFileFolder();
 		$uploadFolder = $bucket->path;
@@ -201,6 +230,51 @@ class ImportService extends BaseService
 			}
 			throw new ErrorException('Error en la subida de archivo spss.' . $err);
 		}
+
+		$this->state->SetStep(self::STEP_CONVERTED, 'Creando tablas');
+		return $this->state->ReturnState(false);
+	}
+
+	private function ConvertKMX($bucket, $fileExtension)
+	{
+		$python = App::GetPythonPath();
+		if (IO::Exists($python) === false) {
+			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
+		}
+
+		$folder = $this->state->GetFileFolder();
+		$uploadFolder = $bucket->path;
+		$sourceFile =  $uploadFolder . '/file.dat';	
+		
+		$lines = array();
+
+		$ret = System::Execute(App::GetPythonPath(), array(
+			Paths::GetPythonScriptsPath() .'/kmx2csv.py',
+			$fileExtension,
+			$sourceFile,
+			$folder
+		), $lines);
+
+		if($ret !== 0)
+		{
+			$err = '';
+			$detail = "\nScript: " . Paths::GetPythonScriptsPath() .'/kmx2csv.py'
+				. "\nFile extension: " . $fileExtension
+				. "\nSource: " . $sourceFile
+				. "\nFolder: " . $folder
+				. "\nScript Output was: \n----------------------\n" . implode("\n", $lines) . "\n----------------------\n";
+			if(App::Debug()) {
+				$err = $detail;
+			}
+			else
+			{
+				Log::HandleSilentException(new ErrorException($detail));
+			}
+			throw new ErrorException('Error en la subida de archivo KML/KMZ.' . $err);
+		}
+
+		$csv_file = $sourceFile . '_out.csv';
+		CsvToJson::Convert($csv_file, $folder);
 
 		$this->state->SetStep(self::STEP_CONVERTED, 'Creando tablas');
 		return $this->state->ReturnState(false);

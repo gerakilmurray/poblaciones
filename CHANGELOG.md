@@ -1,5 +1,27 @@
 [CURRENT]
+- Fix: detección de encoding en CSV identificaba como mac-files archivos con mayúsculas acentuadas acentos.
+- La grilla de datos del dataset en backoffice hace encoding del html que pueda estar en las celdas.
+- Mejoras crawling segmentado.
+- Autogeneración de carpetas de storage.
+- Fix: la publicación pisaba los extents si no había modificaciones de datos.
+- Administración: listado de regiones.
+- Al seleccionar una región o círculo de buffer se perdía el fijado de nivel.
+- Fix: 'zoom al indicador' cuando había un clipping pequeño (< 90% de la cobertura del indicador) no liberaba la selección.
+- El mapa ofrece elementos en la barra de acciones para iniciar y cerrar sesión.
+
+v2.18 (2020-04-15)
+- Posibilidad de agregar indicadores externos en una cartografía a la lista de indicadores del panel superior.
+- Se puede indicar qué indicadores aparecen activos en el mapa al ingresarse por las rutas de cartografía.
+- Se pueden importar datos en formato excel (xls y xlsx).
+- Se pueden importar archivos sin crear previamente un dataset.
+
+v2.17 (2020-03-21)
 - Fix a colocación de panel de cartografía en la vista de mapa (hasta cambiar el tamaño de la ventana, se veía mal en chrome y en firefox).
+- Posibilidad de georreferenciar por distrito escolar para datos de 2001.
+- Al cambiar el nivel por una modificación en el zoom (ej. de provincia a departamento), si existe una variable con igual nombre se mantiene como seleccionada.
+- El bloqueo de nivel (ej. fijar departamento) se guarda y recupera de la ruta.
+- Fix: al moverse sin una región seleccionada, no se actualizan los resúmenes de los indicadores.
+- Mejoras en compatibilidad para MySql 5.7 y 8.0.
 
 v2.16 (2020-02-16)
 - Optimización de tiles por bloques.

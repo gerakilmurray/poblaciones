@@ -24,13 +24,6 @@ class WorkExtraMetric
     private $Id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="wmt_order", type="integer", precision=0, scale=0, nullable=false, unique=false)
-     */
-    private $Order;
-
-    /**
      * @var \helena\entities\backoffice\Metric
      *
      * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\Metric")
@@ -52,6 +45,12 @@ class WorkExtraMetric
      */
     private $Work;
 
+		/**
+     * @var boolean
+     *
+     * @ORM\Column(name="wmt_start_active", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $StartActive;
 
     /**
      * Get id
@@ -76,28 +75,30 @@ class WorkExtraMetric
 
         return $this;
     }
-    /**
-     * Set order
+
+
+   /**
+     * Set startActive
      *
-     * @param integer $order
+     * @param boolean $startActive
      *
      * @return WorkExtraMetric
      */
-    public function setOrder($order)
+    public function setStartActive($startActive)
     {
-        $this->Order = $order;
+        $this->StartActive = $startActive;
 
         return $this;
     }
 
     /**
-     * Get order
+     * Get startActive
      *
-     * @return integer
+     * @return boolean
      */
-    public function getOrder()
+    public function getStartActive()
     {
-        return $this->Order;
+        return $this->StartActive;
     }
 
     /**

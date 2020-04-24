@@ -17,7 +17,7 @@ function LocationsGeojsonComposer(mapsApi, activeSelectedMetric) {
 
 LocationsGeojsonComposer.prototype = new AbstractTextComposer();
 
-LocationsGeojsonComposer.prototype.renderGeoJson = function (dataMetric, mapResults, dataResults, tileKey, div, x, y, z, tileBounds) {
+LocationsGeojsonComposer.prototype.renderGeoJson = function (dataMetric, mapResults, dataResults, gradient, tileKey, div, x, y, z, tileBounds) {
 	var filtered = [];
 	var allKeys = [];
 	var dataItems = dataResults.Data;
@@ -165,7 +165,7 @@ LocationsGeojsonComposer.prototype.bindStyles = function (dataMetric, tileKey) {
 					LevelId: metric.SelectedLevel().Id,
 					VariableId: metric.SelectedVariable().Id
 				};
-				loc.MapsApi.markerMouseOver(e, parentInfo, feature.getId(), feature.getProperty('Description'));
+				loc.MapsApi.selector.markerMouseOver(e, parentInfo, feature.getId(), feature.getProperty('Description'));
 			});
 			element.addListener('mouseout', function (e) {
 				var parentInfo = {

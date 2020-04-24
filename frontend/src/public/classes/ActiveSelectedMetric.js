@@ -74,8 +74,23 @@ ActiveSelectedMetric.prototype.ChangeMetricVisibility = function () {
 	this.UpdateMap();
 };
 
-ActiveSelectedMetric.prototype.SetSelectedLevelIndex = function (index) {
+ActiveSelectedMetric.prototype.ChangeSelectedLevelIndex = function (index) {
+	// Cambia el level, intentando mantener la variable seleccionado.
+	// La mantiene si el caption coincide.
+	var variable = this.SelectedVariable();
+	var name = (variable !== null ? variable.Name : null);
 	this.SelectedVersion().SelectedLevelIndex = index;
+	this.SetSelectedVariableByName(name);
+};
+
+ActiveSelectedMetric.prototype.SetSelectedVariableByName = function (name) {
+	var level = this.SelectedLevel();
+	for (var l = 0; l < level.Variables.length; l++) {
+		if (level.Variables[l].Name === name) {
+			level.SelectedVariableIndex = l;
+			break;
+		}
+	}
 };
 
 ActiveSelectedMetric.prototype.Visible = function () {
@@ -90,7 +105,8 @@ ActiveSelectedMetric.prototype.UpdateSummary = function () {
 		this.cancelUpdateSummary('cancelled');
 	}
 	this.IsUpdatingSummary = true;
-	window.SegMap.Get(/*window.host + */'/services/metrics/GetSummary', {
+	this.IsUpdatingRanking = true;
+	window.SegMap.Get(window.host + '/services/metrics/GetSummary', {
 		params: h.getSummaryParams(metric, window.SegMap.frame),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateSummary = c; }),
 	}).then(function (res) {
@@ -379,7 +395,7 @@ ActiveSelectedMetric.prototype.UpdateLevel = function () {
 	}
 	var l = this.CalculateProperLevel();
 	if (l !== this.SelectedLevel().Id) {
-		this.SetSelectedLevelIndex(l);
+		this.ChangeSelectedLevelIndex(l);
 		this.CheckValidMetric();
 		return true;
 	} else {
@@ -481,7 +497,7 @@ ActiveSelectedMetric.prototype.GetStyleColorList = function() {
 	var ret = [];
 	for (let i = 0; i < variable.ValueLabels.length; i++) {
 		var value = variable.ValueLabels[i];
-		ret.push({ cs: 'cs' + value['Id'], className: 'c' + value['Id'], fillColor: value.FillColor });
+		ret.push({ cs: 'cs' + value['Id'], className: value['Id'], fillColor: value.FillColor });
 	}
 	return ret;
 };

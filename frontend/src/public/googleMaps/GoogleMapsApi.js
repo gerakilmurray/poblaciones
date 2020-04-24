@@ -71,7 +71,8 @@ GoogleMapsApi.prototype.Initialize = function () {
 
 	var myMapOptions = {
 		mapTypeControlOptions: {
-			mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'blank']
+//			style: this.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+			mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'blank'],
 		},
 	 scaleControl: true,
 		styles: [{
@@ -92,8 +93,8 @@ GoogleMapsApi.prototype.Initialize = function () {
 			stylers: [{ visibility: 'off' }]
 		}],
 		clickableIcons: false,
-		center: { lat: 0, lng: 0 },
-		zoom: 1
+		center: { lat: -37.1799565, lng: -65.6866910 },
+		zoom: 6
 	};
 //		controlSize: 25,
 
@@ -227,7 +228,7 @@ GoogleMapsApi.prototype.CircleCompleted = function (circle) {
 			Lon: h.trimNumber(Math.abs(radius.lng() - center.lng())),
 		},
 	};
-	this.segmentedMap.Clipping.SetClippingRegionCircle(clippingCircle);
+	this.segmentedMap.Clipping.SetClippingCircle(clippingCircle);
 
 	//borra el círculo
 	circle.setMap(null);
