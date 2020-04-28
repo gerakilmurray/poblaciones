@@ -39,12 +39,12 @@ export default {
 	},
 	data() {
 		return {
-				bgColor: '#00A0D2',
-				action: {
-					Metrics: []
-				},
-				fabMetrics: [],
-				position: 'bottom-left',
+			bgColor: '#00A0D2',
+			action: {
+				Metrics: []
+			},
+			fabMetrics: [],
+			position: 'bottom-left',
 		};
 	},
 	created () {
@@ -53,9 +53,7 @@ export default {
 	beforeDestroy () {
 		window.removeEventListener('keydown', this.keyProcess);
 	},
-	mounted() {
-		
-	},
+	// mounted() { },
 	computed: {
 		fabActions() {
 			var ret = [];
@@ -70,20 +68,20 @@ export default {
 	props: [
 		'work',
 	],
-  methods: {
+	methods: {
 		getCustomBgColor() {
 			const work = this.work.Current;
 			return work && work.Styles && work.Styles['background-color'];
 		},
 		loadFabMetrics() {
 			const loc = this;
-				axios.get('/services/metrics/GetFabMetrics', {
-					params: { w : window.SegMap.Revisions.FabMetrics }
-				}).then(function (res) {
-					loc.fabMetrics = res.data;
-				}).catch(function (error) {
-					err.errDialog('LoadFabMetrics', 'obtener los indicadores de datos públicos', error);
-				});
+			axios.get(/*window.host + */ '/services/metrics/GetFabMetrics', {
+				params: { w: window.SegMap.Revisions.FabMetrics }
+			}).then(function (res) {
+				loc.fabMetrics = res.data;
+			}).catch(function (error) {
+				err.errDialog('LoadFabMetrics', 'obtener los indicadores de datos públicos', error);
+			});
 		},
 		keyProcess(e) {
 			if (e.key === "Escape") {
@@ -92,11 +90,11 @@ export default {
 				}
 			}
 		},
-    selected(n){
+		selected(n) {
 			this.action = this.fabMetrics[n];
 			window.Popups.AddMetric.show(this.action.Metrics);
 		}
-  },
+	},
 };
 </script>
 

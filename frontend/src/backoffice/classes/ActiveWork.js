@@ -90,7 +90,7 @@ ActiveWork.prototype.HasChanges = function () {
 ActiveWork.prototype.GetMetricsList = function () {
 	// Trae sus variables
 	var args = { 'w': this.properties.Id };
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetWorkMetricsList', args,
+	return axiosClient.getPromise(/*window.host + */ '/services/backoffice/GetWorkMetricsList', args,
 		'obtener la lista de métricas');
 };
 
@@ -240,7 +240,7 @@ ActiveWork.prototype.AppendExtraMetric = function (metric) {
 ActiveWork.prototype.UpdateExtraMetricStart = function (metric) {
 	var args = { 'w': this.properties.Id, 'm': metric.Id, 'a': (metric.StartActive ? 1 : 0) };
 	this.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateExtraMetricStart', args,
+	return axiosClient.getPromise(/*window.host + */ '/services/backoffice/UpdateExtraMetricStart', args,
 		'actualizar el indicador adicional');
 };
 
@@ -302,7 +302,7 @@ ActiveWork.prototype.RequestReview = function () {
 ActiveWork.prototype.UpdateVisibility = function () {
 	var loc = this;
 	return axiosClient.getPromise(/*window.host + */ '/services/backoffice/UpdateWorkVisibility',
-		{ 'w': this.properties.Id, 'l' : this.properties.AccessLink, 'p': (this.properties.IsPrivate ? '1' : '0') }, 'actualizar la visibilidad').then(
+		{ 'w': this.properties.Id, 'l': this.properties.AccessLink, 'p': (this.properties.IsPrivate ? '1' : '0') }, 'actualizar la visibilidad').then(
 		function () {
 			window.Context.UpdatePrivacy(loc.properties.Id, loc.properties.IsPrivate);
 		});

@@ -71,10 +71,10 @@ GoogleMapsApi.prototype.Initialize = function () {
 
 	var myMapOptions = {
 		mapTypeControlOptions: {
-//			style: this.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+			style: this.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
 			mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'blank'],
 		},
-	 scaleControl: true,
+		scaleControl: true,
 		styles: [{
 			featureType: 'poi.attraction',
 			elementType: 'labels',
@@ -245,6 +245,23 @@ GoogleMapsApi.prototype.PanTo = function (coord) {
 	this.gMap.panTo(c);
 };
 
+GoogleMapsApi.prototype.SetTypeControlsDropDown = function () {
+	this.SetTypeControls(this.google.maps.MapTypeControlStyle.DROPDOWN_MENU);
+};
+
+GoogleMapsApi.prototype.SetTypeControlsDefault = function () {
+	this.SetTypeControls(this.google.maps.MapTypeControlStyle.HORIZONTAL_BAR);
+};
+
+GoogleMapsApi.prototype.SetTypeControls = function (controlType) {
+	this.gMap.setOptions({
+		mapTypeControlOptions: {
+			style: controlType,
+			mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'blank'],
+		},
+	});
+};
+
 GoogleMapsApi.prototype.SetZoom = function (zoom) {
 	this.isSettingZoom = true;
 	this.gMap.setZoom(zoom);
@@ -385,7 +402,7 @@ GoogleMapsApi.prototype.SetClippingCanvas = function (canvas) {
 };
 
 GoogleMapsApi.prototype.markerClicked = function (event, metricVersion, fid, offset) {
-	window.SegMap.InfoRequested(h.getPosition(event), metricVersion, fid, offset);
+	window.SegMap.InfoRequestedInteractive(h.getPosition(event), metricVersion, fid, offset);
 };
 
 GoogleMapsApi.prototype.getBounds = function() {
