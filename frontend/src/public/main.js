@@ -7,7 +7,7 @@ import axios from 'axios';
 import 'vue-material-design-icons/styles.css';
 import Clipboard from 'v-clipboard';
 
- // Bus para comunicación entre componentes
+// Bus para comunicación entre componentes
 // usar window.bus.$emit y window.bus.$on
 window.bus = new Vue();
 
@@ -27,6 +27,10 @@ window.SegMap = null;
 
 // enable axios post cookie, default false
 axios.defaults.withCredentials = true;
+
+import MpCloseButton from '@/public/components/controls/MpCloseButton';
+
+Vue.component('mp-close-button', MpCloseButton);
 
 Vue.use(Clipboard);
 

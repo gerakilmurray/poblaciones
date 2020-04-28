@@ -46,7 +46,7 @@
 			<button v-if='!user.Logged' type="button" class="btn btn-default btn-xs" title="Ingresar/Registrarse"
 							v-on:click="authenticate.redirectLogin()"><i class="fas fa-sign-in-alt"></i></button>
 			<span v-else="" class="dropdown">
-				<button v-if='this.useExtraToolbar()' type="button"
+				<button type="button"
 								id="dropdownMenuButton" class="btn btn-default btn-xs dropdown-toggle"
 								data-toggle="dropdown" :title="userTooltip">
 					<i class="fas fa-user" />
@@ -54,7 +54,7 @@
 					<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
 						<li><a @click="authenticate.redirectBackoffice" href="/users">Mis cartografías</a></li>
 						<li v-if="user.Privileges === 'A'"><a href="/admins" @click="authenticate.redirectAdmin">Administración</a></li>
-						<li><a href="#">Cuenta</a></li>
+						<li><a href="/users#/account">Cuenta</a></li>
 						<li class="divider"></li>
 						<li><a @click="authenticate.logoff">Cerrar sesión</a></li>
 					</ul>

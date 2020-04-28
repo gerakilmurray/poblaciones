@@ -10,9 +10,9 @@ import axios from 'axios';
 import str from '@/common/js/str';
 import Vue from "vue";
 import PanelType from '@/public/enums/PanelType';
-import InfoPanel from '@/public/components/panels/infoPanel';
 
 import h from '@/public/js/helper';
+import m from '@/public/js/Mercator';
 import err from '@/common/js/err';
 
 export default SegmentedMap;
@@ -159,6 +159,14 @@ SegmentedMap.prototype.SetZoom = function (zoom) {
 	this.frame.Zoom = zoom;
 };
 
+SegmentedMap.prototype.SetTypeControlsDropDown = function () {
+this.MapsApi.SetTypeControlsDropDown();
+};
+
+SegmentedMap.prototype.SetTypeControlsDefault = function () {
+	this.MapsApi.SetTypeControlsDefault();
+};
+
 SegmentedMap.prototype.MapTypeChanged = function(mapTypeState) {
 	this.SaveRoute.UpdateRoute();
 };
@@ -200,7 +208,16 @@ SegmentedMap.prototype.EndSelecting = function () {
 	this.MapsApi.selector.ClearSelectorCanvas();
 };
 
-SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset) {
+SegmentedMap.prototype.InfoRequestedInteractive = function (position, parent, fid, offset) {
+	if (this.UsePanels) {
+		if (position && (!position.Point || position.Point.X < 350)) {
+			this.PanTo(position.Coordinate);
+		}
+	}
+	this.InfoRequested(position, parent, fid, offset, true);
+};
+
+SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, forceExpand) {
 	const loc = this;
 	window.SegMap.Get('/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
@@ -208,12 +225,15 @@ SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset) 
 		if(loc.UsePanels) {
 			res.data.position = position;
 			res.data.fid = fid;
-			res.data.type = PanelType.InfoPanel;
+			res.data.parent = parent;
+			res.data.panelType = PanelType.InfoPanel;
 			window.Panels.Left.Add(res.data);
+			if (forceExpand) {
+				window.Panels.Left.collapsed = false;
+			}
 		} else {
-			var text = '';
 			var data = res.data;
-			text += "<div style='max-width: 250px;'>";
+			var text = "<div style='max-width: 250px;'>";
 			text += "<div style='padding-bottom: 0px; padding-top:2px; font-size: 9px; text-transform: uppercase'>" + data.Type + '</div>';
 			text += "<div style='padding-bottom: 3px; padding-top:2px; font-size: 15px; font-weight: 500'>";
 			if (data.Title) {
@@ -254,6 +274,18 @@ SegmentedMap.prototype.InfoRequestedFormatLine = function (item) {
 	text += h.capitalize(item.Name) + ': ' + val;
 	text += '</div>';
 	return text;
+};
+
+SegmentedMap.prototype.GetVariableName = function (metricId, variableId) {
+	var metric = this.Metrics.GetMetricById(metricId);
+	if (metric === null) {
+		return '';
+	}
+	var variable = metric.GetVariableById(variableId);
+	if (variable === null) {
+		return '';
+	}
+	return variable.Name;
 };
 
 SegmentedMap.prototype.AddMetricByIdAndWork = function (id, workId) {
