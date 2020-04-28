@@ -2,14 +2,13 @@
 	<div>
 		<div class="btn-group pull-right" style="clear:both">
 			<h4 class="title">
-				<button title="Quitar" type="button" class="close buttonMargin" v-on:click="clickQuitar">
-					<close-icon title="Quitar" />
-				</button>
+				<mp-close-button v-on:click="clickQuitar" />
 
 				<button title="Opciones" type="button" class="close "
 								v-on:click="clickCustomize" style="margin-right: 7px; margin-left: -2px; margin-top: 4px;
 font-size: 12px">
-					<i class="fas fa-sliders-h"></i>				</button>
+					<i class="fas fa-sliders-h"></i>
+				</button>
 
 				<button type="button" v-on:click="toogleRankings" v-if="metric.useRankings()" onmouseup="this.blur()"
 								class="close lightButton" :class="(metric.ShowRanking ? 'activeButton' : '')" :title="(metric.ShowRanking ? 'Ocultar ranking' : 'Mostrar ranking')">
@@ -51,7 +50,6 @@ font-size: 12px">
 </template>
 
 <script>
-import CloseIcon from 'vue-material-design-icons/Close.vue';
 import Mercator from '@/public/js/Mercator';
 
 // https://materialdesignicons.com/cdn/1.9.32/
@@ -63,7 +61,7 @@ export default {
 		'clipping',
 	],
 	components: {
-		CloseIcon
+
 	},
 	data() {
 		return {
@@ -145,19 +143,14 @@ export default {
 	computed: {
 
 	}
-};</script>
+};
+</script>
 
 <style scoped>
   .vellipsis:after {
   content: '\2807';
   font-size: .8em;
   }
-
-.buttonMargin {
-  margin-right: -2px;
-  margin-top: -4px;
-	margin-left: -3px;
-}
 
 .lightButton {
 	font-size: 12px;
