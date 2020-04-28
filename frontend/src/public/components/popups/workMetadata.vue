@@ -1,5 +1,5 @@
 <template>
-  <Modal :title="(metric ? 'Fuente' : 'Metadatos')" ref="dialog" :showCancel="false"  :showOk="false">
+  <Modal :title="(metric ? 'Fuente' : 'Metadatos')" ref="dialog" :showCancel="false" :showOk="false">
 		<div v-if="metric || work">
 			<table class="localTable">
 				<tbody>
@@ -85,7 +85,7 @@
 <script>
 import h from '@/public/js/helper';
 import FilePdfIcon from 'vue-material-design-icons/FilePdf.vue';
-import creativeCommons from '@/public/components/widgets/creativeCommons.vue';
+import creativeCommons from '@/public/components/controls/creativeCommons.vue';
 import apa from '@/common/js/citationAPA';
 import Modal from '@/public/components/popups/modal';
 
