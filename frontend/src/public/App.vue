@@ -2,7 +2,7 @@
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
 			<Search/>
-			<LeftPanel v-show="config.UsePanels" ref='leftPanel'/>
+			<LeftPanel ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" />
@@ -46,7 +46,7 @@ export default {
 	},
 	created() {
 		window.Popups = {};
-		window.Panels = {};
+		window.Panels = { Content: { FeatureInfo: null, FeatureList: null }};
 	},
 	data() {
 		return {
@@ -320,7 +320,7 @@ a:hover {
 	text-decoration: none !important;
 }
 .ibTooltipNoYOffset {
-	margin-top: 0px;
+	margin-top: -10px;
 }
 
 .tpValueTitle {
