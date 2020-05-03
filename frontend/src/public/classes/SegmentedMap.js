@@ -43,7 +43,6 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 		this.tileDataBlockSize = null;
 	}
 	this.UseGradients = config.UseGradients;
-	this.UsePanels = config.UsePanels;
 	this.Queue = new Queue(config.MaxQueueRequests);
 };
 
@@ -141,6 +140,8 @@ SegmentedMap.prototype.GetMapTypeState = function () {
 };
 SegmentedMap.prototype.SetMapTypeState = function (mapType) {
 	this.MapsApi.SetMapTypeState(mapType);
+	this.MapTypeChanged(mapType);
+
 };
 
 SegmentedMap.prototype.SetCenter = function (coord) {
@@ -167,8 +168,19 @@ SegmentedMap.prototype.SetTypeControlsDefault = function () {
 	this.MapsApi.SetTypeControlsDefault();
 };
 
-SegmentedMap.prototype.MapTypeChanged = function(mapTypeState) {
-	this.SaveRoute.UpdateRoute();
+SegmentedMap.prototype.MapTypeChanged = function (mapTypeState) {
+	var showLabels = !mapTypeState.startsWith('s');
+	if (showLabels) {
+		if (!this.Labels.Visible()) {
+			// Lo empieza a mostrar
+			this.Labels.Show();
+		}
+	} else {
+		if (this.Labels.Visible()) {
+			// Las oculta
+			this.Labels.Hide();
+		}
+	}
 };
 SegmentedMap.prototype.ZoomChanged = function (zoom) {
 	if (this.frame.Zoom !== zoom) {
@@ -209,71 +221,51 @@ SegmentedMap.prototype.EndSelecting = function () {
 };
 
 SegmentedMap.prototype.InfoRequestedInteractive = function (position, parent, fid, offset) {
-	if (this.UsePanels) {
-		if (position && (!position.Point || position.Point.X < 350)) {
-			this.PanTo(position.Coordinate);
-		}
+	if (position && (!position.Point || position.Point.X < 350)) {
+		this.PanTo(position.Coordinate);
 	}
 	this.InfoRequested(position, parent, fid, offset, true);
 };
 
 SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, forceExpand) {
 	const loc = this;
-	window.SegMap.Get('/services/metrics/GetInfoWindowData', {
+	// Establece qué está obteniendo
+	var key = parent;
+	key.Id = fid;
+	window.Panels.Content.FeatureInfoKey = key;
+	// Lo busca
+	window.SegMap.Get(window.host + '/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
 	}).then(function (res) {
-		if(loc.UsePanels) {
-			res.data.position = position;
-			res.data.fid = fid;
+		// Lo obtuvo
+		res.data.position = position;
+		res.data.Key = key;
+		res.data.panelType = PanelType.InfoPanel;
+		window.Panels.Left.Add(res.data);
+		// Si viene interactivo, lo abre y lo pone en la ruta
+		if (forceExpand) {
+			window.Panels.Left.collapsed = false;
+			loc.SaveRoute.UpdateRoute();
+		}
+	});
+};
+
+SegmentedMap.prototype.InfoListRequested = function (parent, forceExpand) {
+	const loc = this;
+	var page = 0;
+	window.SegMap.Get(window.host + '/services/metrics/GetInfoListData', {
+		params: { l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId, p: page }
+	}).then(function (res) {
 			res.data.parent = parent;
 			res.data.panelType = PanelType.InfoPanel;
+			window.Panels.Content.FeatureList = res.data;
 			window.Panels.Left.Add(res.data);
 			if (forceExpand) {
 				window.Panels.Left.collapsed = false;
 			}
-		} else {
-			var data = res.data;
-			var text = "<div style='max-width: 250px;'>";
-			text += "<div style='padding-bottom: 0px; padding-top:2px; font-size: 9px; text-transform: uppercase'>" + data.Type + '</div>';
-			text += "<div style='padding-bottom: 3px; padding-top:2px; font-size: 15px; font-weight: 500'>";
-			if (data.Title) {
-				text += data.Title;
-			} else if (data.Code) {
-				text += data.Code;
-			}
-			text += '</div>';
-
-			text += "<div style='max-height: 300px;'>";
-			if (data.Code && data.Title) {
-				text += loc.InfoRequestedFormatLine({ Name: 'Código', Value: data.Code });
-			}
-			data.Items.forEach(function (item) {
-				text += loc.InfoRequestedFormatLine(item);
-			});
-			text += "<div style='padding-top: 11px; font-size: 11px;text-align: center'>Posición: "
-				+ h.trimNumber(position.Coordinate.Lat) + ',' + h.trimNumber(position.Coordinate.Lon) + '.</div>';
-			text += '</div>';
-			text += '</div>';
-			loc.MapsApi.ShowInfoWindow(text, position.Coordinate, offset);
-		}
 	}).catch(function (error) {
 		err.errDialog('GetInfoWindowData', 'traer la información para el elemento seleccionado', error);
 	});
-};
-
-SegmentedMap.prototype.InfoRequestedFormatLine = function (item) {
-	var text = "<div style='padding-top: 4px'>";
-	var val = (item.Caption !== null && item.Caption !== undefined ? item.Caption : item.Value);
-	if (val === null) {
-		val = '-';
-	}
-	val = (val + '').trim();
-	if (val.length > 0 && val.substr(val.length - 1) !== '.') {
-		val += '.';
-	}
-	text += h.capitalize(item.Name) + ': ' + val;
-	text += '</div>';
-	return text;
 };
 
 SegmentedMap.prototype.GetVariableName = function (metricId, variableId) {
@@ -350,7 +342,7 @@ SegmentedMap.prototype.SelectId = function (type, item, lat, lon) {
 			VariableId: null
 		};
 		var position = { Coordinate: { Lat: lat, Lon: lon } };
-		this.InfoRequested(position, parentInfo, id, null);
+		this.InfoRequestedInteractive(position, parentInfo, id, null);
 	} else if (type === 'P') {
 		// punto...
 		this.AddMetricById(item);
