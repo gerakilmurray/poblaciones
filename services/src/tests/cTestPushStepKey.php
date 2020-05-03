@@ -1,27 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace helena\tests;
 
-use helena\controllers\common\cController;
-use helena\classes\Session;
 use helena\classes\App;
-use minga\framework\Params;
 use helena\services\backoffice\PublishService;
+use minga\framework\tests\TestCaseBase;
 
-class cTestPushStepKey extends cController
+class cTestPushStepKey extends TestCaseBase
 {
-	public function Show()
+	public function testPushStepKey()
 	{
-		if ($app = Session::CheckIsMegaUser())
-			return $app;
-
-		$key = Params::Get("key");
-		if (!$key)
-		{
-			return 'Debe indicar el parámetro key';
-		}
-
+		$key = 'xx';
 		$service = new PublishService();
-		return App::Json($service->StepPublication($key));
+		$ret = App::Json($service->StepPublication($key));
+		vd($ret);
 	}
 }
