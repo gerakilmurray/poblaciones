@@ -117,7 +117,7 @@ TileRequest.prototype.allSubscribersAreCancelled = function () {
 TileRequest.prototype.startDataRequest = function () {
 	var loc = this;
 	var params = this.params;
-	window.SegMap.Get(/*window.host + */'/services/' + this.url, {
+	window.SegMap.Get(window.host +'/services/' + this.url, {
 		params: params,
 		cancelToken: new this.CancelToken1(function executor(c) { loc.cancel1 = c; }),
 	}).then(function (res) {

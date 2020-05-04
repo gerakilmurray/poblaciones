@@ -234,7 +234,7 @@ SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, 
 	key.Id = fid;
 	window.Panels.Content.FeatureInfoKey = key;
 	// Lo busca
-	window.SegMap.Get(/*window.host + */ '/services/metrics/GetInfoWindowData', {
+	window.SegMap.Get(window.host + '/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
 	}).then(function (res) {
 		// Lo obtuvo
@@ -253,7 +253,7 @@ SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, 
 SegmentedMap.prototype.InfoListRequested = function (parent, forceExpand) {
 	const loc = this;
 	var page = 0;
-	window.SegMap.Get(/*window.host + */ '/services/metrics/GetInfoListData', {
+	window.SegMap.Get(window.host + '/services/metrics/GetInfoListData', {
 		params: { l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId, p: page }
 	}).then(function (res) {
 			res.data.parent = parent;
