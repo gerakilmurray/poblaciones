@@ -24,6 +24,9 @@ sudo rm -Rf ./release
 mkdir -p ../services/storage/temp/
 touch ../services/storage/temp/XDEBUG_SESSION.txt.lock
 
+echo -e "\n### Installing Git Hooks ###################################################################################################"
+./install_hooks.sh
+
 echo -e "\n### Compiling local release ################################################################################################"
 ./build.sh vendor
 
