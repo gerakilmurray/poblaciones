@@ -24,11 +24,14 @@ sudo rm -Rf ./release
 mkdir -p ../services/storage/temp/
 touch ../services/storage/temp/XDEBUG_SESSION.txt.lock
 
+echo -e "\n### Installing Git Hooks ###################################################################################################"
+./install_hooks.sh
+
 echo -e "\n### Compiling local release ################################################################################################"
 ./build.sh vendor
 
 echo -e "\n### Removing temp files ####################################################################################################"
-rm -v release.tar.bz2
+rm -vf release.tar.bz2
 
 echo -e "\n### Copying configuration files ############################################################################################"
 cp -v ./configs_azure/settings.php ./release/config

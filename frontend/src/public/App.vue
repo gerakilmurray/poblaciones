@@ -6,7 +6,7 @@
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" />
-			<LogoFloat/>
+			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
@@ -28,7 +28,7 @@ import LeftPanel from '@/public/components/panels/leftPanel';
 import Edit from '@/public/components/widgets/map/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/map/search';
-import LogoFloat from '@/public/components/widgets/logoFloat';
+import LogoFloat from '@/public/components/widgets/map/logoFloat';
 
 import Split from 'split.js';
 import axios from 'axios';
