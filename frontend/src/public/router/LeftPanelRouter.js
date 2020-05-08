@@ -19,7 +19,7 @@ LeftPanelRouter.prototype.GetSettings = function() {
 LeftPanelRouter.prototype.ToRoute = function () {
 	var leftPanelStates = [];
 
-	if (window.Panels.Left.open) {
+	if (window.Panels.Left.hasContent) {
 		leftPanelStates.push(['c', (window.Panels.Left.collapsed ? 1 : 0), 0]);
 	}
 	return leftPanelStates;
@@ -28,3 +28,5 @@ LeftPanelRouter.prototype.ToRoute = function () {
 LeftPanelRouter.prototype.FromRoute = function (args) {
 	window.Panels.Left.collapsed = h.getSafeValueBool(args, 'c', false);
 };
+
+

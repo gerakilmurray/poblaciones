@@ -101,7 +101,7 @@ MetricsList.prototype.ClearUserMetrics = function () {
 
 MetricsList.prototype.GetMetricById = function (metricId) {
 	for (var i = 0; i < this.metrics.length; i++) {
-		if (this.metrics[i].properties.Metric.Id === '' + metricId) {
+		if (this.metrics[i].properties.Metric.Id == metricId) {
 			return this.metrics[i];
 		}
 	}
@@ -137,9 +137,11 @@ MetricsList.prototype.UpdateMetric = function (activeMetric) {
 	}
 };
 
-MetricsList.prototype.Remove = function (activeMetric) {
+MetricsList.prototype.Remove = function (activeMetric, doNotUpdateRoute) {
 	this.doRemove(activeMetric);
-	window.SegMap.SaveRoute.UpdateRoute();
+	if (!doNotUpdateRoute) {
+		window.SegMap.SaveRoute.UpdateRoute();
+	}
 };
 
 MetricsList.prototype.doRemove = function (activeMetric) {

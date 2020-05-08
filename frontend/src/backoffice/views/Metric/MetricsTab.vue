@@ -28,7 +28,7 @@
 				<md-icon>add_circle_outline</md-icon>
 				Completar nivel
 			</md-button>
-			<md-button @click="levelDataset">
+			<md-button @click="levelDataset" v-if="canLevel">
 				<md-icon>view_week</md-icon>
 				Nivelar
 			</md-button>
@@ -152,6 +152,12 @@ export default {
 		},
 		f() {
 			return f;
+		},
+		canLevel() {
+			if (!this.Dataset) {
+				return false;
+			}
+			return this.Work.properties.Type === 'P' && this.list && this.list.length > 0;
 		}
 	},
 	methods: {
@@ -208,7 +214,7 @@ export default {
 			return 'No';
 		}
 	},
-	openEdition(item){
+	openEdition(item) {
 		this.$refs.editPopup.show(item);
 	},
 	onDelete(item) {
@@ -237,10 +243,10 @@ export default {
 	down(level, variable) {
 		this.$refs.invoker.do(this.Dataset, this.Dataset.MoveVariableDown, level, variable);
 	},
-	openVariableFormulaEdition(item, variable){
+	openVariableFormulaEdition(item, variable) {
 		this.$refs.editVariableFormulaPopup.show(item, variable);
 	},
-	openVariableSymbologyEdition(item, variable){
+	openVariableSymbologyEdition(item, variable) {
 			/*var hasCalculatedColumns = (variable.Data !== null && variable.Data !== 'O') ||
 																	(variable.Normalization !== null && variable.Normalization !== 'O');
 			if (hasCalculatedColumns && !this.Dataset.properties.Geocoded) {
@@ -263,7 +269,7 @@ export default {
 										open);
 			}
 		},
-		openVariableOptionsEdition(item, variable){
+		openVariableOptionsEdition(item, variable) {
 			this.$refs.editVariableOptionsPopup.show(item, variable);
 		},
 		onDeleteVariable(item, variable) {

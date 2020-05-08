@@ -10,9 +10,9 @@ import axios from 'axios';
 import str from '@/common/js/str';
 import Vue from "vue";
 import PanelType from '@/public/enums/PanelType';
-import InfoPanel from '@/public/components/panels/infoPanel';
 
 import h from '@/public/js/helper';
+import m from '@/public/js/Mercator';
 import err from '@/common/js/err';
 
 export default SegmentedMap;
@@ -32,8 +32,8 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 	this.DefaultTitle = 'Poblaciones';
 	this._axios = this.CreateAxios();
 	this.Metrics = new MetricsList(this, selectedMetricCollection);
-	this.SaveRoute = new SaveRoute(this);
-	this.RestoreRoute = new RestoreRoute(this);
+	this.SaveRoute = new SaveRoute();
+	this.RestoreRoute = new RestoreRoute();
 	this.afterCallback = null;
 	this.afterCallback2 = null;
 	this.Labels = new ActiveLabels(config);
@@ -43,7 +43,6 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 		this.tileDataBlockSize = null;
 	}
 	this.UseGradients = config.UseGradients;
-	this.UsePanels = config.UsePanels;
 	this.Queue = new Queue(config.MaxQueueRequests);
 };
 
@@ -141,6 +140,8 @@ SegmentedMap.prototype.GetMapTypeState = function () {
 };
 SegmentedMap.prototype.SetMapTypeState = function (mapType) {
 	this.MapsApi.SetMapTypeState(mapType);
+	this.MapTypeChanged(mapType);
+
 };
 
 SegmentedMap.prototype.SetCenter = function (coord) {
@@ -159,8 +160,27 @@ SegmentedMap.prototype.SetZoom = function (zoom) {
 	this.frame.Zoom = zoom;
 };
 
-SegmentedMap.prototype.MapTypeChanged = function(mapTypeState) {
-	this.SaveRoute.UpdateRoute();
+SegmentedMap.prototype.SetTypeControlsDropDown = function () {
+this.MapsApi.SetTypeControlsDropDown();
+};
+
+SegmentedMap.prototype.SetTypeControlsDefault = function () {
+	this.MapsApi.SetTypeControlsDefault();
+};
+
+SegmentedMap.prototype.MapTypeChanged = function (mapTypeState) {
+	var showLabels = !mapTypeState.startsWith('s');
+	if (showLabels) {
+		if (!this.Labels.Visible()) {
+			// Lo empieza a mostrar
+			this.Labels.Show();
+		}
+	} else {
+		if (this.Labels.Visible()) {
+			// Las oculta
+			this.Labels.Hide();
+		}
+	}
 };
 SegmentedMap.prototype.ZoomChanged = function (zoom) {
 	if (this.frame.Zoom !== zoom) {
@@ -200,60 +220,64 @@ SegmentedMap.prototype.EndSelecting = function () {
 	this.MapsApi.selector.ClearSelectorCanvas();
 };
 
-SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset) {
+SegmentedMap.prototype.InfoRequestedInteractive = function (position, parent, fid, offset) {
+	if (position && (!position.Point || position.Point.X < 350)) {
+		this.PanTo(position.Coordinate);
+	}
+	this.InfoRequested(position, parent, fid, offset, true);
+};
+
+SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, forceExpand) {
 	const loc = this;
-	window.SegMap.Get('/services/metrics/GetInfoWindowData', {
+	// Establece qué está obteniendo
+	var key = parent;
+	key.Id = fid;
+	window.Panels.Content.FeatureInfoKey = key;
+	// Lo busca
+	window.SegMap.Get(/*window.host + */ '/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
 	}).then(function (res) {
-		if(loc.UsePanels) {
-			res.data.position = position;
-			res.data.fid = fid;
-			res.data.type = PanelType.InfoPanel;
-			window.Panels.Left.Add(res.data);
-		} else {
-			var text = '';
-			var data = res.data;
-			text += "<div style='max-width: 250px;'>";
-			text += "<div style='padding-bottom: 0px; padding-top:2px; font-size: 9px; text-transform: uppercase'>" + data.Type + '</div>';
-			text += "<div style='padding-bottom: 3px; padding-top:2px; font-size: 15px; font-weight: 500'>";
-			if (data.Title) {
-				text += data.Title;
-			} else if (data.Code) {
-				text += data.Code;
-			}
-			text += '</div>';
-
-			text += "<div style='max-height: 300px;'>";
-			if (data.Code && data.Title) {
-				text += loc.InfoRequestedFormatLine({ Name: 'Código', Value: data.Code });
-			}
-			data.Items.forEach(function (item) {
-				text += loc.InfoRequestedFormatLine(item);
-			});
-			text += "<div style='padding-top: 11px; font-size: 11px;text-align: center'>Posición: "
-				+ h.trimNumber(position.Coordinate.Lat) + ',' + h.trimNumber(position.Coordinate.Lon) + '.</div>';
-			text += '</div>';
-			text += '</div>';
-			loc.MapsApi.ShowInfoWindow(text, position.Coordinate, offset);
+		// Lo obtuvo
+		res.data.position = position;
+		res.data.Key = key;
+		res.data.panelType = PanelType.InfoPanel;
+		window.Panels.Left.Add(res.data);
+		// Si viene interactivo, lo abre y lo pone en la ruta
+		if (forceExpand) {
+			window.Panels.Left.collapsed = false;
+			loc.SaveRoute.UpdateRoute();
 		}
+	});
+};
+
+SegmentedMap.prototype.InfoListRequested = function (parent, forceExpand) {
+	const loc = this;
+	var page = 0;
+	window.SegMap.Get(/*window.host + */ '/services/metrics/GetInfoListData', {
+		params: { l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId, p: page }
+	}).then(function (res) {
+			res.data.parent = parent;
+			res.data.panelType = PanelType.InfoPanel;
+			window.Panels.Content.FeatureList = res.data;
+			window.Panels.Left.Add(res.data);
+			if (forceExpand) {
+				window.Panels.Left.collapsed = false;
+			}
 	}).catch(function (error) {
 		err.errDialog('GetInfoWindowData', 'traer la información para el elemento seleccionado', error);
 	});
 };
 
-SegmentedMap.prototype.InfoRequestedFormatLine = function (item) {
-	var text = "<div style='padding-top: 4px'>";
-	var val = (item.Caption !== null && item.Caption !== undefined ? item.Caption : item.Value);
-	if (val === null) {
-		val = '-';
+SegmentedMap.prototype.GetVariableName = function (metricId, variableId) {
+	var metric = this.Metrics.GetMetricById(metricId);
+	if (metric === null) {
+		return '';
 	}
-	val = (val + '').trim();
-	if (val.length > 0 && val.substr(val.length - 1) !== '.') {
-		val += '.';
+	var variable = metric.GetVariableById(variableId);
+	if (variable === null) {
+		return '';
 	}
-	text += h.capitalize(item.Name) + ': ' + val;
-	text += '</div>';
-	return text;
+	return variable.Name;
 };
 
 SegmentedMap.prototype.AddMetricByIdAndWork = function (id, workId) {
@@ -318,7 +342,7 @@ SegmentedMap.prototype.SelectId = function (type, item, lat, lon) {
 			VariableId: null
 		};
 		var position = { Coordinate: { Lat: lat, Lon: lon } };
-		this.InfoRequested(position, parentInfo, id, null);
+		this.InfoRequestedInteractive(position, parentInfo, id, null);
 	} else if (type === 'P') {
 		// punto...
 		this.AddMetricById(item);

@@ -94,7 +94,7 @@ ActiveSelectedMetric.prototype.SetSelectedVariableByName = function (name) {
 };
 
 ActiveSelectedMetric.prototype.Visible = function () {
-	return this.properties.Visible && this.SelectedLevel().SelectedVariableIndex !== -1 ;
+	return this.properties.Visible && this.SelectedLevel().SelectedVariableIndex !== -1;
 };
 
 ActiveSelectedMetric.prototype.UpdateSummary = function () {
@@ -106,7 +106,7 @@ ActiveSelectedMetric.prototype.UpdateSummary = function () {
 	}
 	this.IsUpdatingSummary = true;
 	this.IsUpdatingRanking = true;
-	window.SegMap.Get(window.host + '/services/metrics/GetSummary', {
+	window.SegMap.Get(/*window.host + */ '/services/metrics/GetSummary', {
 		params: h.getSummaryParams(metric, window.SegMap.frame),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateSummary = c; }),
 	}).then(function (res) {
@@ -188,6 +188,29 @@ ActiveSelectedMetric.prototype.GetVersionIndexByWorkId = function (id) {
 		}
 	}
 	return -1;
+};
+
+ActiveSelectedMetric.prototype.GetVersionById = function (id) {
+	var index = this.GetVersionIndex(id);
+	if (index === -1) {
+		return null;
+	}
+	return this.prop.Versions[index];
+};
+
+ActiveSelectedMetric.prototype.GetVariableById = function (variableId) {
+	var versions = this.properties.Versions;
+	for (var v = 0; v < versions.length; v++) {
+		for (var l = 0; l < versions[v].Levels.length; l++) {
+			var level = versions[v].Levels[l];
+			for (var i = 0; i < level.Variables.length; i++) {
+				if (level.Variables[i].Id == variableId) {
+					return level.Variables[i];
+				}
+			}
+		}
+	}
+	return null;
 };
 
 ActiveSelectedMetric.prototype.GetVersionIndex = function (id) {
