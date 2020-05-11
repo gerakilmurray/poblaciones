@@ -230,6 +230,14 @@ ActiveSelectedMetric.prototype.SelectedVersion = function () {
 	return this.properties.Versions[this.properties.SelectedVersionIndex];
 };
 
+ActiveSelectedMetric.prototype.SelectedLevelIndex = function () {
+	if (this.properties === null) {
+		throw new Error('No properties has been set.');
+	}
+	var version = this.SelectedVersion();
+	return version.SelectedLevelIndex;
+};
+
 ActiveSelectedMetric.prototype.SelectedLevel = function () {
 	if (this.properties === null) {
 		throw new Error('No properties has been set.');
@@ -418,7 +426,7 @@ ActiveSelectedMetric.prototype.UpdateLevel = function () {
 		return false;
 	}
 	var l = this.CalculateProperLevel();
-	if (l !== this.SelectedLevel().Id) {
+	if (l !== this.SelectedLevelIndex()) {
 		this.ChangeSelectedLevelIndex(l);
 		this.CheckValidMetric();
 		return true;
@@ -451,7 +459,7 @@ ActiveSelectedMetric.prototype.CalculateProperLevel = function () {
 	for (var l = 0; l < currentVersion.Levels.length; l++) {
 		currentLevelIndex = l;
 		currentLevel = currentVersion.Levels[currentLevelIndex];
-		if (clippingPassed && currentZoom <= currentLevel.MaxZoom) {
+		if (clippingPassed && currentZoom >= currentLevel.MinZoom && currentZoom <= currentLevel.MaxZoom) {
 			break;
 		}
 		if (clippingPassed === false) {
@@ -543,11 +551,11 @@ ActiveSelectedMetric.prototype.CheckTileIsOutOfClipping = function() {
 ActiveSelectedMetric.prototype.GetCartographyService = function () {
 	switch (this.SelectedLevel().LevelType) {
 	case 'L':
-			return { url: null, useDatasetId: false, revision: null };
+			return { url: null, revision: null };
 	case 'D':
-		return { url: 'geographies/GetGeography', useDatasetId: false, revision: window.SegMap.Revisions.Geography };
+		return { url: h.resolveMultiUrl(window.SegMap.Configuration.StaticServer, '/services/geographies/GetGeography'), revision: window.SegMap.Revisions.Geography };
 	case 'S':
-		return { url: 'shapes/GetDatasetShapes', useDatasetId: true, revision: this.properties.Metric.Revision };
+		return { url: window.host + '/services/shapes/GetDatasetShapes', isDatasetShapeRequest: true, revision: this.properties.Metric.Revision };
 	default:
 		throw new Error('Unknown dataset metric type');
 	}
@@ -559,9 +567,9 @@ ActiveSelectedMetric.prototype.UseBlockedRequests = function (boundsRectRequired
 
 ActiveSelectedMetric.prototype.GetDataService = function (boundsRectRequired) {
 	if (this.UseBlockedRequests(boundsRectRequired)) {
-		return 'metrics/GetBlockTileData';
+		return { server: window.host, path: '/services/metrics/GetBlockTileData', useStaticQueue: false };
 	} else {
-		return 'metrics/GetTileData';
+		return { server: window.host, path: '/services/metrics/GetTileData', useStaticQueue: false };
 	}
 };
 

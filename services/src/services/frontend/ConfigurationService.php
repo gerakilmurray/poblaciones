@@ -20,11 +20,14 @@ class ConfigurationService extends BaseService
 		$userService = new AuthenticationService();
 		$user = $userService->GetStatus();
 
-		return array('Revisions' => $revisions,
+		$ret = array('Revisions' => $revisions,
 									'Blocks' => $blockStrategy,
+									'StaticServer' =>  Context::Settings()->Servers()->GetContentServerUris(),
 									'UseGradients' => Context::Settings()->Map()->UseGradients,
 									'MaxQueueRequests' => Context::Settings()->Map()->MaxQueueRequests,
+									'MaxStaticQueueRequests' => Context::Settings()->Map()->MaxStaticQueueRequests,
 									'User' => $user);
+		return $ret;
 	}
 }
 

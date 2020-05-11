@@ -37,11 +37,11 @@ ActiveLabels.prototype.UseBlockedRequests = function (boundsRectRequired) {
 	return this.blockSize && !boundsRectRequired;
 };
 
-ActiveLabels.prototype.GetDataService = function (boundsRectRequired) {
+ActiveLabels.prototype.GetDataService = function (boundsRectRequired, seed) {
 	if (this.UseBlockedRequests(boundsRectRequired)) {
-		return 'clipping/GetBlockLabels';
+		return { server: h.selectMultiUrl(window.SegMap.Configuration.StaticServer, seed / this.blockSize), path: '/services/clipping/GetBlockLabels', useStaticQueue: true };
 	} else {
-		return 'clipping/GetLabels';
+		return { server: h.selectMultiUrl(window.SegMap.Configuration.StaticServer, seed), path: '/services/clipping/GetLabels', useStaticQueue: true };
 	}
 };
 
@@ -93,7 +93,7 @@ ActiveLabels.prototype.CreateComposer = function() {
 };
 
 ActiveLabels.prototype.GetCartographyService = function () {
-	return { url: null, useDatasetId: false, revision: null };
+	return { url: null, revision: null };
 };
 
 
