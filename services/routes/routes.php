@@ -35,7 +35,6 @@ App::$app->before(function(Request $request) {
 	Performance::ResolveControllerFromUri();
 
 	Headers::AcceptAnyCOARS();
-
 	$route = $request->getPathInfo();
 
 	if (Router::ProcessPath($route)) {
@@ -75,8 +74,8 @@ require_once('common.php');
 if (isset($isPublic) == false || $isPublic == false)
 {
 	require_once('logs.php');
-
 	App::RegisterControllerGet('/users', helena\controllers\backoffice\cBackoffice::class);
+	App::RegisterControllerGet('/users/', helena\controllers\backoffice\cBackoffice::class);
 	App::RegisterControllerGet('/users/{any}', helena\controllers\backoffice\cBackoffice::class)->assert("any", ".*");
 
 	App::RegisterControllerGet('/admins', helena\controllers\admins\cAdmins::class);
@@ -92,6 +91,7 @@ if (isset($isPublic) == false || $isPublic == false)
 	require_once('backoffice/import.php');
 	require_once('backoffice/mock.php');
 	require_once('backoffice/test.php');
+
 	require_once('admin/admin.php');
 }
 require_once('tests.php');

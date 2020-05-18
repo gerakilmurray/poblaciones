@@ -5,7 +5,7 @@ import err from '@/common/js/err';
 
 export default TileRequest;
 
-function TileRequest(queue, selectedMetricOverlay, coord, zoom, boundsRectRequired, key, div) {
+function TileRequest(queue, staticQueue, selectedMetricOverlay, coord, zoom, boundsRectRequired, key, div) {
 	this.selectedMetricOverlay = selectedMetricOverlay;
 	this.coord = coord;
 	this.zoom = zoom;
@@ -14,6 +14,8 @@ function TileRequest(queue, selectedMetricOverlay, coord, zoom, boundsRectRequir
 	this.boundsRectRequired = boundsRectRequired;
 	this.cancel1 = null;
 	this.cancel2 = null;
+	this.preCancel1Queue = null;
+	this.preCancel2Queue = null;
 	this.preCancel1 = null;
 	this.preCancel2 = null;
 	this.CancelToken1 = axios.CancelToken;
@@ -27,6 +29,7 @@ function TileRequest(queue, selectedMetricOverlay, coord, zoom, boundsRectRequir
 	this.cancelled = false;
 	this.dataBlockRequest = null;
 	this.queue = queue;
+	this.staticQueue = staticQueue;
 }
 
 TileRequest.prototype.CancelHttpRequests = function () {
@@ -42,7 +45,7 @@ TileRequest.prototype.CancelHttpRequests = function () {
 				this.cancel1('cancelled');
 			}
 			if (this.preCancel1 !== null) {
-				this.queue.Release(this.preCancel1);
+				this.preCancel1Queue.Release(this.preCancel1);
 			}
 		}
 	}
@@ -50,28 +53,34 @@ TileRequest.prototype.CancelHttpRequests = function () {
 		this.cancel2('cancelled');
 	}
 	if (this.preCancel2 !== null) {
-		this.queue.Release(this.preCancel2);
+		this.preCancel2Queue.Release(this.preCancel2);
 	}
 };
 
 TileRequest.prototype.GetTile = function () {
 	var loc = this;
 
-	this.url = this.selectedMetricOverlay.activeSelectedMetric.GetDataService(this.boundsRectRequired);
+	this.url = this.selectedMetricOverlay.activeSelectedMetric.GetDataService(this.boundsRectRequired, this.coord.x);
 	this.params = this.selectedMetricOverlay.activeSelectedMetric.GetDataServiceParams(this.coord, this.boundsRectRequired);
 	this.subset = (this.selectedMetricOverlay.activeSelectedMetric.GetSubset ? this.selectedMetricOverlay.activeSelectedMetric.GetSubset(this.coord, this.boundsRectRequired) : null);
 
-	var info = this.url + JSON.stringify(this.params);
+	var info = this.url.path + JSON.stringify(this.params);
 
-	var existing = this.queue.GetSameRequest(info);
+	// Resuelve el data
+	var dataQueue = (!this.url.useStaticQueue ? this.queue : this.staticQueue);
+	var existing = dataQueue.GetSameRequest(info);
 	if (existing) {
 		this.dataBlockRequest = existing;
 		existing.dataSubscribe(this);
 	} else {
-		this.queue.Enlist(this, this.startDataRequest, null, function (p) { loc.preCancel1 = p; }, info);
+		this.preCancel1Queue = dataQueue;
+		dataQueue.Enlist(this, this.startDataRequest, null, function (p) { loc.preCancel1 = p; }, info);
 	}
+	// Resuelve el geography
 	if (this.selectedMetricOverlay.geographyService.url) {
-		this.queue.Enlist(this, this.startGeographyRequest, null, function (p) { loc.preCancel2 = p; });
+		var geoQueue = (this.selectedMetricOverlay.geographyService.isDatasetShapeRequest ? this.queue : this.staticQueue);
+		this.preCancel2Queue = geoQueue;
+		geoQueue.Enlist(this, this.startGeographyRequest, null, function (p) { loc.preCancel2 = p; });
 	}
 };
 
@@ -114,18 +123,21 @@ TileRequest.prototype.allSubscribersAreCancelled = function () {
 };
 
 
-TileRequest.prototype.startDataRequest = function () {
+TileRequest.prototype.startDataRequest = function (queue) {
 	var loc = this;
 	var params = this.params;
-	window.SegMap.Get(/*window.host + */'/services/' + this.url, {
+
+	window.SegMap.Get(this.url.server + this.url.path, {
 		params: params,
-		cancelToken: new this.CancelToken1(function executor(c) { loc.cancel1 = c; }),
-	}).then(function (res) {
-		loc.queue.Release(loc.preCancel1);
+		cancelToken: new this.CancelToken1(function executor(c) { loc.cancel1 = c; })
+		},
+		this.url.useStaticQueue
+	).then(function (res) {
+		queue.Release(loc.preCancel1);
 		loc.notifyDataSubscribers(res.data);
 		loc.processDataResponse(res.data);
 	}).catch(function (error) {
-		loc.queue.Release(loc.preCancel1);
+		queue.Release(loc.preCancel1);
 		var q = params;
 		if (error.message !== 'cancelled') {
 			loc.selectedMetricOverlay.SetDivFailure(loc.div);
@@ -134,12 +146,12 @@ TileRequest.prototype.startDataRequest = function () {
 	});
 };
 
-TileRequest.prototype.startGeographyRequest = function () {
+TileRequest.prototype.startGeographyRequest = function (queue) {
 	var loc = this;
 
 	var geographyId = this.selectedMetricOverlay.activeSelectedMetric.SelectedLevel().GeographyId;
 	var geographyParams = { x: this.coord.x, y: this.coord.y, z: this.zoom, w: this.selectedMetricOverlay.geographyService.revision };
-	if (this.selectedMetricOverlay.geographyService.useDatasetId) {
+	if (this.selectedMetricOverlay.geographyService.isDatasetShapeRequest) {
 		geographyParams.d = this.selectedMetricOverlay.activeSelectedMetric.SelectedLevel().Dataset.Id;
 	} else {
 		geographyParams.a = geographyId;
@@ -150,12 +162,17 @@ TileRequest.prototype.startGeographyRequest = function () {
 	if (this.boundsRectRequired) {
 		geographyParams.b = this.boundsRectRequired;
 	};
-	var url = '/services/' + this.selectedMetricOverlay.geographyService.url;
+	var url = this.selectedMetricOverlay.geographyService.url;
+
+	url = h.selectMultiUrl(url, this.coord.x);
+	var noCredentials = (this.queue == queue);
+
 	window.SegMap.Get(url, {
 		params: geographyParams,
 		cancelToken: new this.CancelToken2(function executor(c) { loc.cancel2 = c; }),
+		noCredentials
 	}).then(function (res) {
-		loc.queue.Release(loc.preCancel2);
+		queue.Release(loc.preCancel2);
 		loc.receiveMapData(res.data);
 		var total = (res.data.TotalPages ? res.data.TotalPages : 1);
 		var next = (res.data.Page ? res.data.Page + 1 : 1);
@@ -164,10 +181,10 @@ TileRequest.prototype.startGeographyRequest = function () {
 			loc.ProcessResultsIfCompleted();
 		} else {
 			loc.Page = next;
-			this.queue.Enlist(loc, loc.startGeographyRequest, null, function (p) { loc.preCancel2 = p; });
+			queue.Enlist(loc, loc.startGeographyRequest, null, function (p) { loc.preCancel2 = p; });
 		}
 	}).catch(function (error1) {
-		loc.queue.Release(loc.preCancel2);
+		queue.Release(loc.preCancel2);
 		if (error1.message !== 'cancelled') {
 			loc.selectedMetricOverlay.SetDivFailure(loc.div);
 		}
