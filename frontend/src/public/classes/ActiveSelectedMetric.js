@@ -106,7 +106,8 @@ ActiveSelectedMetric.prototype.UpdateSummary = function () {
 	}
 	this.IsUpdatingSummary = true;
 	this.IsUpdatingRanking = true;
-	window.SegMap.Get(window.host + '/services/metrics/GetSummary', {
+
+	window.SegMap.Get(window.host + '/services/frontend/metrics/GetSummary', {
 		params: h.getSummaryParams(metric, window.SegMap.frame),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateSummary = c; }),
 	}).then(function (res) {
@@ -155,7 +156,7 @@ ActiveSelectedMetric.prototype.UpdateRanking = function () {
 	}
 	this.IsUpdatingRanking = true;
 
-	window.SegMap.Get(window.host +'/services/metrics/GetRanking', {
+	window.SegMap.Get(window.host + '/services/frontend/metrics/GetRanking', {
 		params: h.getRankingParams(metric, window.SegMap.frame, this.RankingSize, this.RankingDirection),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateRanking = c; }),
 	}).then(function (res) {
@@ -227,6 +228,14 @@ ActiveSelectedMetric.prototype.SelectedVersion = function () {
 		throw new Error('No properties has been set.');
 	}
 	return this.properties.Versions[this.properties.SelectedVersionIndex];
+};
+
+ActiveSelectedMetric.prototype.SelectedLevelIndex = function () {
+	if (this.properties === null) {
+		throw new Error('No properties has been set.');
+	}
+	var version = this.SelectedVersion();
+	return version.SelectedLevelIndex;
 };
 
 ActiveSelectedMetric.prototype.SelectedLevel = function () {
@@ -417,7 +426,7 @@ ActiveSelectedMetric.prototype.UpdateLevel = function () {
 		return false;
 	}
 	var l = this.CalculateProperLevel();
-	if (l !== this.SelectedLevel().Id) {
+	if (l !== this.SelectedLevelIndex()) {
 		this.ChangeSelectedLevelIndex(l);
 		this.CheckValidMetric();
 		return true;
@@ -450,7 +459,7 @@ ActiveSelectedMetric.prototype.CalculateProperLevel = function () {
 	for (var l = 0; l < currentVersion.Levels.length; l++) {
 		currentLevelIndex = l;
 		currentLevel = currentVersion.Levels[currentLevelIndex];
-		if (clippingPassed && currentZoom <= currentLevel.MaxZoom) {
+		if (clippingPassed && currentZoom >= currentLevel.MinZoom && currentZoom <= currentLevel.MaxZoom) {
 			break;
 		}
 		if (clippingPassed === false) {
@@ -542,11 +551,11 @@ ActiveSelectedMetric.prototype.CheckTileIsOutOfClipping = function() {
 ActiveSelectedMetric.prototype.GetCartographyService = function () {
 	switch (this.SelectedLevel().LevelType) {
 	case 'L':
-			return { url: null, useDatasetId: false, revision: null };
+			return { url: null, revision: null };
 	case 'D':
-		return { url: 'geographies/GetGeography', useDatasetId: false, revision: window.SegMap.Revisions.Geography };
+		return { url: h.resolveMultiUrl(window.SegMap.Configuration.StaticServer, '/services/frontend/geographies/GetGeography'), revision: window.SegMap.Revisions.Geography };
 	case 'S':
-		return { url: 'shapes/GetDatasetShapes', useDatasetId: true, revision: this.properties.Metric.Revision };
+		return { url: window.host + '/services/frontend/shapes/GetDatasetShapes', isDatasetShapeRequest: true, revision: this.properties.Metric.Revision };
 	default:
 		throw new Error('Unknown dataset metric type');
 	}
@@ -558,9 +567,9 @@ ActiveSelectedMetric.prototype.UseBlockedRequests = function (boundsRectRequired
 
 ActiveSelectedMetric.prototype.GetDataService = function (boundsRectRequired) {
 	if (this.UseBlockedRequests(boundsRectRequired)) {
-		return 'metrics/GetBlockTileData';
+		return { server: window.host, path: '/services/frontend/metrics/GetBlockTileData', useStaticQueue: false };
 	} else {
-		return 'metrics/GetTileData';
+		return { server: window.host, path: '/services/frontend/metrics/GetTileData', useStaticQueue: false };
 	}
 };
 
