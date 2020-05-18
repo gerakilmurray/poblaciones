@@ -4,7 +4,7 @@ const err = require('@/common/js/err');
 module.exports = {
 	loadHeaderBar(setter) {
 		var loc = this;
-		axios.get(window.host + '/services/backoffice/GetConfiguration', {
+		axios.get(/*window.host + */'/services/backoffice/GetConfiguration', {
 				withCredentials: true,
 				params: {}
 			}).then(function(res) {

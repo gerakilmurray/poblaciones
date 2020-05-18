@@ -89,7 +89,7 @@ ActiveWork.prototype.HasChanges = function () {
 ActiveWork.prototype.GetMetricsList = function () {
 	// Trae sus variables
 	var args = { 'w': this.properties.Id };
-	return axiosClient.getPromise(window.host + '/services/backoffice/GetWorkMetricsList', args,
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/GetWorkMetricsList', args,
 		'obtener la lista de métricas');
 };
 
@@ -232,21 +232,21 @@ ActiveWork.prototype.UpdateSource = function (source) {
 ActiveWork.prototype.AppendExtraMetric = function (metric) {
 	var args = { 'w': this.properties.Id, 'm': metric.Id };
 	this.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/AppendExtraMetric', args,
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/AppendExtraMetric', args,
 		'agregar el indicador adicional');
 };
 
 ActiveWork.prototype.UpdateExtraMetricStart = function (metric) {
 	var args = { 'w': this.properties.Id, 'm': metric.Id, 'a': (metric.StartActive ? 1 : 0) };
 	this.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateExtraMetricStart', args,
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/UpdateExtraMetricStart', args,
 		'actualizar el indicador adicional');
 };
 
 ActiveWork.prototype.RemoveExtraMetric = function (metric) {
 	var args = { 'w': this.properties.Id, 'm': metric.Id };
 	this.WorkChanged();
-	return axiosClient.getPromise(window.host + '/services/backoffice/RemoveExtraMetric', args,
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/RemoveExtraMetric', args,
 		'remover el indicador adicional');
 };
 
@@ -254,7 +254,7 @@ ActiveWork.prototype.UpdateStartup = function () {
 	var args = { 'w': this.properties.Id, 's': this.properties.Startup };
 	this.WorkChanged();
 	// Guarda en el servidor lo que esté en this.properties.Startup
-	return axiosClient.postPromise(window.host + '/services/backoffice/UpdateStartup', args,
+	return axiosClient.postPromise(/*window.host + */'/services/backoffice/UpdateStartup', args,
 		'actualizar los atributos de inicio');
 };
 
@@ -300,7 +300,7 @@ ActiveWork.prototype.RequestReview = function () {
 
 ActiveWork.prototype.UpdateVisibility = function () {
 	var loc = this;
-	return axiosClient.getPromise(window.host + '/services/backoffice/UpdateWorkVisibility',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/UpdateWorkVisibility',
 		{ 'w': this.properties.Id, 'l': this.properties.AccessLink, 'p': (this.properties.IsPrivate ? '1' : '0') }, 'actualizar la visibilidad').then(
 		function () {
 			window.Context.UpdatePrivacy(loc.properties.Id, loc.properties.IsPrivate);
