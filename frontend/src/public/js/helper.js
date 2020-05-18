@@ -1,8 +1,8 @@
 var TWEEN = require('@tweenjs/tween.js');
 
 module.exports = {
-	trimNumber(n) {
-		return parseFloat(n.toFixed(6));
+	trimNumberCoords(n) {
+		return parseFloat(Number('' + n).toFixed(6));
 	},
 	formatPercent(num, tot) {
 		if (num === '') {
@@ -400,9 +400,12 @@ module.exports = {
 			// tiene múltiples fuentes
 			return url;
 		}
+		if (url.length === 1) {
+			return url[0];
+		}
 		var pos;
 		if (seed) {
-			pos = seed % url.length;
+			pos = Math.floor(Math.floor(seed) % url.length);
 		} else {
 			pos = Math.floor(Math.random() * url.length);
 		}
