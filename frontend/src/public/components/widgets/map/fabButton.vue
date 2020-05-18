@@ -6,7 +6,7 @@
 					 z-index="1000000095"
 					 :enable-rotation="false"
 					 :position="position"
-					 :bg-color="bgColor"
+					 :bg-color="getCustomBgColor() || bgColor"
 					 :actions="fabActions"
 					 @selected0="selected(0)"
 					 @selected1="selected(1)"
@@ -65,7 +65,14 @@ export default {
 			return ret;
 		}
 	},
+	props: [
+		'work',
+	],
 	methods: {
+		getCustomBgColor() {
+			const work = this.work.Current;
+			return work && work.Styles && work.Styles['background-color'];
+		},
 		loadFabMetrics() {
 			const loc = this;
 			axios.get(/*window.host + */'/services/metrics/GetFabMetrics', {

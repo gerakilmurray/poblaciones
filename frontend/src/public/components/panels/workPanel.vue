@@ -1,7 +1,7 @@
 <template>
 	<nav id="workPanel" class="navbar-fixed-top workPanel">
 		<div>
-			<div v-if="work.Current !== null" ref="barBody" class="panel card workPanelBody" id="barBody">
+			<div v-if="work.Current !== null" ref="barBody" class="panel card workPanelBody" id="barBody" :style="work.Current.Styles">
 				<!--button title="Cerrar" type="button" v-on:click="work.Current = null" class="close">
 					<span aria-hidden="true">&times;</span>
 				</button -->
@@ -12,12 +12,11 @@
 					<div style="position: relative; z-index: 10;" :style="(showButtonsInInSingleRow() ? 'width: 1px' : '')">
 						<div class="sourceInfo" :style="getMetadataStyle()">
 							<a href="#" :title="'Metadatos de ' + work.Current.Name"
-								 v-on:click="clickFuente" style="color: #FFF">
+								v-on:click="clickFuente" style="color: #FFF">
 								<link-icon />
 								Metadatos
 							</a>
 						</div>
-
 					</div>
 				</div>
 				<div v-if="work.Current.Institution" class="littleRow preTitleRow">
