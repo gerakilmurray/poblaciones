@@ -11,6 +11,10 @@ App::SetDebug(true);
 // **** Servidores
 Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.eastus.cloudapp.azure.com", "https://desa-poblaciones.eastus.cloudapp.azure.com");
 
+// **** Opcionales
+Context::Settings()->Map()->UseTileBlocks = true;
+Context::Settings()->Map()->UseGradients = true;
+
 // **** Keys de terceros
 Context::Settings()->Keys()->GoogleMapsKey = "AIzaSyCvwo3r7L_WUENLJQgqlwQT3D4XUyvIpSc";
 
@@ -35,4 +39,8 @@ Context::Settings()->Map()->DefaultClippingRegion = 15476;
 Context::Settings()->Db()->SetDatabase("localhost", "ffg_maps_desa", "u_ffg_dev", "uffG.2019");
 
 // Ubicación de python
+Context::Settings()->Servers()->Python3 = '/usr/bin/python3';
 Context::Settings()->Servers()->Python27 = '/usr/bin/python';
+
+// Ubicación del binario de php para ejecutar en línea de comandos
+Context::Settings()->Servers()->PhpCli = 'php';

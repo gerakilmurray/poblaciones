@@ -24,6 +24,12 @@ class DatasetService extends DbSession
 		$caption = trim($caption);
 		$dataset = $this->Create($workId, $caption);
 
+		$this->CreateDefaultMetric($dataset, $caption);
+		return $dataset;
+	}
+
+	private function CreateDefaultMetric($dataset, $caption)
+	{
 		// Crea el metric, metricVersion y metricVersionLevel
 		$metricService = new MetricService();
 
@@ -48,9 +54,8 @@ class DatasetService extends DbSession
 		$variable->setMetricVersionLevel($level);
 
 		$metricService->UpdateVariable($dataset->getId(), $level, $variable);
-
-		return $dataset;
 	}
+
 	public function Create($workId, $caption = '')
 	{
 		Profiling::BeginTimer();
@@ -205,7 +210,7 @@ class DatasetService extends DbSession
 			$cols .= ',' . $column->getField() . ' `' . $column->getVariable() . '`';
 		$cols .= ',Id as internal__Id';
 
-		// Si es la vista de errores desde georreferenciación, hace join con la tabla de errors
+		// Si es la vista de errores desde georreferenciaciÃ³n, hace join con la tabla de errors
 		$joinErrors = '';
 		$whereErrors = '';
 		$colsErrors = '';
@@ -491,7 +496,7 @@ class DatasetService extends DbSession
 	private function DeleteOrphanMetricVersion($metricVersion)
 	{
 		Profiling::BeginTimer();
-		// Se fija si era el último
+		// Se fija si era el Ãºltimo
 		$childrenSql = "SELECT count(*) FROM draft_metric_version_level WHERE mvl_metric_version_id = ?";
 		$sibilings = App::Db()->fetchScalarInt($childrenSql, array($metricVersion->getId()));
 		if ($sibilings == 0)
@@ -503,7 +508,7 @@ class DatasetService extends DbSession
 	private function DeleteOrphanMetric($metric)
 	{
 		Profiling::BeginTimer();
-		// Se fija si era el último
+		// Se fija si era el Ãºltimo
 		$childrenSql = "SELECT count(*) FROM draft_metric_version WHERE mvr_metric_id = ?";
 		$sibilings = App::Db()->fetchScalarInt($childrenSql, array($metric->getId()));
 		if ($sibilings == 0)

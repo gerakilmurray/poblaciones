@@ -9,7 +9,7 @@ function ActiveLabels(config) {
 	this.isBaseMetric = true;
 	this.visible = true;
 	this.KillDuplicateds = false;
-	if (config.Blocks.UseTileBlocks) {
+	if (config.Blocks.UseLabelTileBlocks) {
 		this.blockSize = config.Blocks.LabelsBlockSize;
 	} else {
 		this.blockSize = null;
@@ -37,11 +37,11 @@ ActiveLabels.prototype.UseBlockedRequests = function (boundsRectRequired) {
 	return this.blockSize && !boundsRectRequired;
 };
 
-ActiveLabels.prototype.GetDataService = function (boundsRectRequired) {
+ActiveLabels.prototype.GetDataService = function (boundsRectRequired, seed) {
 	if (this.UseBlockedRequests(boundsRectRequired)) {
-		return 'clipping/GetBlockLabels';
+		return { server: h.selectMultiUrl(window.SegMap.Configuration.StaticServer, seed / this.blockSize), path: '/services/frontend/clipping/GetBlockLabels', useStaticQueue: true };
 	} else {
-		return 'clipping/GetLabels';
+		return { server: h.selectMultiUrl(window.SegMap.Configuration.StaticServer, seed), path: '/services/frontend/clipping/GetLabels', useStaticQueue: true };
 	}
 };
 
@@ -93,7 +93,7 @@ ActiveLabels.prototype.CreateComposer = function() {
 };
 
 ActiveLabels.prototype.GetCartographyService = function () {
-	return { url: null, useDatasetId: false, revision: null };
+	return { url: null, revision: null };
 };
 
 
