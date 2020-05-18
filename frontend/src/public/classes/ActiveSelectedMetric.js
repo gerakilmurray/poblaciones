@@ -107,7 +107,7 @@ ActiveSelectedMetric.prototype.UpdateSummary = function () {
 	this.IsUpdatingSummary = true;
 	this.IsUpdatingRanking = true;
 
-	window.SegMap.Get(window.host + '/services/frontend/metrics/GetSummary', {
+	window.SegMap.Get(/*window.host + */'/services/frontend/metrics/GetSummary', {
 		params: h.getSummaryParams(metric, window.SegMap.frame),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateSummary = c; }),
 	}).then(function (res) {
@@ -156,7 +156,7 @@ ActiveSelectedMetric.prototype.UpdateRanking = function () {
 	}
 	this.IsUpdatingRanking = true;
 
-	window.SegMap.Get(window.host + '/services/frontend/metrics/GetRanking', {
+	window.SegMap.Get(/*window.host + */'/services/frontend/metrics/GetRanking', {
 		params: h.getRankingParams(metric, window.SegMap.frame, this.RankingSize, this.RankingDirection),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelUpdateRanking = c; }),
 	}).then(function (res) {
@@ -555,7 +555,7 @@ ActiveSelectedMetric.prototype.GetCartographyService = function () {
 	case 'D':
 		return { url: h.resolveMultiUrl(window.SegMap.Configuration.StaticServer, '/services/frontend/geographies/GetGeography'), revision: window.SegMap.Revisions.Geography };
 	case 'S':
-		return { url: window.host + '/services/frontend/shapes/GetDatasetShapes', isDatasetShapeRequest: true, revision: this.properties.Metric.Revision };
+		return { url: /*window.host + */'/services/frontend/shapes/GetDatasetShapes', isDatasetShapeRequest: true, revision: this.properties.Metric.Revision };
 	default:
 		throw new Error('Unknown dataset metric type');
 	}

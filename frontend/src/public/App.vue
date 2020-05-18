@@ -112,7 +112,7 @@ export default {
 	methods: {
 		GetConfiguration() {
 			const loc = this;
-			return axios.get(window.host + '/services/GetConfiguration', {
+			return axios.get(/*window.host + */'/services/GetConfiguration', {
 				params: {}
 			}).then(function(res) {
 				loc.config = res.data;
