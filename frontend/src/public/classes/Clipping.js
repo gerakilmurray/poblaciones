@@ -167,7 +167,7 @@ Clipping.prototype.RestoreClipping = function (clippingName, fitRegion) {
 	this.SetClippingRequest('*');
 	this.SegmentedMap.MapsApi.ClearClippingCanvas();
 	this.SegmentedMap.RefreshSummaries();
-	this.SegmentedMap.Get(/*window.host + */'/services/frontend/clipping/CreateClipping', {
+	this.SegmentedMap.Get(window.host + '/services/frontend/clipping/CreateClipping', {
 		params: h.getCreateClippingParamsByName(loc.frame, clippingName, this.SegmentedMap.Revisions.Clipping),
 		cancelToken: new CancelToken(function executor(c) { loc.cancelCreateClipping = c; }),
 	}).then(function (res) {

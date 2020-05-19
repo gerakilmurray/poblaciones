@@ -126,7 +126,7 @@ export default {
 			this.newMetric.Source.ValueLabelIds = [];
 
 			const loc = this;
-			axios.get(/*window.host + */'/services/metrics/GetSelectedMetric', {
+			axios.get(window.host + '/services/metrics/GetSelectedMetric', {
 				params: { l: metric.Id }
 			}).then(function (res) {
 				loc.newMetric.SourceMetric = res.data;

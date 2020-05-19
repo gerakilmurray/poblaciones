@@ -6,9 +6,6 @@ if(process.env.npm_config_lamp) {
 	devenv = './lamp.env';
 }
 
-// TODO - GK - Remove before merge
-var devenv_url = 'https://desa.poblaciones.org';
-
 module.exports = {
 	build: {
 		env: {} ,
@@ -37,14 +34,7 @@ module.exports = {
 		autoOpenBrowser: false,
 		assetsSubDirectory: 'static',
 		assetsPublicPath: '/',
-		// TODO - GK - Remove before merge
-		proxyTable: {
-			'/services': { target: devenv_url, changeOrigin: true, secure: false
-		}
-//			'/logs': { target: devenv_url, changeOrigin: true },
-//			'/authenticate': { target: devenv_url, changeOrigin: true },
-//			'/static': { target: devenv_url, changeOrigin: true }
-		 },
+		proxyTable: {},
 		// TODO - GK - Remove before merge
 		// CSS Sourcemaps off by default because relative paths are "buggy"
 		// with this option, according to the CSS-Loader README

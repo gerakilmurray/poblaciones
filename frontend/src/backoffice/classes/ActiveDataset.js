@@ -239,7 +239,7 @@ ActiveDataset.prototype.CalculateNewMetric = function(newMetric) {
 	// levelNoVariables.Variables = null;
 	this.Work.WorkChanged();
 
-	return axiosClient.getPromise(/*window.host + */'/services/backoffice/CalculateNewMetric', {
+	return axiosClient.getPromise(window.host + '/services/backoffice/CalculateNewMetric', {
 		'k': loc.properties.Id,
 		'w': loc.Work.Id,
 		'm': newMetric.Id,
