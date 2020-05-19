@@ -3,7 +3,7 @@
 # lineends=linux
 
 echo -e "\n### Installing Python Pip ##################################################################################################"
-sudo apt install python-pip
+sudo apt install python-pip python3-pip
 
 echo -e "\n### Installing dependencies ################################################################################################"
 sudo pip install savReaderWriter ijson numpy bs4 lxml
