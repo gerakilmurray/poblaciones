@@ -11,32 +11,26 @@
             Embeber este mapa
            </div>
           <div class="articleContent">
-            <div style="margin-left: 60px;">
-              <div style="margin-right: 60px;">
-              Para embeber este mapa copiar el siguiente HTML en su sitio web y pegarlo en el código fuente de su página.
-              </div>
-              </div>
+            	<div style="margin-left: 60px;">
+              		<div style="margin-right: 60px;">
+              				Para embeber este mapa copiar el siguiente HTML en su sitio web y pegarlo en el código fuente de su página.
+              		</div>
+              	</div>
+
+				<textarea v-model="iframeCode" id="testing-code" style="padding: 15px 20px;" >  </textarea>
+
             </div>
         </section>
-
       </article>
       <footer>
-        <div class="forward-actions">
-          <!--         <button class="secondary skip" :disabled="isLastStep" v-show="!isLastStep" @click="skip(2)">Skip</button> -->
-          <button class="primary next" :disabled="isLastStep" v-show="!isLastStep" @click="skip(1)">
-            <i class="fa fa-fw fa-lg" :class="nextIcon"></i>
+        <div class="cancel-actions">
+          <button type="button" class="accent save" @click="finish()">
+            <i class="fas fa-times fa-lg"></i>
           </button>
-          <button class="accent save" :disabled="!isLastStep" v-show="isLastStep" @click="finish">
-            <i class="fa fa-fw fa-lg fa-check"></i>
-          </button>
+
         </div>
-        <div class="step-dots" v-if="hasDots">
-          <div class="step-dot" v-for="n in max" :key="n" :class="{active: n == step}" @click="goToStep(n)"></div>
-        </div>
-        <div class="back-actions">
-          <button class="secondary cancel prev" :disabled="isFirstStep" xv-show="!isFirstStep" @click="skip(-1)">
-            <i class="fa fa-fw fa-lg" :class="backIcon"></i>
-          </button>
+        <div class="copy-actions">
+          <button type="button" class="copy iframe" @click="copyIframeCode()"> {{ "COPIAR" }}  </button>
         </div>
       </footer>
     </boardal>
@@ -44,7 +38,7 @@
 </template>
 
 <script>
-import boardal from '@/public/components/widgets/boardal';
+import boardal from '@/public/components/controls/boardal';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 
 export default {
@@ -56,7 +50,7 @@ export default {
         isOpen: false,
         hasMask: true,
         canClickMask: true,
-        hasX: false
+		hasX: false,
       },
 
       showDots: true,
@@ -65,21 +59,10 @@ export default {
     };
   },
   computed: {
-    isFirstStep(){
-      return (this.step === 1);
-    },
-    isLastStep(){
-      return (this.step === this.max);
-    },
-    hasDots(){
-      return (this.max > 1 && this.showDots);
-    },
-    x_multiplier(){
-      return (this.orientation === 'row' ? -1 : 0);
-    },
-    y_multiplier(){
-      return (this.orientation === 'row' ? 0 : -1);
-    },
+	iframeCode: () => {
+		const url = window.location.href;
+		return `<iframe src="${ url }" width="98%" height="83%" frameborder="0" style="border:0; margin-top:-2 5rem; position:relative;" allowfullscreen="true" scrolling="false" allowtransparency="true"></iframe>`;
+	},
     axis() {
       return (this.orientation === 'row' ? 'row' : 'column');
     },
@@ -91,12 +74,6 @@ export default {
     },
     crossReverse() {
       return (this.orientation === 'row' ? 'column-reverse' : 'row-reverse');
-    },
-    nextIcon() {
-      return (this.orientation === 'row' ? 'fa-arrow-right' : 'fa-arrow-down');
-    },
-    backIcon() {
-      return (this.orientation === 'row' ? 'fa-arrow-left' : 'fa-arrow-up');
     },
 
   },
@@ -110,7 +87,7 @@ export default {
       this.modal.isOpen = !this.modal.isOpen;
       if(this.modal.isOpen) {
         let self = this;
-        setTimeout(function(){
+        setTimeout(function() {
           self.$sections = self.$el.querySelectorAll('section');
           self.max = self.$sections.length;
           self.goToStep(step);
@@ -121,13 +98,7 @@ export default {
         }
       }
     },
-    noThanks() {
-      if (window.SegMap) {
-        window.SegMap.Tutorial.DoneWithTutorial();
-      }
-      this.toggleModal();
-    },
-    setCssVars(){
+    setCssVars() {
       this.$el.style.setProperty('--x', (((this.step * 100) - 100) * this.x_multiplier) + '%');
       this.$el.style.setProperty('--y', (((this.step * 100) - 100) * this.y_multiplier) + '%');
       this.$el.style.setProperty('--axis', this.axis);
@@ -135,23 +106,31 @@ export default {
       this.$el.style.setProperty('--cross', this.cross);
       this.$el.style.setProperty('--cross-reverse', this.crossReverse);
       // this.$el.style.setProperty('--vision', this.xray);
+	},
+	copyIframeCode() {
+		let testingCodeToCopy = document.querySelector('#testing-code');
+        testingCodeToCopy.select();
+        var successful = document.execCommand('copy');
+		var msg = successful ? 'successful' : 'unsuccessful';
+		console.log(msg);
+        window.getSelection().removeAllRanges();
     },
-    goToStep(step){
+    goToStep(step) {
       this.step = step > this.max ? this.max : step < 1 ? 1 : step;
       this.currentSection = this.$sections[this.step - 1];
-      this.$sections.forEach(function(section){
+      this.$sections.forEach(function(section) {
         section.classList.remove('current');
       });
       this.currentSection.classList.add('current');
       this.currentSection.scrollTop = 0;
       this.setCssVars();
     },
-    reset(){
+    reset() {
       this.goToStep(1);
     },
-    finish(){
+    finish() {
       this.toggleModal();
-    }
+	}
   }
 };
 </script>
@@ -175,6 +154,18 @@ export default {
   color: #888;
 }
 
+#testing-code{
+	height: 150px;
+	width: 600px;
+	border-radius: 20px;
+	overflow: hidden;
+	position: fixed;
+	font-size: 80%;
+	text-align: justify;
+	margin: 20px 60px 20px 90px;
+	font-size: 0.9em;
+}
+
 .halves {
   max-width: 350px;
   font-size: 14px;
@@ -194,8 +185,8 @@ position: absolute;
 }
 // modal content sliders
 article {
-  flex: 1 1 100%;
-  height: 100%;
+  flex: 1 1 80%;
+  height: 80%;
   display: flex;
   flex-direction: var(--axis, row);
   overflow: hidden;
@@ -260,41 +251,18 @@ footer {
     padding: 1em;
   }
 }
-
-.step-dots {
-  display: flex;
-  flex-direction: var(--axis, row);
-}
-.step-dot {
-  cursor: pointer;
-  width: 1em;
-  height: 1em;
-  margin: .5ch;
-  border-radius: 1em;
-  background: currentColor;
-  opacity: .2;
-  transition: transform 100ms ease-out, opacity 150ms linear;
-  &.active {
-    opacity: .7;
-    box-shadow: 0 0 1em -.25em;
-  }
-  &:hover {
-    transform: scale(1.2)
-  }
-}
-.forward-actions,
-.back-actions {
+.copy-actions,
+.cancel-actions {
   flex: 1;
   display: flex;
   flex-direction: var(--axis, row);
 }
-.forward-actions {
+.copy-actions {
   justify-content: flex-end;
-  // text-align: right;
 }
-.back-actions {
-  justify-content: flex-start;
-  // text-align: left;
+.cancel-actions {
+  justify-content: flex-end;
+
 }
 
 // boring
@@ -377,6 +345,9 @@ button {
   &.cancel:not([disabled]) {
     color: var(--accent);
   }
+}
+.boardal__wrapper{
+	width: 30em !important;
 }
 
 </style>
