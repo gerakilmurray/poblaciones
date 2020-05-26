@@ -1,4 +1,12 @@
 [CURRENT]
+
+v2.20 (2020-05-26)
+- Refactoring tabla snapshots.
+- Fix: las cuentas nuevas no se activaban automáticamente al recibirse un permiso a una cartografía.
+- Fix: identificación de columnas en archivos Excel (para títulos con celdas vacías)
+- Fix: descarga de SAV con columnas con caracteres extendidos.
+
+v2.21 (2020-05-19)
 - Implementación de readonlyForMaintenance.
 - Retry en queries del mapa (1 vez).
 - Modo CDN para servers para compatibilidad con CloudFlare.
@@ -8,6 +16,8 @@
 - Badge de publicar en barra lateral.
 - Fix: redirect tras cambiar contraseña por link.
 - Fix: link a términos y condiciones desde pantalla de ingresar.
+- La grilla de datos permite editar los valores.
+- Mejoras en título para los handles para crawler (google).
 
 v2.20 (2020-05-08)
 - Los tooltips en el mapa muestra un panel con el valor actual para el feature.
