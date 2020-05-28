@@ -4,6 +4,7 @@ namespace helena\services\backoffice\publish;
 
 use minga\framework\Profiling;
 use minga\framework\Arr;
+use minga\framework\Context;
 
 use helena\classes\App;
 use helena\db\admin\WorkModel;
@@ -29,18 +30,23 @@ class PublishSnapshots extends BaseService
 		if ($slice < $totalSlices)
 		{
 			$row = $datasets[$slice];
-			$cacheManager->ClearDatasetData($row['dat_id']);
-			$snapshotsManager->UpdateDatasetData($row);
+			if ($work['wrk_dataset_data_changed'])
+			{
+				$cacheManager->ClearDatasetData($row['dat_id']);
+				$snapshotsManager->UpdateDatasetData($row);
+			}
+			if (Context::Settings()->Map()->NewPublishingMethod)
+			{
+				if ($work['wrk_metric_data_changed'] || $work['wrk_dataset_data_changed'] || $work['wrk_metric_labels_changed'])
+				{
+					$snapshotsManager->UpdateDatasetMetrics($row);
+				}
+			}
 		}
 
 		Profiling::EndTimer();
 
-		if ($work['wrk_dataset_data_changed'])
-		{
-			return $slice == $totalSlices;
-		}
-		else
-			return true;
+		return $slice == $totalSlices;
 	}
 
 	public function UpdateWorkMetricVersions($workId, $slice, &$totalSlices)
@@ -56,7 +62,7 @@ class PublishSnapshots extends BaseService
 		$workModel = new WorkModel();
 		$metricVersions = $workModel->GetMetricVersions($workId);
 
-		// Los datos cambian por metricVersion; los metadatos sólo por metric.
+		// Los datos cambian por metricVersion; los metadatos sÃ³lo por metric.
 		if (sizeof($metricVersions) === 0)
 		{
 			$snapshotsManager->DeleteMetricVersionsByWork($workId);
@@ -78,7 +84,7 @@ class PublishSnapshots extends BaseService
 			// Libera los metadatos del metric (summary, selected, getTile)
 			$cacheManager->ClearMetricMetadata($metricVersion['mvr_metric_id']);
 		}
-		// Actualiza los metadatos del metric en el que están las versiones
+		// Actualiza los metadatos del metric en el que estÃ¡n las versiones
 		$snapshotsManager->UpdateMetricMetadata($metricVersion['mvr_metric_id']);
 		if ($work['wrk_type'] === 'P')
 		{
@@ -116,7 +122,7 @@ class PublishSnapshots extends BaseService
 
 	public function UpdateWorkVisibility($workId)
 	{
-		// Es llamado cuando cambia el isIndexed, el isPrivate, el accesLink o el workType de una cartografía.
+		// Es llamado cuando cambia el isIndexed, el isPrivate, el accesLink o el workType de una cartografÃ­a.
 		// 1. Trae los metrics ya publicados
 		$publicWorkModel = new WorkModel(false);
 		$workIdShardified = PublishDataTables::Shardified($workId);

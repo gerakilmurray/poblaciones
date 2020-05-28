@@ -1,8 +1,8 @@
 var TWEEN = require('@tweenjs/tween.js');
 
 module.exports = {
-	trimNumber(n) {
-		return parseFloat(n.toFixed(6));
+	trimNumberCoords(n) {
+		return parseFloat(Number('' + n).toFixed(6));
 	},
 	formatPercent(num, tot) {
 		if (num === '') {
@@ -206,6 +206,24 @@ module.exports = {
 		}
 		return ret;
 	},
+	removeAllChildren(e) {
+		var child = e.lastElementChild;
+    while (child) {
+        e.removeChild(child);
+        child = e.lastElementChild;
+    }
+	},
+	getVariableFrameKey(v, x, y, z, boundsRectRequired) {
+		var args = 'v=' + v + '&' + this.getFrameKey(x, y, z, boundsRectRequired);
+		return args;
+	},
+	getFrameKey(x, y, z, boundsRectRequired) {
+		var args = 'x=' + x + '&y=' + y + '&z=' + z;
+		if (boundsRectRequired) {
+			args += '&b=1';
+		}
+		return args;
+	},
 	getSafeValue(arr, key, def) {
 		if (key in arr) {
 			return arr[key];
@@ -366,6 +384,32 @@ module.exports = {
 			ret.b = boundsRectRequired;
 		};
 		return ret;
+	},
+	resolveMultiUrl(servers, path) {
+		if (!Array.isArray(servers)) {
+			return servers + path;
+		}
+		var ret = [];
+		for (var n = 0; n < servers.length; n++) {
+			ret.push(servers[n] + path);
+		}
+		return ret;
+	},
+	selectMultiUrl(url, seed) {
+		if (!Array.isArray(url)) {
+			// tiene múltiples fuentes
+			return url;
+		}
+		if (url.length === 1) {
+			return url[0];
+		}
+		var pos;
+		if (seed) {
+			pos = Math.floor(Math.floor(seed) % url.length);
+		} else {
+			pos = Math.floor(Math.random() * url.length);
+		}
+		return url[pos];
 	},
 	getRankingParams(metric, frame, size, direction) {
 		const ver = metric.Versions[metric.SelectedVersionIndex];

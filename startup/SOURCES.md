@@ -3,7 +3,7 @@ Esta guía detalla los pasos necesarios para inicializar una instalación de des
 
 ## 1. Instalar el software necesario.
 
-1. Para instalar VueJS. Descargar e instalar NodeJs https://nodejs.org/en/. Es necesario correr la instalación completa instalando las herramientas para compilar paquetes en C o C++. El instalador descarga e instala todas las dependencias. 
+1. Para instalar VueJS. Descargar e instalar NodeJs https://nodejs.org/en/. Es necesario correr la instalación completa instalando las herramientas para compilar paquetes en C o C++. El instalador descarga e instala todas las dependencias.
 
 1a. Luego de instalarlo, ejecutar > `npm install vue`.
 
@@ -11,7 +11,13 @@ Esta guía detalla los pasos necesarios para inicializar una instalación de des
 
 3. Instalar Python 2.7 (sólo requerido para conversiones de archivos SPSS) (https://www.python.org/downloads/release/python-2716/)
 
-4. Instalar MySql 5.6 o superior (https://dev.mysql.com/downloads/mysql/).
+4. Instalar las dependencias de Python:
+
+pip install savReaderWriter
+pip install ijson
+pip install numpy
+
+5. Instalar MySql 5.6 o superior (https://dev.mysql.com/downloads/mysql/).
 
 ## 2. Descargar los fuentes del repositorio.
 
@@ -21,7 +27,7 @@ Esta guía detalla los pasos necesarios para inicializar una instalación de des
 
 ## 3. Iniciar una base de datos para Poblaciones
 
-1. Utilizar [dbscript-v1.sql](dbscript-v1.sql) para crear una base vacía. 
+1. Utilizar [dbscript-v1.sql](dbscript-v1.sql) para crear una base vacía.
 
 2. Agregar los registros de un 'data-pack' desde https://github.com/poblaciones/data-packs.
 
@@ -42,14 +48,14 @@ Eso instalará las librerías que precisan los servicios en PHP y cliente VueJS.
 
 ## 5. Crear los archivos de configuración
 
-1. Renombrar services/config/settings.sample.php a services/config/settings.php 
- 
-2. Indicar dentro de ese archivo los datos de conexión a la base de datos. 
+1. Renombrar services/config/settings.sample.php a services/config/settings.php
+
+2. Indicar dentro de ese archivo los datos de conexión a la base de datos.
 
 3. Indicar configuraciones para el envío de notificaciones por correo electrónico y las claves para la API de Google Maps. Opcionalmente se puede habilitar allí la autenticación de OpenAuth de Google y Facebook (generando las claves necesarios para esos servicios).
 
 4. Renombrar frontend/config/dev.env.sample.js a frontend/config/dev.env.js
- 
+
 5. Indicar dentro de ese archivo un key válido de google maps.
 
 ## 5. Crear sitios para el servidor de servicios
@@ -73,7 +79,7 @@ Ejemplo en apache:
  ```
     frontend>npm run dev
 ```
-## 6. Navegación e inicialización 
+## 6. Navegación e inicialización
 
 1. Navegar http://localhost:8000/ para utilizar el visor, http://localhost:8000/users#/ para ingresar al backoffice, y http://desa.poblaciones.org/logs para consultar la parte administrativa.
 

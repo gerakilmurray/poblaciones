@@ -17,6 +17,12 @@ class cMap extends cPublicController
 
 	public function Show()
 	{
+		if (Context::Settings()->Servers()->OnlyCDNs())
+		{
+			echo('Server ' . Context::Settings()->applicationName . ' running.');
+			App::EndRequest();
+		}
+
 		$this->AddValue('google_maps_key', Context::Settings()->Keys()->GoogleMapsKey);
 		$this->AddValue('google_analytics_key', Context::Settings()->Keys()->GoogleAnalyticsKey);
 		$this->AddValue('add_this_key', Context::Settings()->Keys()->AddThisKey);
@@ -44,7 +50,7 @@ class cMap extends cPublicController
 	{
 		$this->AddValue('application_name' , 'Poblaciones');
 		$this->AddValue('description', 'Plataforma abierta de datos espaciales de la Argentina');
-		// Se fija si está sirviendo para una cartografía en particular
+		// Se fija si estÃ¡ sirviendo para una cartografÃ­a en particular
 		if ($this->workId)
 		{
 			$service = new MetadataModel();

@@ -66,10 +66,6 @@ Db.prototype.RebindAndFocusLastDataset = function (router) {
 	});
 };
 
-Db.prototype.RebindCurrentWork = function () {
-	return window.Db.ReBindWork(window.Context.CurrentWork.properties.Id);
-};
-
 Db.prototype.ServerClipboardCopy = function (text) {
 	return axiosClient.postPromise('/services/backoffice/ClipboardCopy',
 		{ t: text}, 'copiar la información');
@@ -86,12 +82,12 @@ Db.prototype.UpdateWorkIndexing = function (item) {
 };
 
 Db.prototype.UpdateWorkSegmentedCrawling = function (item) {
-	return axiosClient.getPromise(/*window.host + */ '/services/admin/UpdateWorkSegmentedCrawling',
+	return axiosClient.getPromise(/*window.host + */'/services/admin/UpdateWorkSegmentedCrawling',
 		{ w: item.Id, v: (item.SegmentedCrawling ? '1' : '0') }, 'cambiar el tipo indexación de la obra');
 };
 
 Db.prototype.GetClippingRegions = function () {
-	return axiosClient.getPromise(/*window.host + */ '/services/admin/GetClippingRegions',
+	return axiosClient.getPromise(/*window.host + */'/services/admin/GetClippingRegions',
 		{}, 'obtener la lista de regiones');
 };
 Db.prototype.GetUsers = function () {
@@ -112,7 +108,7 @@ Db.prototype.DeleteUser = function (user, callback) {
 };
 
 Db.prototype.UpdateClippingRegion = function (region) {
-	return axiosClient.postPromise(/*window.host + */ '/services/admin/UpdateClippingRegion',
+	return axiosClient.postPromise(/*window.host + */'/services/admin/UpdateClippingRegion',
 		{ r: region }, 'actualizar la región').then(function () {
 
 		});
@@ -129,8 +125,10 @@ Db.prototype.LoginAs = function (user) {
 			{ u: user.Id }, 'ingresar como el usuario indicado');
 };
 
-Db.prototype.ReBindWork = function (workId) {
+Db.prototype.RebindCurrentWork = function () {
+	var workId = window.Context.CurrentWork.properties.Id;
 	const loc = this;
+	const vue = Vue;
 	this.ReleaseWork(workId);
 
 	return axiosClient.getPromise('/services/backoffice/GetWorkInfo',
