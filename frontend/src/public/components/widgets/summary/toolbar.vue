@@ -4,9 +4,9 @@
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button type="button" class="btn btn-default btn-xs"
-						    title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()"><i class="fas fa-map-marked-alt"/></button>
-		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PDF..." v-on:click="captureMapPdf()"><i class="fas fa-file-pdf"/></button>
+		<button type="button" class="btn btn-default btn-xs"
+						    title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()"><i class="fas fa-map-marked-alt"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
