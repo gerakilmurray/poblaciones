@@ -88,8 +88,8 @@ def createRow(folder,placemark,place):
 def formatLine(line):
     #return line
     if line == None:
-        return "<br></br>"
-    return "<br>" + line + "</br>"
+        return "\n"
+    return line + "\n"
 
 class Document:
     def __init__(self, xml):
@@ -306,13 +306,13 @@ class ExtendedData:
     def get_data(self):
         extData = ""
         for key in self.data:
-            extData = extData + "<br><b>" + key + "</b>" + ":" + self.data[key] + "</br>"
+            extData = extData + key + ":" + self.data[key] + "\n"
         return extData
 
     def get_row(self):
         extData = ""
         for key in self.data:
-            extData = extData + key + "=" + self.data[key] + " \n"
+            extData = extData + key + "=" + self.data[key] + "\n"
         return extData
         
 if __name__ == "__main__":
