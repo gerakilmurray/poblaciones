@@ -26,7 +26,7 @@ class DbSession extends BaseService
 		if (is_array($entity)) throw new ErrorException('Synchronize requires object, not arrays.');
 
 		// 1) chequeo si es un proxy de doctrine -> no tengo que hacer nada
-		if ($entity instanceof \Doctrine\Common\Persistence\Proxy ||
+		if ($entity instanceof \Doctrine\Common\Proxy\Proxy ||
 					(get_class($entity) !== 'stdClass'))
 		{
 			return $entity;
