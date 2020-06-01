@@ -30,29 +30,37 @@ function SegmentedMap(mapsApi, frame, clipping, toolbarStates, selectedMetricCol
 	this.toolbarStates = toolbarStates;
 	this.MapIsInitialized = false;
 	this.DefaultTitle = 'Poblaciones';
-	this._axios = this.CreateAxios();
+	this._axios = this.CreateAxios(true);
+	this._axiosNoCredentials = this.CreateAxios(false);
 	this.Metrics = new MetricsList(this, selectedMetricCollection);
 	this.SaveRoute = new SaveRoute();
 	this.RestoreRoute = new RestoreRoute();
 	this.afterCallback = null;
 	this.afterCallback2 = null;
 	this.Labels = new ActiveLabels(config);
-	if (config.Blocks.UseTileBlocks) {
+	if (config.Blocks.UseDataTileBlocks) {
 		this.tileDataBlockSize = config.Blocks.TileDataBlockSize;
 	} else {
 		this.tileDataBlockSize = null;
 	}
-	this.UseGradients = config.UseGradients;
+	this.Configuration = config;
 	this.Queue = new Queue(config.MaxQueueRequests);
+	if (Array.isArray(config.StaticServer) || window.host !== config.StaticServer) {
+		this.StaticQueue = new Queue(config.MaxStaticQueueRequests);
+	} else {
+		this.StaticQueue = this.Queue;
+	}
 };
 
-SegmentedMap.prototype.Get = function (url, params) {
+SegmentedMap.prototype.Get = function (url, params, noCredencials, isRetry) {
 	if (window.accessLink) {
 		if (!params) { params = {}; }
 		if (!params.headers) { params.headers = {}; }
 		params.headers['Access-Link'] = window.accessLink;
 	}
-	return this._axios.get(url, params).then(function (res) {
+	var loc = this;
+	var axios = (noCredencials ? this._axiosNoCredentials : this._axios);
+	return axios.get(url, params).then(function (res) {
 		if ((!res.response || res.response.status === undefined) && res.message === 'cancelled') {
 			throw { message: 'cancelled', origin: 'segmented' };
 		} else if (res.status === 200) {
@@ -67,7 +75,7 @@ SegmentedMap.prototype.Get = function (url, params) {
 		var data = null;
 		if (res.response) {
 			data = res.response.data;
-			if (data !== null && typeof data === 'string') {
+			if (data !== null && typeof data === 'string' && data.length < 25000) {
 				var debug = 'Whoops, looks like something went wrong.';
 				var debugText = '<p class="break-long-words trace-message">';
 				if (data.includes(debug) && data.includes(debugText)) {
@@ -85,11 +93,27 @@ SegmentedMap.prototype.Get = function (url, params) {
 				data: data
 			}
 		};
+	}).catch(function (res) {
+		var cancellation = res && res.message === 'cancelled';
+
+		if (!isRetry && !cancellation) {
+			let prom = new Promise((resolve, reject) => {
+				setTimeout(function () {
+					loc.Get(url, params, noCredencials, true).then(
+						function (res) { resolve(res); }
+					).catch(
+						function (res) { reject(res); }
+					);
+				}, 3500);
+			});
+			return prom;
+		}
+		throw(res);
 	});
 };
 
-SegmentedMap.prototype.CreateAxios = function () {
-	var api = axios.create({ withCredentials: true });
+SegmentedMap.prototype.CreateAxios = function (withCredentials) {
+	var api = axios.create({ withCredentials: withCredentials });
 	return api;
 };
 
@@ -234,7 +258,7 @@ SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, 
 	key.Id = fid;
 	window.Panels.Content.FeatureInfoKey = key;
 	// Lo busca
-	window.SegMap.Get(window.host + '/services/metrics/GetInfoWindowData', {
+	window.SegMap.Get(/*window.host + */'/services/metrics/GetInfoWindowData', {
 		params: { f: fid, l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId }
 	}).then(function (res) {
 		// Lo obtuvo
@@ -253,7 +277,7 @@ SegmentedMap.prototype.InfoRequested = function (position, parent, fid, offset, 
 SegmentedMap.prototype.InfoListRequested = function (parent, forceExpand) {
 	const loc = this;
 	var page = 0;
-	window.SegMap.Get(window.host + '/services/metrics/GetInfoListData', {
+	window.SegMap.Get(/*window.host + */'/services/metrics/GetInfoListData', {
 		params: { l: parent.MetricId, a: parent.LevelId, v: parent.MetricVersionId, p: page }
 	}).then(function (res) {
 			res.data.parent = parent;

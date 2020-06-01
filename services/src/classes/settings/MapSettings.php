@@ -12,7 +12,12 @@ class MapSettings
 	public $LabelsBlockSize = 6;
 	public $TileDataBlockSize = 4;
 
-	public $UseTileBlocks = false;
+	public $UseDataTileBlocks = false;
+	public $UseLabelTileBlocks = true;
+
+	public $UseCalculated = false;
+
 	public $UseGradients = false;
-	public $MaxQueueRequests = 5;
+	public $MaxQueueRequests = 4;
+	public $MaxStaticQueueRequests = 6;
 }

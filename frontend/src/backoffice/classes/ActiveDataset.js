@@ -8,6 +8,8 @@ import LevelGenerator from './LevelGenerator';
 import Vue from 'vue';
 import err from '@/common/js/err';
 
+var columnFormatEnum = require("@/common/enums/columnFormatEnum");
+
 export default ActiveDataset;
 
 function ActiveDataset(work, dataset) {
@@ -230,6 +232,24 @@ ActiveDataset.prototype.UpdateVariable = function (level, variable) {
 			}
 			return data;
 		});
+};
+
+ActiveDataset.prototype.CalculateNewMetricUrl = function () {
+	return /*window.host + */'/services/backoffice/CalculateNewMetric';
+};
+
+ActiveDataset.prototype.StepCalculateNewMetricUrl = function () {
+	return /*window.host + */'/services/backoffice/StepCalculateNewMetric';
+};
+
+ActiveDataset.prototype.CalculatedMetricExists = function (variableId) {
+	return axios.get(/*window.host + */'/services/backoffice/CalculatedMetricExists', {
+		params: { k: this.properties.Id, v: variableId }
+	}).then(function (res) {
+		return res.data.columnExists;
+	}).catch(function (error) {
+		err.err('CalculatedMetricExists', error);
+	});
 };
 
 ActiveDataset.prototype.UpdateMetricVersionLevel = function (level) {
@@ -612,7 +632,7 @@ ActiveDataset.prototype.GetNumericWithLabelColumns = function () {
 	}
 	var columns = [];
 	for (let i = 0; i < this.Columns.length; i++) {
-		if (this.Columns[i].Format === 5) {
+		if (this.Columns[i].Format === columnFormatEnum.NUMBER) {
 			var labels = this.Labels[this.Columns[i].Id];
 			if (labels && labels.length > 0) {
 				columns.push(this.Columns[i]);
@@ -628,7 +648,7 @@ ActiveDataset.prototype.GetNumericColumns = function () {
 	}
 	var columns = [];
 	for (let i = 0; i < this.Columns.length; i++) {
-		if (this.Columns[i].Format === 5) {
+		if (this.Columns[i].Format === columnFormatEnum.NUMBER) {
 			columns.push(this.Columns[i]);
 		}
 	}
@@ -641,7 +661,7 @@ ActiveDataset.prototype.GetTextColumns = function () {
 	}
 	var columns = [];
 	for (let i = 0; i < this.Columns.length; i++) {
-		if (this.Columns[i].Format === 1) {
+		if (this.Columns[i].Format === columnFormatEnum.STRING) {
 			columns.push(this.Columns[i]);
 		}
 	}
@@ -660,14 +680,14 @@ ActiveDataset.prototype.GetColumnUniqueValues = function () {
 	}
 	var columns = [];
 	for (let i = 0; i < this.Columns.length; i++) {
-		if (this.Columns[i].Format === 5) {
+		if (this.Columns[i].Format === columnFormatEnum.NUMBER) {
 			columns.push(newColumn);
 		}
 	}
 	return columns;
 };
 
-ActiveDataset.prototype.GetColumnsForJqxGrid = function (showingErrors) {
+ActiveDataset.prototype.GetColumnsForJqxGrid = function (showingErrors, validate) {
 	if (this.Columns === null) {
 		return [];
 	}
@@ -692,13 +712,16 @@ ActiveDataset.prototype.GetColumnsForJqxGrid = function (showingErrors) {
 			newColumn.filtertype = 'list';
 			newColumn.filteritems = this.getLabelList(currentLabels);
 		}
-		if (datasetColumn.Format === 5) {
+		if (datasetColumn.Format === columnFormatEnum.NUMBER) {
 			newColumn.cellsformat = 'd' + datasetColumn.Decimals;
 		}
 		newColumn.cellsalign = this.spssAlignmentToGridAligment(datasetColumn.Alignment);
 		newColumn.width = (datasetColumn.ColumnWidth < 30 ? datasetColumn.ColumnWidth * 10 : 200);
 		newColumn.cellsrenderer = this.cellsRenderer;
-
+		if (validate) {
+			newColumn.editable = true;
+			newColumn.validation = validate;
+		}
 		columns.push(newColumn);
 	}
 	return columns;
@@ -740,6 +763,18 @@ ActiveDataset.prototype.GetDataFieldByColumnId = function (showingErrors, column
 	throw new Error('DataField no encontrado.');
 };
 
+ActiveDataset.prototype.GetDataFieldByColumnId = function (showingErrors, columnId) {
+	var column = this.GetColumnById(columnId);
+	var dataFields = this.GetDataFieldsForJqxGrid(showingErrors);
+	for (let i = 0; i < dataFields.length; i++) {
+		let dataField = dataFields[i];
+		if (dataField.name === column.Variable) {
+			return dataField;
+		}
+	}
+	throw new Error('DataField no encontrado.');
+};
+
 ActiveDataset.prototype.GetDataFieldsForJqxGrid = function (showingErrors) {
 	var datafields = [];
 
@@ -752,7 +787,7 @@ ActiveDataset.prototype.GetDataFieldsForJqxGrid = function (showingErrors) {
 			let datafield = {};
 			datafield.name = column.Variable;
 			datafield.map = '' + datafields.length;
-			if (column.Format === 5) {
+			if (column.Format === columnFormatEnum.NUMBER) {
 				datafield.type = 'number';
 			} else {
 				datafield.type = 'string';

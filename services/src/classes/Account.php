@@ -120,6 +120,12 @@ class Account
 		$this->EnsureDbInfo();
 		return $this->userId;
 	}
+	private function RefreshDbInfo()
+	{
+		$this->privileges = '';
+		$this->EnsureDbInfo();
+	}
+
 	private function EnsureDbInfo($throwException = true)
 	{
 		if ($this->privileges === '')
@@ -175,6 +181,8 @@ class Account
 
 	public function Login($password)
 	{
+		Session::CheckReadonlyForMaintenance();
+
 		if ($this->EnsureDbInfo(false) == false)
 			return false;
 		else
@@ -188,6 +196,8 @@ class Account
 
 	public function BeginActivation($password, $firstName, $lastName, $to)
 	{
+		Session::CheckReadonlyForMaintenance();
+
 		if ($password == '')
 			MessageBox::ThrowBackMessage('La contraseña no puede ser nula.');
 		if ($firstName == '')
@@ -288,6 +298,7 @@ class Account
 	{
 		$sql = "UPDATE user SET usr_firstname = ?, usr_lastname = ?, usr_password = ?, usr_is_active = 1 WHERE usr_id = ?";
 		App::Db()->exec($sql, array($firstName, $lastName, $passwordHashed, $this->userId));
+		$this->RefreshDbInfo();
 	}
 
 	public function SaveOauthActivation($data, $isCreate = true)

@@ -2,18 +2,25 @@
 
 namespace helena\tests\frontend;
 
+use helena\classes\TestCase;
 use helena\entities\frontend\clipping\LabelsDataInfo;
 use helena\services\frontend\LabelsService;
-use minga\framework\tests\TestCaseBase;
+use minga\framework\Context;
 
-class LabelServiceTest extends TestCaseBase
+class LabelServiceTest extends TestCase
 {
-	public function testGetLabels()
+
+	/**
+	 * @dataProvider CacheSettingProvider
+	 */
+	public function testGetLabels($cacheSetting)
 	{
-		$x = 85;
-		$y = 156;
-		$z = 8;
-		$b = null;
+		Context::Settings()->Cache()->Enabled = $cacheSetting;
+
+		$x = $this->Get('x');
+		$y = $this->Get('y');
+		$z = $this->Get('z');
+		$b = $this->Get('b');
 
 		$controller = new LabelsService();
 		$ret = $controller->GetLabels($x, $y, $z, $b);

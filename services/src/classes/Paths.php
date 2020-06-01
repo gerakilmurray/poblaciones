@@ -7,6 +7,11 @@ use minga\framework\IO;
 
 class Paths
 {
+	public static function GetPHPUnitPath()
+	{
+		return Context::Paths()->GetRoot() . "/vendor/phpunit/phpunit/phpunit";
+	}
+
 	public static function GetPythonScriptsPath()
 	{
 		return Context::Paths()->GetRoot() . "/py";
@@ -112,6 +117,11 @@ class Paths
 	public static function GetTestsDataLocalPath()
 	{
 		return self::GetTestsLocalPath() . "/data";
+	}
+
+	public static function GetTestsConfigLocalPath()
+	{
+		return self::GetTestsLocalPath() . "/config";
 	}
 
 }

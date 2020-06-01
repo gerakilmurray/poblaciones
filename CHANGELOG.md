@@ -1,17 +1,42 @@
 [CURRENT]
+
+v2.20 (2020-05-26)
+- Refactoring tabla snapshots.
+- Fix: las cuentas nuevas no se activaban automáticamente al recibirse un permiso a una cartografía.
+- Fix: identificación de columnas en archivos Excel (para títulos con celdas vacías)
+- Fix: descarga de SAV con columnas con caracteres extendidos.
+
+v2.21 (2020-05-19)
+- Implementación de readonlyForMaintenance.
+- Retry en queries del mapa (1 vez).
+- Modo CDN para servers para compatibilidad con CloudFlare.
+- Soporte a búsquedas para palabras especiales de menos de 3 caracteres.
+- Tests automatizados: integración a interfaz y migración a PHP Unit.
+- Fix: actualización de botón de Publicar cambios.
+- Badge de publicar en barra lateral.
+- Fix: redirect tras cambiar contraseña por link.
+- Fix: link a términos y condiciones desde pantalla de ingresar.
+- La grilla de datos permite editar los valores.
+- Mejoras en título para los handles para crawler (google).
+
+v2.20 (2020-05-08)
 - Los tooltips en el mapa muestra un panel con el valor actual para el feature.
-- Al desmarcar el ver etiquetas en el modo 'satélite' remueve las etiquetas del mapa.
+- Fix: Al desmarcar el 'ver etiquetas' en el modo 'satélite' remueve las etiquetas del mapa.
+- Muestra la información de los items en un panel lateral
+- Para los datasets de polígonos y códigos, se reduce el efecto de repintado en los cambios de zoom.
+- Se permite configurar un servidor secundario para las cartografía de base (statics).
+- El cálculo de resumen de clipping utiliza el nivel correspondiente al zoom activo.
 
 v2.19 (2020-04-26)
+- El mapa ofrece elementos en la barra de acciones superior del panel derecho para iniciar y cerrar sesión.
 - Fix: detección de encoding en CSV identificaba como mac-files archivos con mayúsculas acentuadas acentos.
 - La grilla de datos del dataset en backoffice hace encoding del html que pueda estar en las celdas.
-- Mejoras crawling segmentado.
-- Autogeneración de carpetas de storage.
+- Mejoras para ofrecer crawling segmentado (se habilitaa en configuración de región y configuración administrativa de cartografía).
+- Autogeneración de carpetas de storage para ambientes nuevos.
 - Fix: la publicación pisaba los extents si no había modificaciones de datos.
-- Administración: listado de regiones.
-- Al seleccionar una región o círculo de buffer se perdía el fijado de nivel.
+- Administración muestra listado de regiones.
+- Fix: Al seleccionar una región o círculo de buffer se perdía el fijado de nivel.
 - Fix: 'zoom al indicador' cuando había un clipping pequeño (< 90% de la cobertura del indicador) no liberaba la selección.
-- El mapa ofrece elementos en la barra de acciones para iniciar y cerrar sesión.
 
 v2.18 (2020-04-15)
 - Posibilidad de agregar indicadores externos en una cartografía a la lista de indicadores del panel superior.
@@ -109,7 +134,7 @@ v2.7 (2019-11-07)
 - Fix: shapefile tiene límite de cantidad de columnas (255). Se ignoran las siguientes en lugar de dar error.
 
 v2.6 (2019-10-28)
-- Habilitación de caching entre sesiones del navegador. 
+- Habilitación de caching entre sesiones del navegador.
 - Filtro de entidades inferiores a un pixel (< 1/300 tile) (hasta x20 en tiempos para indicadores a nivel radio)
 - Mejora en uso de RAM en el browser (baja a menos de un tercio en mapas con muchas entidades).
 - Permite descargar en format shapefile.
@@ -123,7 +148,7 @@ v2.5 (2019-10-18)
 - Los 'Valores' de columna pasan a llamarse 'Categorías'.
 - El agrupamiento por 'Variable' pasa a llamarse 'Categorías'.
 - Fix: baja de categorías tomaba los elementos en el orden equivocado.
-- Filtra geometrías de menos de 1/300 tile 
+- Filtra geometrías de menos de 1/300 tile
 - Fix: la restauración por ruta no se completaba bien si el centro se encontraba en alguna ubicación fuera del territorio nacional.
 
 v2.4 (2019-10-10)

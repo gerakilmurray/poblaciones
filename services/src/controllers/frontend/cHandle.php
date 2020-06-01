@@ -6,6 +6,7 @@ use helena\controllers\common\cPublicController;
 use minga\framework\Request;
 use minga\framework\Params;
 use minga\framework\Arr;
+use minga\framework\Context;
 use minga\framework\Str;
 use helena\classes\Session;
 use helena\classes\Links;
@@ -154,7 +155,7 @@ class cHandle extends cPublicController
 		$workService = new WorkService();
 		$work = $workService->GetWork($workId);
 		$metadata = $this->GetMetadata($work);
-		$metadata['met_title'] = $this->PreppendMap($metadata['met_title']);
+		//$metadata['met_title'] = $this->PreppendMap($metadata['met_title']);
 
 		$this->AddMetadata($metadata, $work->Url);
 		$this->AddMetricLinks($work);
@@ -187,14 +188,14 @@ class cHandle extends cPublicController
 		$metadataId = $work->MetadataId;
 		$sources = $model->GetMetadataSources($metadataId);
 		$metricName = Arr::GetItemByNamedValue($work->Metrics, "Id", $metricId)['Name'];
-		$metric = $this->PreppendMap($metricName);
+		//$metric = $this->PreppendMap($metricName);
+		$metric = $metricName;
 
 		$this->AddInfo($metadata, $metric, $items);
 		$this->AddSources($sources, $items);
 		$this->AddValue("items", $items);
 		$this->AddMetadata($metadata, $work->Url);
-		$outVersions = '';
-		$this->AddVariables($workId, $metricId, $outVersions);
+		$this->AddVariables($workId, $metricId, $outDatasetTables);
 		$metadata['met_title'] = $metric;
 
 		if ($regionId != null)
@@ -209,11 +210,11 @@ class cHandle extends cPublicController
 		if ($metadata['Extents'] !== null && Session::IsWorkPublicSegmentedCrawled($workId))
 		{
 			$extents = Envelope::FromDb($metadata['Extents']);
-			$this->AddRegions($workId, $metricId, $outVersions, $metricName, $extents, $regionId);
+			$this->AddRegions($workId, $metricId, $outDatasetTables, $metricName, $extents, $regionId);
 		}
 	}
 
-	private function AddRegions($workId, $metricId, $versionIds, $metricName, $extents, $regionId)
+	private function AddRegions($workId, $metricId, $datasetTables, $metricName, $extents, $regionId)
 	{
 		// Lo busca en el caché
 		$key = WorkHandlesCache::CreateKey($metricId, $regionId);
@@ -221,7 +222,7 @@ class cHandle extends cPublicController
 		$data = null;
 		if (!WorkHandlesCache::Cache()->HasData($workId, $key, $data))
 		{
-			$data = $this->CalculateRegionData($metricId, $versionIds, $metricName, $extents, $regionId);
+			$data = $this->CalculateRegionData($metricId, $datasetTables, $metricName, $extents, $regionId);
 			// Lo agrega al caché...
 			WorkHandlesCache::Cache()->PutData($workId, $key, $data);
 		}
@@ -229,11 +230,12 @@ class cHandle extends cPublicController
 		$this->AddValue("regions", $data);
 	}
 
-	private function CalculateRegionData($metricId, $versionIds, $metricName, $extents, $regionId)
+	private function CalculateRegionData($metricId, $datasetTables, $metricName, $extents, $regionId)
 	{
 		Profiling::BeginTimer();
+
 		$model = new ClippingRegionItemModel();
-		$clippingRegionItemIds = $model->GetCrawlerItemsIntersectingEnvelope($metricId, $versionIds, $extents, $regionId);
+		$clippingRegionItemIds = $model->GetCrawlerItemsIntersectingEnvelope($metricId, $datasetTables, $extents, $regionId);
 		// Si no tiene regionId, se queda con los que no tienen padre en la lista
 		if ($regionId == null)
 		{
@@ -259,9 +261,9 @@ class cHandle extends cPublicController
 		Profiling::EndTimer();
 		return $data;
 	}
-	private function AddVariables($workId, $metricId, &$outVersions)
+	private function AddVariables($workId, $metricId, &$outDatasetTables)
 	{
-		$outVersions = '';
+		$outDatasetTables = [];
 		// Trae los niveles y variables...
 		$selectedService = new SelectedMetricService();
 		$selectedMetric = $selectedService->GetSelectedMetric($metricId);
@@ -271,13 +273,16 @@ class cHandle extends cPublicController
 			if ($version->Version->WorkId === $workId)
 			{
 				$maxGeography = 0;
+				$maxTable = '';
 				foreach($version->Levels as $level)
 				{
 					// el version lo tiene que acompañar (para lo de regiones) del
 					// geographyId su level más bajo
 					if ($level->GeographyId > $maxGeography)
+					{
+						$maxTable = $level->Dataset->Table . "_snapshot";
 						$maxGeography = $level->GeographyId;
-
+					}
 					foreach($level->Variables as $variable)
 					{
 						$line = $variable->Name;
@@ -292,8 +297,8 @@ class cHandle extends cPublicController
 						$variables[] = $fullName;
 					}
 				}
-				$outVersions .= ($outVersions != '' ? ' OR ' : '') . ' (miv_metric_version_id = ' . $version->Version->Id
-														. ' AND miv_geography_id = ' . $maxGeography . ') ';
+				if ($maxTable != '' && !in_array($maxTable, $outDatasetTables))
+						$outDatasetTables[] = $maxTable;
 			}
 		}
 		$this->AddValue("variables", $variables);

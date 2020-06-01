@@ -10,6 +10,7 @@ use minga\framework\ErrorException;
 use minga\framework\System;
 
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use helena\services\backoffice\import\PhpSpreadSheetCsv;
 
 use helena\services\common\BaseService;
 use helena\classes\Paths;
@@ -174,11 +175,15 @@ class ImportService extends BaseService
 		$uploadFolder = $bucket->path;
 		$sourceFile =  $uploadFolder . '/file.dat';
 		$xlsFile =  $uploadFolder . '/file_xls.dat';
+		if (file_exists($xlsFile))
+			// es un reintento
+			return;
+
 		IO::Move($sourceFile, $xlsFile);
 
 		$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($xlsFile);
 		$loadedSheetNames = $spreadsheet->getSheetNames();
-		$writer = new Csv($spreadsheet);
+		$writer = new PhpSpreadSheetCsv($spreadsheet);
 
 		foreach($loadedSheetNames as $sheetIndex => $loadedSheetName) {
 				$writer->setSheetIndex($sheetIndex);
@@ -202,14 +207,22 @@ class ImportService extends BaseService
 		$folder = $this->state->GetFileFolder();
 		$uploadFolder = $bucket->path;
 		$sourceFile =  $uploadFolder . '/file.dat';
-		$python = App::GetPythonPath();
-		if (IO::Exists($python) === false) {
-			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
+
+		$python = App::GetPython3Path();
+		$p3 = '3';
+		if($python == null)
+		{
+			$python = App::GetPythonPath();
+			$p3 = '';
 		}
+
+		if (IO::Exists($python) === false)
+			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
+
 		$lines = array();
 
-		$ret = System::Execute(App::GetPythonPath(), array(
-			Paths::GetPythonScriptsPath() .'/spss2json.py',
+		$ret = System::Execute($python, array(
+			Paths::GetPythonScriptsPath() . '/spss2json' . $p3 . '.py',
 			$sourceFile,
 			$folder
 		), $lines);
@@ -217,17 +230,15 @@ class ImportService extends BaseService
 		if($ret !== 0)
 		{
 			$err = '';
-			$detail = "\nScript: " . Paths::GetPythonScriptsPath() .'/spss2json.py'
+			$detail = "\nScript: " . Paths::GetPythonScriptsPath() . '/spss2json' . $p3 . '.py'
 				. "\nSource: " . $sourceFile
 				. "\nFolder: " . $folder
 				. "\nScript Output was: \n----------------------\n" . implode("\n", $lines) . "\n----------------------\n";
-			if(App::Debug()) {
+			if(App::Debug())
 				$err = $detail;
-			}
 			else
-			{
 				Log::HandleSilentException(new ErrorException($detail));
-			}
+
 			throw new ErrorException('Error en la subida de archivo spss.' . $err);
 		}
 

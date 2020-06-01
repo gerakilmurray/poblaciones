@@ -35,11 +35,12 @@ export default {
 			const loc = this;
 			authentication.loadHeaderBar(loc.LoadData);
 		},
-		LoadData(userInfo) {
+		LoadData(data) {
 			// Inicia sesión autenticada
-			this.user = userInfo;
+			this.user = data.User;
 			const loc = this;
 			window.Context.User = this.user;
+			window.Context.Configuration = data;
 			this.$refs.invoker.do(window.Db, window.Db.LoadWorks)
 				.then(function() {
 					loc.works = window.Db.Works;
@@ -72,6 +73,10 @@ html, body {
 }
 
 
+.jqx-grid-content :first-child
+{
+	overflow: initial!important
+}
 .gm-fullscreen-control {
 	transform: scale(0.8);
 }

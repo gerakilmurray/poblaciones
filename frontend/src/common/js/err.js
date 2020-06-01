@@ -7,9 +7,7 @@ module.exports = {
 			window.Context.ErrorSignaled.value++;
 		}
 		if(err !== undefined) {
-			if(err.message && err.message === 'cancelled') {
-				console.log('Cancel', method);
-			} else {
+			if(err.message && err.message !== 'cancelled') {
 				this.HandleError(err);
 			}
 		} else {
@@ -28,9 +26,7 @@ module.exports = {
 			if (err.message) {
 				msg = err.message;
 			}
-			if (msg === 'cancelled') {
-				console.log('Cancel', method);
-			} else {
+			if (msg !== 'cancelled') {
 				this.HandleError(err);
 			}
 		} else {
@@ -53,6 +49,8 @@ module.exports = {
 			pre = 'El servidor no se encuentra disponible. En consecuencia, no fue posible ';
 		} else if (msg === 'Request failed with status code 401' || msg === 'Request failed with status code 403') {
 			pre = 'El usuario actual no posee los permisos suficientes para ';
+		} else if (msg === 'Request failed with status code 404') {
+			pre = 'Mientras realizamos tareas de mantenimiento en el sitio no es posible realizar operaciones de edición sobre información. Por favor, vuelva a intentar más tarde para ';
 		} else if (msg === 'Request failed with status code 405') {
 			pre = 'Se ha utilizado un método HTTP (post, get, etc) no aceptado por el servidor al ';
 		} else {
@@ -62,16 +60,17 @@ module.exports = {
 		if (err.response && err.response.data) {
 			var msgtext = err.response.data.trim();
 			if (msgtext.startsWith('[ME-E]:')) {
-				post = ' ' + msgtext.substr(7) + '.';
+				post = ' ' + msgtext.substr(7);
+				if (!post.endsWith('.')) {
+					post += '.';
+				}
 			}
 		}
 		// Pone el mensaje visual
 		alert(str.AddDot(pre + text) + post + '\n\nSi el problema persiste, póngase en contacto con soporte para que podamos solucionar el inconveniente.');
 	},
 	errMessage(method, errMessage) {
-		if (errMessage && errMessage === 'cancelled') {
-			console.log('Cancel', method);
-		} else {
+		if (errMessage && errMessage !== 'cancelled') {
 			console.log('Error', method, errMessage);
 		}
 	},

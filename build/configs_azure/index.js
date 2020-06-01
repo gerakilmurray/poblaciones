@@ -39,7 +39,7 @@ module.exports = {
 		assetsPublicPath: '/',
 		// TODO - GK - Remove before merge
 		proxyTable: {
-			'/services': { target: devenv_url, changeOrigin: true, secure: false 
+			'/services': { target: devenv_url, changeOrigin: true, secure: false
 		}
 //			'/logs': { target: devenv_url, changeOrigin: true },
 //			'/authenticate': { target: devenv_url, changeOrigin: true },

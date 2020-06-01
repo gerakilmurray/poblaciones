@@ -3,13 +3,14 @@
 namespace helena\services\backoffice\publish;
 
 use minga\framework\Profiling;
+use minga\framework\Context;
 
 use helena\services\common\BaseService;
 use helena\classes\DatasetTypeEnum;
 
 use helena\services\backoffice\publish\snapshots\SnapshotMetricVersionModel;
 use helena\services\backoffice\publish\snapshots\SnapshotShapeDatasetItemModel;
-use helena\services\backoffice\publish\snapshots\SnapshotMetricVersionItemVariableModel;
+use helena\services\backoffice\publish\snapshots\SnapshotByDatasetModel;
 use helena\services\backoffice\publish\snapshots\SnapshotLookupModel;
 
 class SnapshotsManager extends BaseService
@@ -30,29 +31,6 @@ class SnapshotsManager extends BaseService
 		$modelVersion->RegenMetric($metricId);
 	}
 
-	// MetricVersion
-	public function UpdateMetricVersionData($metricVersion)
-	{
-		Profiling::BeginTimer();
-
-		$this->CleanMetricVersionData($metricVersion);
-
-		$model = new SnapshotMetricVersionItemVariableModel();
-		$model->RegenMetricVersion($metricVersion['mvr_id']);
-
-		Profiling::EndTimer();
-	}
-
-	public function CleanMetricVersionData($metricVersion)
-	{
-		Profiling::BeginTimer();
-
-		$model = new SnapshotMetricVersionItemVariableModel();
-		$model->ClearMetricVersion($metricVersion['mvr_id']);
-
-		Profiling::EndTimer();
-	}
-
 	// Dataset
 	public function CleanDataset($datasetId)
 	{
@@ -66,7 +44,15 @@ class SnapshotsManager extends BaseService
 
 		Profiling::EndTimer();
 	}
+	public function UpdateDatasetMetrics($row)
+	{
+		Profiling::BeginTimer();
 
+		$model = new SnapshotByDatasetModel();
+		$model->RegenDatasetLevels($row['dat_id']);
+
+		Profiling::EndTimer();
+	}
 	public function UpdateDatasetData($row)
 	{
 		Profiling::BeginTimer();
