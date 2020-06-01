@@ -36,10 +36,16 @@ font-size: 12px">
 							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('D')">Urbano disperso</button>
 						</li>
 						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('UD')">Urbano total</button>
+						</li>
+						<li>
 							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('R')">Rural</button>
 						</li>
 						<li>
 							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('L')">Rural disperso</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('RL')">Rural total</button>
 						</li>
 					</ul>
 				</span>
@@ -115,11 +121,15 @@ export default {
 			}else if(this.urbanity === 'U') {
 				return ' - U';
 			}else if(this.urbanity === 'D') {
-				return ' - UD';
+				return ' - D';
 			}else if(this.urbanity === 'R') {
 				return ' - R';
 			}else if(this.urbanity === 'L') {
-				return ' - RD';
+				return ' - L';
+			}else if(this.urbanity === 'UD') {
+				return ' - UD';
+			}else if(this.urbanity === 'RL') {
+				return ' - RL';
 			}
 		},
 		changeUrbanity(mode) {
