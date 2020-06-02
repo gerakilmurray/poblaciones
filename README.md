@@ -31,9 +31,9 @@ Permite subir datos y metadatos de información espacial mediante una interfaz m
 
 La aplicación puede ser alojada en un servidor compartido (ej. hostgator), dado que no requiere de la ejecución de instalaciones con permisos de administrador en el servidor. Son sus requisitos de software:
 
-- MySql 5.6 ó superior.
-- PHP 7.1 ó superior.
-- Python 2.7 (requisito para permitir subir y descargar información en formato SPSS [.sav])
+- MySql 5.7. 
+- PHP 7.1.
+- Python 2.7 o 3.4 (requisito para permitir subir y descargar información en formato SPSS [.sav])
 - SO: indistinto.
 
 # Demo
@@ -45,11 +45,11 @@ El sitio se encuentra operativo con datos demográficos, sociales y políticos d
 En youtube pueden encontrar tutoriales técnicos para mantener, extender y mejorar el código en https://bit.ly/2x0PXFm.
 # Instalación
 
-Para generar una versión para instalar: [guía de compilación](startup/BUILD.md)
-
 Para instalar un ambiente productivo: [guía de instalación](startup/INSTALL.md)
 
-Para instalar un ambiente de desarrollo: [guía para desarrollo](startup/SOURCES.md)
+Para armar un ambiente de desarrollo: [guía para desarrollo](startup/SOURCES.md)
+
+Para generar una versión para instalar: [guía de compilación](startup/BUILD.md)
 
 # Licencia
 Poblaciones - Plataforma abierta de datos espaciales de población.
