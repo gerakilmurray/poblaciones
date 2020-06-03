@@ -7,6 +7,14 @@ DROP FUNCTION IF EXISTS NearestSnapshotShape;
 DROP FUNCTION IF EXISTS NearestSnapshotRangePoint;
 DROP FUNCTION IF EXISTS NearestSnapshotPoint;
 
+DELIMITER ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+DELIMITER ;;
+
+
 DELIMITER $$
 CREATE FUNCTION `DistanceSphere`(`pt1` POINT, `pt2` POINT) RETURNS double
     NO SQL
