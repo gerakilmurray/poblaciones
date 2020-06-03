@@ -5,7 +5,8 @@
 		<md-radio v-if="newMetric.SelectedLevel.Dataset.Type != 'L'" class="md-primary" :value="false" v-model="newMetric.Area.IsInclusionPoint">Por polígono del elemento</md-radio>
 		<md-radio class="md-primary" :value="true" v-model="newMetric.Area.IsInclusionPoint">Por distancia desde el centroide / punto:</md-radio>
 		<md-field class="md-size-10">
-			<mp-simple-text class="md-size-10" :disabled="!newMetric.Area.IsInclusionPoint" type="number" v-model="newMetric.Area.InclusionDistance"></mp-simple-text>
+			<mp-simple-text class="md-size-10" :disabled="!newMetric.Area.IsInclusionPoint" preffix="km"
+											type="number" v-model="newMetric.Area.InclusionDistance"></mp-simple-text>
 			Kms.
 		</md-field>
 
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import str from '@/common/js/str';
 
 export default {
 	// Step 3 para Distance
@@ -33,7 +35,7 @@ export default {
 		validate() {
 			if (this.newMetric.Area.IsInclusionPoint
 				&& str.IsIntegerGreaterThan0(this.newMetric.Area.InclusionDistance) == false) {
-				alert("Debe ingresar la distancia máxima en kms.");
+				alert("Debe ingresar la distancia máxima en kilómetros.");
 				return false;
 			}
 			return true;

@@ -72,6 +72,26 @@ html, body {
 	margin-bottom: 7px;
 }
 
+.md-suffix {
+	right: 22px;
+	position: absolute;
+}
+.unselectable {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.md-layout-item-separation
+{
+	height: 60px;
+	min-width: 100%;
+}
+.md-layout-item-separated {
+	margin-top: 20px;
+}
 
 .jqx-grid-content :first-child
 {
