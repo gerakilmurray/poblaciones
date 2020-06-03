@@ -5,7 +5,7 @@
 			<LeftPanel ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" />
+			<Fab ref="fabPanel" :work="work" />
 			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
