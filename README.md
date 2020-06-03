@@ -7,7 +7,7 @@ Poblaciones es una aplicación web que permite visualizar y cargar datos georref
 
 Funciona como un servidor autónomo de información geoespacial para navegadores web, apoyado en PHP 7.1 y MySql 5.6. Utiliza Google Maps como provedor del mapa de base, dando en forma permanente acceso a los servicios asociados de StreetView.
 
-Permite subir datos y metadatos de información espacial mediante una interfaz moderna y simple, permitiendo a los usuarios administrar sus producciones dentro del sitio. 
+Permite subir datos y metadatos de información espacial mediante una interfaz moderna y simple, permitiendo a los usuarios administrar sus producciones dentro del sitio.
 
 # Características
 
@@ -15,11 +15,11 @@ Permite subir datos y metadatos de información espacial mediante una interfaz m
 
 * La subida de archivos se realiza por medio de archivos CSV o SPSS (.sav).
 
-* La plataforma permite a múltiples usuarios administrar y anexar su información, pudiendo luego los usuarios que visitan el mapa poder ver esta información en forma simultánea (colocar información provista por diferentes personas en una sola vista). 
+* La plataforma permite a múltiples usuarios administrar y anexar su información, pudiendo luego los usuarios que visitan el mapa poder ver esta información en forma simultánea (colocar información provista por diferentes personas en una sola vista).
 
 * Los administradores del sitio pueden marcar conjuntos de datos como 'datos públicos', los cuales son destacados a los usuarios para facilitar la consulta.
 
-* El sitio realiza indexación full-text sobre las regiones en el mapa, las entidades y los indicadores publicados, permitiendo a los usuarios acceder desde un buscador a cualquiera de estos elementos. 
+* El sitio realiza indexación full-text sobre las regiones en el mapa, las entidades y los indicadores publicados, permitiendo a los usuarios acceder desde un buscador a cualquiera de estos elementos.
 
 * La información disponible puede ser visualizada por segmentos espaciales, tales que provincias, municipios, barrios, localidades. La plataforma permite agregar múltiples niveles de segmentación, los cuales agrupan luego a los datos subidos por los usuarios (ej. listado de establecimientos educativos).
 
@@ -31,9 +31,9 @@ Permite subir datos y metadatos de información espacial mediante una interfaz m
 
 La aplicación puede ser alojada en un servidor compartido (ej. hostgator), dado que no requiere de la ejecución de instalaciones con permisos de administrador en el servidor. Son sus requisitos de software:
 
-- MySql 5.6 ó superior.
-- PHP 7.1 ó superior.
-- Python 2.7 (requisito para permitir subir y descargar información en formato SPSS [.sav])
+- MySql 5.7.
+- PHP 7.1.
+- Python 2.7 o 3.4 (requisito para permitir subir y descargar información en formato SPSS [.sav])
 - SO: indistinto.
 
 # Demo
@@ -45,15 +45,15 @@ El sitio se encuentra operativo con datos demográficos, sociales y políticos d
 En youtube pueden encontrar tutoriales técnicos para mantener, extender y mejorar el código en https://bit.ly/2x0PXFm.
 # Instalación
 
-Para generar una versión para instalar: [guía de compilación](startup/BUILD.md)
-
 Para instalar un ambiente productivo: [guía de instalación](startup/INSTALL.md)
 
-Para instalar un ambiente de desarrollo: [guía para desarrollo](startup/SOURCES.md)
+Para armar un ambiente de desarrollo: [guía para desarrollo](startup/SOURCES.md)
+
+Para generar una versión para instalar: [guía de compilación](startup/BUILD.md)
 
 # Licencia
 Poblaciones - Plataforma abierta de datos espaciales de población.
 
-Copyright (C) 2018-2019. Consejo Nacional de Investigaciones Científicas y Técnicas (CONICET) y Universidad Católica Argentina (UCA). 
+Copyright (C) 2018-2019. Consejo Nacional de Investigaciones Científicas y Técnicas (CONICET) y Universidad Católica Argentina (UCA).
 
 El código fuente se encuentra bajo licencia GNU GPL version 3 o posterior.
