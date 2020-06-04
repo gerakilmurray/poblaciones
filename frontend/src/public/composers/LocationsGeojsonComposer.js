@@ -128,7 +128,19 @@ LocationsGeojsonComposer.prototype.bindStyles = function (dataMetric, tileKey) {
 			params.icon.fillOpacity = 1;
 			params.icon.path = Svg.markerPinche;
 
-			var adjust = 4;
+			if ( z.inRange(0,5) ){
+				var adjust = 20;
+			}5
+				else if ( z.inRange(6,10) ){
+				var adjust = 10;
+				}
+				else if ( z.inRange(11,15) ){
+					var adjust = 12;
+				}
+				else {
+					var adjust = 21;
+				}
+
 			var n = h.getScaleFactor(z) / adjust;
 
 			var symbol = loc.activeSelectedMetric.GetSymbolInfo();
