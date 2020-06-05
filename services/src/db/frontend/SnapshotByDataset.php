@@ -40,7 +40,7 @@ class SnapshotByDataset extends BaseModel
 	{
 		$query = $this->spatialConditions->CreateEnvelopeQuery($envelope, $metricVersionId, $geographyId);
 
-		return $this->ExecSummaryQuery($metricVersionId, $variables, $hasSummary, $geographyId, $urbanity,$query);
+		return $this->ExecSummaryQuery($metricVersionId, $variables, $hasSummary, $geographyId, $urbanity, $query);
 	}
 
 	public function GetMetricVersionSummaryByCircle($metricVersionId, $variables, $hasSummary, $geographyId, $urbanity, $circle, $datasetType)
@@ -53,44 +53,48 @@ class SnapshotByDataset extends BaseModel
 	private function ExecSummaryQuery($metricVersionId, $variables, $hasSummary, $geographyId, $urbanity, $query, $extraQuery = null)
 	{
 		Profiling::BeginTimer();
-		$sql = "";
-
-		$paramsTotal = [];
-
-		foreach($variables as $variable)
+		if (sizeof($variables))
 		{
-			$select = "COUNT(*) Areas, " . $variable->Id . " VariableId, Round(SUM(IFNULL(sna_area_m2, 0)) / 1000000, 6) Km2";
+			$sql = "";
+			$paramsTotal = [];
 
-			$varId = "sna_" . $variable->Id;
+			foreach($variables as $variable)
+			{
+				$select = "COUNT(*) Areas, " . $variable->Id . " VariableId, Round(SUM(IFNULL(sna_area_m2, 0)) / 1000000, 6) Km2";
 
-			$select .= ", SUM(IFNULL(" . $varId . "_value, 0)) Value,
-										SUM(IFNULL(" . $varId . "_total, 0)) Total," .
-										$varId . "_value_label_id ValueId";
+				$varId = "sna_" . $variable->Id;
 
-			$groupBy = $varId . "_value_label_id";
+				$select .= ", SUM(IFNULL(" . $varId . "_value, 0)) Value,
+											SUM(IFNULL(" . $varId . "_total, 0)) Total," .
+											$varId . "_value_label_id ValueId";
 
-			$from = $this->tableName;
+				$groupBy = $varId . "_value_label_id";
 
-			$where = $this->spatialConditions->UrbanityCondition($urbanity);
+				$from = $this->tableName;
 
-			$baseQuery = new QueryPart($from, $where, null, $select, $groupBy);
+				$where = str_replace('AND ', '', $this->spatialConditions->UrbanityCondition($urbanity));
 
-			if ($query)
-				$query->Select = '';
+				$baseQuery = new QueryPart($from, $where, null, $select, $groupBy);
 
-			if ($extraQuery)
-				$extraQuery->Select = '';
+				if ($query)
+					$query->Select = '';
 
-			$multiQuery = new MultiQuery($baseQuery, $query, $extraQuery);
+				if ($extraQuery)
+					$extraQuery->Select = '';
 
-			if ($sql !== '') $sql .= ' UNION ';
+				$multiQuery = new MultiQuery($baseQuery, $query, $extraQuery);
 
-			$sql .= $multiQuery->sql;
-			if ($multiQuery->params)
-				$paramsTotal = array_merge($paramsTotal, $multiQuery->params);
+				if ($sql !== '') $sql .= ' UNION ';
+
+				$sql .= $multiQuery->sql;
+				if ($multiQuery->params)
+					$paramsTotal = array_merge($paramsTotal, $multiQuery->params);
+			}
+			$ret = App::Db()->fetchAll($sql, $paramsTotal);
 		}
+		else
+			$ret = [];
 
-		$ret = App::Db()->fetchAll($sql, $paramsTotal);
 		Profiling::EndTimer();
 		return $ret;
 	}
@@ -104,7 +108,7 @@ class SnapshotByDataset extends BaseModel
 		$from = $this->tableName . " t1";
 		$join = " JOIN snapshop_geography_item_geography_item snap ON t1.sna_geography_item_id = snap.gii_from_geography_item_id LEFT JOIN " . $this->tableName . " t2 ON t2.sna_geography_item_id = snap.gii_to_geography_item_id";
 
-		$where = "t1.sna_metric_version_id = ? AND t1.sna_geography_id <=> ? " .	$this->spatialConditions->UrbanityCondition($urbanity);
+		$where = "t1.sna_metric_version_id = ? AND t1.sna_geography_id <=> ? " . $this->spatialConditions->UrbanityCondition($urbanity);
 		$params = array($metricVersionId, $geographyId);
 
 		$groupBy = "t1.sna_metric_version_variable_id, t1.sna_version_value_label_id, t2.sna_metric_version_variable_id, t2.sna_version_value_label_id";
@@ -165,7 +169,7 @@ class SnapshotByDataset extends BaseModel
 		}
 		$from = $this->tableName;
 
-		$where = $this->spatialConditions->UrbanityCondition($urbanity);
+		$where = str_replace('AND ', '', $this->spatialConditions->UrbanityCondition($urbanity));
 
 		$baseQuery = new QueryPart($from, $where, null, $select, null, "sna_feature_id");
 
@@ -267,7 +271,7 @@ class SnapshotByDataset extends BaseModel
 		}
 		$from = $this->tableName;
 
-		$where = $this->spatialConditions->UrbanityCondition($urbanity);
+		$where = str_replace('AND ', '', $this->spatialConditions->UrbanityCondition($urbanity));
 
 		if ($hasTotals)
 		{

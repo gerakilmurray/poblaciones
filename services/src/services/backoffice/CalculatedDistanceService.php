@@ -2,8 +2,10 @@
 
 namespace helena\services\backoffice;
 
+use helena\classes\App;
 use helena\services\backoffice\metrics\MetricsCalculator;
 use helena\services\backoffice\publish\CalculateMetricStateBag;
+
 use helena\services\common\BaseService;
 use minga\framework\ErrorException;
 use minga\framework\Profiling;
@@ -11,9 +13,10 @@ use minga\framework\Profiling;
 class CalculatedDistanceService extends BaseService
 {
 	const STEP_CREATE_VARIABLES = 0;
-	const STEP_UPDATE_ROWS = 1;
-	const STEP_CREATE_METRIC = 2;
-	const STEP_COMPLETED = 3;
+	const STEP_PREPARE_DATA = 1;
+	const STEP_UPDATE_ROWS = 2;
+	const STEP_CREATE_METRIC = 3;
+	const STEP_COMPLETED = 4;
 
 	private $state = null;
 
@@ -30,6 +33,15 @@ class CalculatedDistanceService extends BaseService
 		return $this->state->ReturnState(false);
 	}
 
+	private function CompleteSource(& $source)
+	{
+		$calculator = new MetricsCalculator();
+		$dataset = $calculator->GetSourceDatasetByVariableId($source['VariableId']);
+
+		$source['datasetType'] = $dataset->getType();
+		$source['datasetTable'] = $dataset->getTable();
+	}
+
 	public function TotalSteps()
 	{
 		return self::STEP_COMPLETED;
@@ -43,45 +55,50 @@ class CalculatedDistanceService extends BaseService
 		$datasetId = $this->state->Get('datasetId');
 		$source = $this->state->Get('source');
 		$output = $this->state->Get('output');
+		$cols = $this->state->Get('cols');
 
 		$calculator = new MetricsCalculator();
 		switch($this->state->Step())
 		{
 			case self::STEP_CREATE_VARIABLES:
-				$cols = $calculator->StepCreateColumn($datasetId, $source, $output);
+				$cols = $calculator->StepCreateColumns($datasetId, $source, $output);
 				$this->state->Set('cols', $cols);
+				$this->state->NextStep('Preparando datos');
+				break;
+			case self::STEP_PREPARE_DATA:
+				$calculator->StepPrepareData($datasetId, $cols);
 				$this->state->NextStep('Calculando distancias');
 				break;
 			case self::STEP_UPDATE_ROWS:
-				$slice = $this->state->Slice();
-				if($slice == 0)
-					$this->SetUpdateRowsStatePageSizes($datasetId, $source);
-
-				$pageSize = $this->state->Get('pageSize');
-				$cols = $this->state->Get('cols');
-				$ret = $calculator->UpdateDatasetDistance($datasetId, $cols, $source, $output, $slice, $pageSize);
-				if ($ret > 0)
+				$totalSlices = $this->state->GetTotalSlices();
+				if ($totalSlices == 0)
+				{
+					$totalSlices = $calculator->GetTotalSlices($datasetId);
+					$this->state->SetTotalSlices($totalSlices);
+				}
+				if ($calculator->StepUpdateDatasetDistance($key, $datasetId, $cols, $source,
+							$output, $this->state->Slice(), $totalSlices) == false)
+				{
 					$this->state->NextSlice();
+				}
 				else
+				{
 					$this->state->NextStep('Creando indicador');
+				}
 				break;
 			case self::STEP_CREATE_METRIC:
 				//$metric = new MetricService();
 				//$metric->CreateMetric($datasetId);
+				//// Marca work
+				//$dataset = App::Orm()->find(entities\DraftDataset::class, $datasetId);
+				//WorkFlags::SetMetricDataChanged($dataset->getWork()->getId());
+
 				$this->state->NextStep('Listo');
 				break;
 			default:
 				throw new ErrorException('Invalid step.');
 		}
 		return $this->state->ReturnState($this->IsCompleted());
-	}
-
-	private function SetUpdateRowsStatePageSizes($datasetId, $source)
-	{
-		$calculator = new MetricsCalculator();
-		$ret = $calculator->GetTotalSlices($datasetId, $source);
-		$this->state->Set('pageSize', $ret['pageSize']);
-		$this->state->SetTotalSlices($ret['totalSlices']);
 	}
 
 	private function IsCompleted()

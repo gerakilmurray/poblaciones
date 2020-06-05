@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<div class="md-layout">
+		<div class="md-layout md-gutter">
 			<div class="md-layout-item md-size-100">
 				Indique los elementos a incluir en la búsqueda:
 			</div>
-			<div class="md-layout-item md-size-80 md-small-size-100" style="line-height: 4em">
-				Indicador: {{ caption }}
+			<div class="md-layout-item md-size-100 metricRow">
+				{{ caption }}
 				<md-button class="md-raised" @click="addMetric">
 					<md-icon>search</md-icon>
 					Seleccionar...
@@ -143,7 +143,7 @@ export default {
 		asyncValidate() {
 			const loc = this;
 			// Si ya la tiene, no la pide
-			if (this.columnExists !== null) {
+			if (this.columnExists !== null || !loc.newMetric.Source.VariableId) {
 				return new Promise((resolve, reject) => {
 					// devuelve true para indicar que ya fue resuelta con éxito
 					// la validación asincrónica
@@ -187,6 +187,7 @@ export default {
 	},
 	watch: {
 		"newMetric.SelectedVersion"() {
+			this.allCategories = false;
 			if(this.newMetric.SelectedVersion != null) {
 				if(this.newMetric.SelectedVersion.Levels.length > 0) {
 					let i = this.newMetric.SelectedVersion.Levels.findIndex(function(item) {
@@ -199,9 +200,11 @@ export default {
 				}
 			} else {
 				this.newMetric.SelectedLevel = null;
+				this.newMetric.Output.HasDescription = false;
 			}
 		},
 		"newMetric.SelectedLevel"() {
+			this.allCategories = false;
 			if(this.newMetric.SelectedLevel != null) {
 				if(this.newMetric.SelectedLevel.Dataset.Type != 'L') {
 					this.newMetric.Area.IsInclusionPoint = true;
@@ -215,6 +218,7 @@ export default {
 			}
 		},
 		"newMetric.SelectedVariable"() {
+			this.allCategories = false;
 			this.columnExists = null;
 			if(this.newMetric.SelectedVariable != null) {
 				this.newMetric.Source.VariableId = this.newMetric.SelectedVariable.Id;
@@ -232,5 +236,11 @@ export default {
 </script>
 
 <style scoped>
+
+	.metricRow {
+		line-height: 3.1em;
+		display: inline-flex;
+		font-size: 16px;
+	}
 </style>
 

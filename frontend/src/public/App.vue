@@ -5,7 +5,7 @@
 			<LeftPanel ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" />
+			<Fab ref="fabPanel" :work="work" />
 			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
@@ -343,6 +343,7 @@ a:hover {
 	background-color: #ffffff;
 	padding: 8px;
 	border-radius: 8px;
+	overflow: hidden;
 	box-shadow: 0 4px 10px rgba(60,64,67,.28);
 }
 .ibTooltipOffsetLeft {

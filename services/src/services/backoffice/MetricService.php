@@ -271,11 +271,11 @@ class MetricService extends BaseService
 
 		$variableConnected = App::Orm()->Reconnect(entities\DraftVariable::class, $variable);
 
-		$level = $variableConnected->getMetricVersionLevel();
-
 		if ($variableConnected->getMetricVersionLevel() === null) {
 				$variableConnected->setMetricVersionLevel($level);
 		}
+		$level = $variableConnected->getMetricVersionLevel();
+
 		// Graba el symbology
 		App::Orm()->save($variableConnected->getSymbology());
 		// Resuelve el order...
@@ -310,10 +310,11 @@ class MetricService extends BaseService
 		// Borra valores
 		$this->ClearValues($variable->getId());
 		// Borra variable
-		$symbology = $variable->getSymbology();
+		$symbologyId = $variable->getSymbology()->getId();
 		App::Orm()->delete($variable);
 		// Borra el symbology
-		App::Orm()->delete($symbology);
+		App::Db()->exec("DELETE FROM draft_symbology WHERE vsy_id = ? AND NOT EXISTS(
+										SELECT * FROM draft_variable WHERE mvv_symbology_id = ?)", array($symbologyId, $symbologyId));
 		// Marca work
 		WorkFlags::SetMetricDataChanged($level->getDataset()->getWork()->getId());
 		// Listo
@@ -348,7 +349,9 @@ class MetricService extends BaseService
 		Profiling::BeginTimer();
 		if ($variableConnected->getId() === null || $variableConnected->getId() === 0) {
 			$maxSql = "SELECT MAX(mvv_order) + 1 FROM draft_variable WHERE mvv_metric_version_level_id = ?";
-			$maxOrder = App::Db()->fetchScalarInt($maxSql, array($level->getId()));
+			$maxOrder = null;
+			if ($level !== null)
+				App::Db()->fetchScalarInt($maxSql, array($level->getId()));
 			if ($maxOrder === null) $maxOrder = 1;
 			$variableConnected->setOrder($maxOrder);
 		}

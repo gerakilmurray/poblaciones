@@ -46,12 +46,17 @@ class SnapshotByDatasetModel
 		Profiling::EndTimer();
 	}
 
+	public static function SnapshotTable($table)
+	{
+		return $table . "_snapshot";
+	}
+
 	private function CreateTable($dataset, $columns)
 	{
 		Profiling::BeginTimer();
 
 		// Hace el drop preventivo
-		$table = $dataset['dat_table']. '_snapshot';
+		$table = self::SnapshotTable($dataset['dat_table']);
 		App::Db()->dropTable($table);
 
 		// Hace el create
@@ -76,7 +81,7 @@ class SnapshotByDatasetModel
 			$sqlValues .= "," . ($column[2] === null ? "null" :  $column[2]);
 		// Arma el FROM
 		$table = $dataset['dat_table'];
-		$sql = "INSERT INTO " . $table . "_snapshot (" . substr($sqlCols, 1) . ")
+		$sql = "INSERT INTO " . self::SnapshotTable($table) . " (" . substr($sqlCols, 1) . ")
 						SELECT " . substr($sqlValues, 1);
 		// Pne valores
 		$sql .= " FROM " . $table . ", geography_item WHERE gei_id = geography_item_id";
@@ -135,7 +140,7 @@ class SnapshotByDatasetModel
 				POINT(Max(ST_X(PointN(ExteriorRing(sna_envelope), 3))),
 				MAX(ST_Y(PointN(ExteriorRing(sna_envelope), 3))))
                               ))) extents
-				FROM  " . $dataset['dat_table'] . "_snapshot";
+				FROM  " . self::SnapshotTable($dataset['dat_table']);
 
 		$res = App::Db()->fetchAssoc($sql);
 
@@ -167,7 +172,10 @@ class SnapshotByDatasetModel
 		$columns[] = ['sna_id', 'int(11) AUTO_INCREMENT PRIMARY KEY', null];
 		$columns[] = ['sna_geography_item_id', 'int(11) NOT NULL', 'gei_id'];
 		$columns[] = ['sna_urbanity', "char(1) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N'", 'gei_urbanity'];
-		$columns[] = ['sna_description', 'varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL', 'LEFT(' . $this->GetDescriptionColumn($dataset) . ', 250)'];
+		$description = $this->GetDescriptionColumn($dataset);
+		if ($description !== 'null')
+		 $description = 'LEFT(' . $description . ', 250)';
+		$columns[] = ['sna_description', 'varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL', $description];
 
 		$columns[] = ['sna_feature_id', 'bigint(11) NOT NULL', $this->GetFeatureIdField($dataset)];
 		$columns[] = ['sna_area_m2', 'double NOT NULL', $this->GetArea($dataset)];
@@ -186,8 +194,8 @@ class SnapshotByDatasetModel
 		}
 		else if ($dataset['dat_type'] == DatasetTypeEnum::Locations)
 		{
-			$point = "POINT(" . $dataset['dat_longitude_field'] . ", " .
-																$dataset['dat_latitude_field'] . ")";
+			$point = "POINT(CAST(" . $dataset['dat_longitude_field'] . " AS DECIMAL(14,8)), CAST(" .
+																$dataset['dat_latitude_field'] . " AS DECIMAL(14,8)) )";
 			$envelopeTarget = $point;
 			$location = $point;
 		}
@@ -203,7 +211,7 @@ class SnapshotByDatasetModel
 	private function BuildVariableColumns($metricVersionLevel, $variable, &$columns)
 	{
 		// Calcula el valor
-		$columns[] = ['sna_' . $variable->Id() . '_value', 'double NOT NULL', $variable->CalculateValueField()];
+		$columns[] = ['sna_' . $variable->Id() . '_value', 'double NULL', $variable->CalculateValueField()];
 
 		// Calcula la categoría
 		$valueForSegmentation = $variable->CalculateSegmentationValueField();

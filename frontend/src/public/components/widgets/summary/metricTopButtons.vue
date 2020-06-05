@@ -106,7 +106,7 @@ export default {
 					}
 				}
 			}
-			window.SegMap.MapsApi.FitEnvelope(extents);
+			window.SegMap.MapsApi.FitEnvelope(extents, true);
 			this.$refs.zoomExtentsBtn.blur();
 		},
 		getUrbanityTextActive() {
