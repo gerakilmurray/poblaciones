@@ -1,6 +1,8 @@
 import os
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
+import subprocess
 
 class Procesador:
 
@@ -13,7 +15,10 @@ class Procesador:
         self.ruta.pack()
         busqueda = Button(root, text="Buscar", command=self.busquedaDeArchivo).pack(side="left")
         procesar = Button(root, text="Procesar", command=self.procesar).pack(side="left")
-        
+
+    def message_on_click(self):
+        messagebox.showinfo(title="asdtitulo", message="asd")
+        messagebox.showerror(title="asdtitulo", message="asd")
 
     def busquedaDeArchivo(self): 
         filePath = filedialog.askopenfilename() #abre el explorador de archivos y guarda la seleccion en la variable!  
@@ -21,11 +26,22 @@ class Procesador:
         self.ruta.config(text=filePath)
 
     def procesar(self):
-        print(self.ruta['text'])
-        params = self.ruta['text'].split('.')
-        comando = "py kmx2csv.py " + params[1] + " " + self.ruta['text'] + " ." 
-        print(comando)
-        os.system(comando)
+        try: 
+            print(self.ruta['text'])
+            params = self.ruta['text'].split('.')
+            comando = "py kmx2csv.py " + params[1] + " " + self.ruta['text'] + " ." 
+            print(comando)
+            os.system(comando)
+            print("ACAAAAA")
+            test= subprocess.check_output(comando, shell=True);
+            if (params[1] == "" or self.ruta['text'] == ""):
+               raise Exception("No se seleccionó un archivo")
+            messagebox.showinfo(title="Aviso", message="Conversión realizada con éxito")
+
+        except Exception as e:
+            messagebox.showerror(title="Error", message=f"{e}")
+
+
         
 root = Tk()
 main = Procesador(root)
