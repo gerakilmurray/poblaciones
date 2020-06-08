@@ -58,7 +58,7 @@ def process_kmz(in_file, out_file, out_path):
 def process_kml(in_file, out_file):
     ''' Procesa un archivo KML '''
     with io.open(in_file, 'r', encoding="utf8") as kml_file:
-        kml_file = kml_file.read().replace("’","'").replace("“","\"").replace("”","\"")
+        kml_file = kml_file.read().replace(u"’","'").replace(u"“","\"").replace(u"”","\"")
         s = BeautifulSoup(kml_file, 'xml')
         with open(out_file, 'wb') as csvfile:
             writer = csv.writer(csvfile, 
