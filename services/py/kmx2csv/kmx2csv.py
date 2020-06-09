@@ -15,15 +15,15 @@ import io
 
 def main():
     if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print ('Usage: ' + sys.argv[0] +
-               ' file_extesion inputfile [outputpath]')
+        #print ('Usage: ' + sys.argv[0] +
+         #      ' file_extesion inputfile [outputpath]')
         os._exit(1)
 
     if len(sys.argv) == 3:
         sys.argv.append('.')
 
-    print (
-        'Args:' + sys.argv[0] + ' - ' + sys.argv[1] + ' - ' + sys.argv[2] + ' - ' + sys.argv[3])
+    #print (
+     #   'Args:' + sys.argv[0] + ' - ' + sys.argv[1] + ' - ' + sys.argv[2] + ' - ' + sys.argv[3])
 
     try:
         file_extesion = sys.argv[1]
@@ -37,7 +37,7 @@ def main():
             process_kmz(in_file, out_file, out_path)
 
     except:
-        print ('Error: ', sys.exc_info())
+        #print ('Error: ', sys.exc_info())
         traceback.print_exc()
         os._exit(1)
 

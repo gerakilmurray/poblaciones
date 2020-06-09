@@ -16,10 +16,6 @@ class Procesador:
         busqueda = Button(root, text="Buscar", command=self.busquedaDeArchivo).pack(side="left")
         procesar = Button(root, text="Procesar", command=self.procesar).pack(side="left")
 
-    def message_on_click(self):
-        messagebox.showinfo(title="asdtitulo", message="asd")
-        messagebox.showerror(title="asdtitulo", message="asd")
-
     def busquedaDeArchivo(self): 
         filePath = filedialog.askopenfilename() #abre el explorador de archivos y guarda la seleccion en la variable!  
         #self.ruta['text'] = 'filePath'
@@ -32,11 +28,11 @@ class Procesador:
             comando = "py kmx2csv.py " + params[1] + " " + self.ruta['text'] + " ." 
             print(comando)
             os.system(comando)
-            print("ACAAAAA")
             test= subprocess.check_output(comando, shell=True);
             if (params[1] == "" or self.ruta['text'] == ""):
                raise Exception("No se seleccionó un archivo")
             messagebox.showinfo(title="Aviso", message="Conversión realizada con éxito")
+            messagebox.showinfo(title="Archivos generados", message=test)
 
         except Exception as e:
             messagebox.showerror(title="Error", message=f"{e}")
