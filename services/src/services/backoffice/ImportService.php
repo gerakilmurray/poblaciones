@@ -248,7 +248,14 @@ class ImportService extends BaseService
 
 	private function ConvertKMX($bucket, $fileExtension)
 	{
-		$python = App::GetPythonPath();
+		$python = App::GetPython3Path();
+		$p3 = '3';
+		if($python == null)
+		{
+			$python = App::GetPythonPath();
+			$p3 = '';
+		}
+
 		if (IO::Exists($python) === false) {
 			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
 		}
@@ -259,7 +266,7 @@ class ImportService extends BaseService
 		
 		$lines = array();
 
-		$ret = System::Execute(App::GetPythonPath(), array(
+		$ret = System::Execute($python, array(
 			Paths::GetPythonScriptsPath() .'/kmx2csv.py',
 			$fileExtension,
 			$sourceFile,
@@ -273,6 +280,8 @@ class ImportService extends BaseService
 				. "\nFile extension: " . $fileExtension
 				. "\nSource: " . $sourceFile
 				. "\nFolder: " . $folder
+				. "\nPython: " . $python
+				. "\nReturn: " . $ret
 				. "\nScript Output was: \n----------------------\n" . implode("\n", $lines) . "\n----------------------\n";
 			if(App::Debug()) {
 				$err = $detail;
