@@ -130,7 +130,7 @@ LocationsGeojsonComposer.prototype.bindStyles = function (dataMetric, tileKey) {
 
 			if ( z.inRange(0,5) ){
 				var adjust = 20;
-			}5
+			}
 				else if ( z.inRange(6,10) ){
 				var adjust = 10;
 				}
