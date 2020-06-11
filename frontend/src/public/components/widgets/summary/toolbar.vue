@@ -5,11 +5,14 @@
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PDF..." v-on:click="captureMapPdf(metrics)"><i class="fas fa-file-pdf"/></button>
+		<button type="button" class="btn btn-default btn-xs"
+						    title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()"><i class="fas fa-map-marked-alt"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
 							title="Máscara poblacional" v-on:click="changeGradientOpacity(.25)"><i class="fas fa-satellite"/></button>
 	</div>
+
 		<div class="btn-group">
 			<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
 							v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
@@ -63,6 +66,7 @@
 		</div>
 		<div style="clear: both"></div>
     <tour ref="Tour"></tour>
+	<embedded ref="Embedded"></embedded>
   </div>
 </template>
 
@@ -71,6 +75,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import HelpCircleIcon from 'vue-material-design-icons/HelpCircle.vue';
 import tour from '@/public/components/popups/tour';
+import embedded from '@/public/components/popups/embedded';
 import h from '@/public/js/helper';
 import a from '@/common/js/authentication';
 
@@ -84,7 +89,8 @@ export default {
 	],
 	components: {
     tour,
-    HelpCircleIcon
+	HelpCircleIcon,
+	embedded,
 	},
 	methods: {
 		selectionModes() {
@@ -98,6 +104,9 @@ export default {
 		},
 		showTutorial() {
 			this.$refs.Tour.toggleModal();
+		},
+		showEmbeddedMapPopUp() {
+			this.$refs.Embedded.toggleModal();
 		},
 		useExtraToolbar() {
 			return window.UISettings_ExtraToolbar;
