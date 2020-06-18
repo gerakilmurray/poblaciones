@@ -181,8 +181,11 @@ html, body {
 	top: 0px !important;
 	right: 0px !important;
 }
+.ls {
+	stroke-width: 2.5px;
+}
 .gAlpha {
-	opacity: .45;
+	opacity: .35;
 }
 .gm-fullscreen-control {
 	transform: scale(0.8);

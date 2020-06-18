@@ -10,7 +10,7 @@
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
-							title="Máscara poblacional" v-on:click="changeGradientOpacity(.25)"><i class="fas fa-satellite"/></button>
+							:title="'Máscara poblacional ' + currentGradientOpacity" v-on:click="changeGradientOpacity(.25)"><i class="fas fa-satellite"/></button>
 	</div>
 
 		<div class="btn-group">
@@ -81,6 +81,11 @@ import a from '@/common/js/authentication';
 
 export default {
 	name: 'toolbar',
+	data() {
+			return {
+				currentGradientOpacity: 0.35
+			};
+	},
 	props: [
 		'frame',
 		'user',
@@ -203,12 +208,13 @@ export default {
 			return '';
 		},
 		changeGradientOpacity(delta) {
+			var result = this.currentGradientOpacity + delta;
+			if (result > 1) {
+				result = 0.1;
+			}
+			this.currentGradientOpacity = result;
 			var rule = h.getCssRule(document, '.gAlpha');
 			if (rule) {
-				var result = parseFloat(rule.style.opacity) + delta;
-				if (result > 1) {
-					result = 0.1;
-				}
 				rule.style.opacity = result;
 			}
 		}

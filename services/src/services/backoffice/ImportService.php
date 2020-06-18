@@ -60,7 +60,8 @@ class ImportService extends BaseService
 		}
 		else if ($fileExtension == "kml" || $fileExtension == "kmz")
 		{
-			return $this->ConvertKMX($bucket, $fileExtension);
+			$this->ConvertKMX($bucket, $fileExtension);
+			return $this->CSVtoJson($bucket);
 		}
 
 		throw new ErrorException('La extensión del archivo debe ser SAV, CSV, KML o KMZ. Extensión recibida: ' . $fileExtension);
@@ -248,7 +249,15 @@ class ImportService extends BaseService
 
 	private function ConvertKMX($bucket, $fileExtension)
 	{
-		$python = App::GetPythonPath();
+		$python = App::GetPython3Path();
+		$p3 = '3';
+		if($python == null)
+		{
+			$python = App::GetPythonPath();
+			$p3 = '';
+		}
+		$conversor_py = Paths::GetPythonScriptsPath() .'/kmx2csv' . $p3 .'.py';
+
 		if (IO::Exists($python) === false) {
 			throw new ErrorException('El ejecutable de python no fue encontrado en ' . $python);
 		}
@@ -259,20 +268,22 @@ class ImportService extends BaseService
 		
 		$lines = array();
 
-		$ret = System::Execute(App::GetPythonPath(), array(
-			Paths::GetPythonScriptsPath() .'/kmx2csv.py',
+		$ret = System::Execute($python, array(
+			$conversor_py,
 			$fileExtension,
 			$sourceFile,
 			$folder
-		), $lines);
+		), $lines, false);
 
 		if($ret !== 0)
 		{
 			$err = '';
-			$detail = "\nScript: " . Paths::GetPythonScriptsPath() .'/kmx2csv.py'
+			$detail = "\nScript: " . $conversor_py
 				. "\nFile extension: " . $fileExtension
 				. "\nSource: " . $sourceFile
 				. "\nFolder: " . $folder
+				. "\nPython: " . $python
+				. "\nReturn: " . $ret
 				. "\nScript Output was: \n----------------------\n" . implode("\n", $lines) . "\n----------------------\n";
 			if(App::Debug()) {
 				$err = $detail;
@@ -285,10 +296,8 @@ class ImportService extends BaseService
 		}
 
 		$csv_file = $sourceFile . '_out.csv';
-		CsvToJson::Convert($csv_file, $folder);
 
-		$this->state->SetStep(self::STEP_CONVERTED, 'Creando tablas');
-		return $this->state->ReturnState(false);
+		IO::Move($csv_file, $sourceFile);
 	}
 
 	private function CreateTables()

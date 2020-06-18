@@ -462,6 +462,7 @@ ActiveDataset.prototype.SaveColumn = function (variable) {
 		{ 'k': this.properties.Id, 'c': variable },
 		'actualizar los atributos de la variable');
 };
+
 ActiveDataset.prototype.SkipRows = function (rowIds) {
 	var loc = this;
 	this.Work.WorkChanged();
@@ -699,6 +700,7 @@ ActiveDataset.prototype.GetColumnsForJqxGrid = function (showingErrors, validate
 		newColumn.text = 'Problema';
 		newColumn.datafield = 'internal__Err';
 		newColumn.width = 130;
+		newColumn.cellsrenderer = this.cellsRenderer;
 		newColumn.pinned = true;
 		columns.push(newColumn);
 	}
@@ -736,7 +738,7 @@ ActiveDataset.prototype.setRenderer = function(col) {
 };
 
 ActiveDataset.prototype.cellsRenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-	return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + ';">' + str.EscapeHtml(value) + '</span>';
+	return '<div class="gridCell" style="overflow: hidden !important;text-align:' + columnproperties.cellsalign + '">' + str.EscapeHtml(value) + '</div>';
 };
 
 ActiveDataset.prototype.getLabelList = function (list) {
