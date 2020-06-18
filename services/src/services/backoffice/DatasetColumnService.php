@@ -5,7 +5,6 @@ namespace helena\services\backoffice;
 use minga\framework\ErrorException;
 use minga\framework\MessageException;
 use minga\framework\Profiling;
-use minga\framework\Str;
 
 use helena\caches\BackofficeDownloadCache;
 use helena\caches\DatasetColumnCache;
@@ -23,10 +22,14 @@ class DatasetColumnService extends DbSession
 	public function SaveColumn($datasetId, $column)
 	{
 		Profiling::BeginTimer();
+		// Trae el ancho de la columna
+		$fieldWidthSql = "SELECT dco_field_width FROM
+																		draft_dataset_column WHERE dco_id = ? AND dco_dataset_id = ?";
+		$fieldWidth = App::Db()->fetchScalarInt($fieldWidthSql, array($column->getId(), $datasetId));
 		// Graba
 		DatasetColumns::FixCaption($column);
 		DatasetColumns::FixName($column);
-		$duplicated  = "SELECT COUNT(*) FROM draft_dataset_column WHERE dco_variable = ? AND dco_id != ? AND dco_dataset_id = ?";
+		$duplicated = "SELECT COUNT(*) FROM draft_dataset_column WHERE dco_variable = ? AND dco_id != ? AND dco_dataset_id = ?";
 		$count = App::Db()->fetchScalarInt($duplicated, array($column->getVariable(), $column->getId(), $datasetId));
 
 		if ($count > 0)
@@ -36,8 +39,32 @@ class DatasetColumnService extends DbSession
 		App::Orm()->save($column);
 		// Marca work
 		DatasetService::DatasetChangedById($datasetId, true);
+		// Si los anchos difieren, cambia la columna en la base de datos
+		if ($fieldWidth !== $column->getFieldWidth())
+		{
+			$this->resizeColumn($datasetId, $column);
+			DatasetService::DatasetChangedById($datasetId);
+		}
 		Profiling::EndTimer();
 		return $column;
+	}
+
+	private function resizeColumn($datasetId, $column)
+	{
+		$dataset = App::Orm()->find(entities\DraftDataset::class, $datasetId);
+		$table = $dataset->getTable();
+		$newSize = $column->getFieldWidth();
+		$field = $column->getField();
+		$type = $column->getFormat();
+		if ($type !== Format::A)
+			throw new ErrorException("No es posible cambiar el tamaño de un campo numérico");
+		// Reduce tamaños
+		$sqlFixLengths = "UPDATE " . $table . " SET " . $field . " = LEFT(" . $field . ", " . $newSize . ") WHERE
+																		LENGTH(" . $field . ") > " . $newSize;
+		App::Db()->exec($sqlFixLengths);
+		// Cambia el campo
+		$sqlAlter = "ALTER TABLE " . $table . " MODIFY " . $field . " VARCHAR(" . $newSize . ")";
+		App::Db()->execDDL($sqlAlter);
 	}
 
 	public function DeleteColumns($datasetId, $ids)
@@ -183,6 +210,12 @@ class DatasetColumnService extends DbSession
 			$this->DeleteColumns($datasetId, [$column->getId()]);
 	}
 
+	public function UpdateCaption($col, $caption)
+	{
+		$col->setCaption($caption);
+		App::Orm()->save($col);
+	}
+
 	public function CreateColumn($dataset, $field, $variable, $caption, $label, $columnWidth, $fieldWidth,
 		$decimals, $format, $measure, $alignment, $useInSummary, $useInExport, $position = null, $after = '')
 	{
@@ -231,30 +264,7 @@ class DatasetColumnService extends DbSession
 		}
 	}
 
-	public function GetCopyColumnName($prefix, $datasetName, $srcColumnName, $maxLength = 64)
-	{
-		// El mÃ¡ximo de un nombre de columna en mysql es 64 por
-		// eso el default de $maxLength = 64.
-		$clean = Str::RemoveAccents($datasetName);
-		$clean = Str::RemoveNonAlphanumeric($clean);
-		$clean = Str::Replace($clean, ' ', '_');
-		$len = Str::Length($clean) + Str::Length($prefix) + Str::Length($srcColumnName) + 1;
-		if($len > $maxLength)
-		{
-			$newLen = Str::Length($clean) - ($len - $maxLength);
-			if($newLen >= 0)
-				$clean = Str::Substr($clean, 0, $newLen);
-			else
-			{
-				$clean = '';
-				$srcColumnName = Str::Substr($srcColumnName, 0, Str::Length($srcColumnName) + $newLen);
-			}
-		}
-
-		return $prefix . $clean . '_' . $srcColumnName;
-	}
-
-	private function GetColumnByVariable($datasetId, $variable)
+	public function GetColumnByVariable($datasetId, $variable)
 	{
 		return App::Orm()->findByProperties(entities\DraftDatasetColumn::class,
 			['Variable' => $variable, 'Dataset.Id' => $datasetId]);
@@ -380,7 +390,7 @@ class DatasetColumnService extends DbSession
 			{
 				if ($insertBlock !== "") $insertBlock .= ",";
 				$insertBlock .= "(" . $columnId . "," . SqlBuilder::FormatValue($value) . "," .
-														SqlBuilder::FormatValue($label->Caption) .  "," .
+														SqlBuilder::FormatValue($label->Caption) . "," .
 														SqlBuilder::FormatValue($label->Order) .")";
 				$done[$value] = true;
 				$insertCount++;
@@ -454,8 +464,8 @@ class DatasetColumnService extends DbSession
 			throw new ErrorException('Invalid column Id.');
 		$field = "`" . $col->getField() . "`";
 		$rows = App::Db()->fetchAll("
-						SELECT null Id, (@rowNumber := @rowNumber + 1) AS Value, Caption, @rowNumber AS `Order`,  Count  FROM (
-						SELECT " . $field . " Caption, count(*) Count FROM " .  $dataset->getTable() . " GROUP BY " . $field . " ORDER BY " . $field . ") d,
+						SELECT null Id, (@rowNumber := @rowNumber + 1) AS Value, Caption, @rowNumber AS `Order`, Count FROM (
+						SELECT " . $field . " Caption, count(*) Count FROM " . $dataset->getTable() . " GROUP BY " . $field . " ORDER BY " . $field . ") d,
 									 (SELECT @rowNumber := 0) r");
 		Profiling::EndTimer();
 		return $rows;

@@ -117,9 +117,14 @@ class cHandle extends cPublicController
 		$this->AddValue('links', $links);
 	}
 
-	public function AddMetadata(&$metadata, $url)
+	public function AddMetadata(&$metadata, $url, $metricName, $regionId = null)
 	{
-		$this->AddValue('htmltitle', $metadata['met_title']);
+		$fullTitle = $this->GetFullTitle($metricName, $regionId);
+
+		$metadata['met_title'] = $fullTitle;
+		$this->AddValue("handleTitle", $fullTitle);
+		$this->AddValue('htmltitle', $fullTitle);
+
 		$map = [	'citation_title' => 'met_title',
 							'citation_publication_date' => 'met_online_since',
 							'citation_date' => 'met_online_since',
@@ -156,12 +161,9 @@ class cHandle extends cPublicController
 		$workService = new WorkService();
 		$work = $workService->GetWork($workId);
 		$metadata = $this->GetMetadata($work);
-		//$metadata['met_title'] = $this->PreppendMap($metadata['met_title']);
 
-		$this->AddMetadata($metadata, $work->Url);
+		$this->AddMetadata($metadata, $work->Url, $metadata['met_title']);
 		$this->AddMetricLinks($work);
-
-		$this->AddValue('handleTitle', $metadata['met_title']);
 
 		$items[] = ['Name' => 'Resumen', 'Value' => $metadata['met_abstract']];
 		$this->AddValue("items", $items);
@@ -189,30 +191,46 @@ class cHandle extends cPublicController
 		$metadataId = $work->MetadataId;
 		$sources = $model->GetMetadataSources($metadataId);
 		$metricName = Arr::GetItemByNamedValue($work->Metrics, "Id", $metricId)['Name'];
-		//$metric = $this->PreppendMap($metricName);
 		$metric = $metricName;
 
 		$this->AddInfo($metadata, $metric, $items);
 		$this->AddSources($sources, $items);
 		$this->AddValue("items", $items);
-		$this->AddMetadata($metadata, $work->Url);
+		$this->AddMetadata($metadata, $work->Url, $metricName, $regionId);
 		$this->AddVariables($workId, $metricId, $outDatasetTables);
 		$metadata['met_title'] = $metric;
 
-		if ($regionId != null)
-		{
-			$model = new ClippingRegionItemModel();
-			$clippingRegionItem = $model->GetClippingRegionItem($regionId, true);
-			$this->AddValue("clippingRegionItem", $clippingRegionItem['Name']);
-			$this->AddValue("clippingRegion", $clippingRegionItem['Type']);
-			$this->AddValueIfNotNull("parentCaption", $clippingRegionItem['parentCaption']);
-			$this->AddValueIfNotNull("grandParentCaption", $clippingRegionItem['grandParentCaption']);
-		}
 		if ($metadata['Extents'] !== null && Session::IsWorkPublicSegmentedCrawled($workId))
 		{
 			$extents = Envelope::FromDb($metadata['Extents']);
 			$this->AddRegions($workId, $metricId, $outDatasetTables, $metricName, $extents, $regionId);
 		}
+	}
+
+	private function GetFullTitle($title, $regionId)
+	{
+		if ($regionId == null)
+			return $title;
+
+		$model = new ClippingRegionItemModel();
+		$clippingRegionItem = $model->GetClippingRegionItem($regionId, true);
+		$clippingRegionItemName = $clippingRegionItem['Name'];
+		$clippingRegion = $clippingRegionItem['Type'];
+		$parentCaption = $clippingRegionItem['parentCaption'];
+		$grandParentCaption = $clippingRegionItem['grandParentCaption'];
+
+		$ret = "";
+		if ($clippingRegionItemName)
+			$ret .= $clippingRegionItemName . ', ';
+		$ret .= $title;
+
+		if ($parentCaption)
+		{
+			$ret .= " - " . $parentCaption;
+			if ($grandParentCaption)
+				$ret .=  ', ' . $grandParentCaption;
+		}
+		return $ret;
 	}
 
 	private function AddRegions($workId, $metricId, $datasetTables, $metricName, $extents, $regionId)
@@ -307,8 +325,6 @@ class cHandle extends cPublicController
 
 	private function AddInfo($metadata, $metric, &$items)
 	{
-		$this->AddValue("handleTitle", $metric);
-
 		$workTitle = $metadata['met_title'];
 		if (trim($metadata["met_abstract"]) === "") $metadata["met_abstract"] = '-';
 		$tags = ["met_abstract" => $workTitle, "met_authors" => "Autores", "ins_caption" => "Institución"];
