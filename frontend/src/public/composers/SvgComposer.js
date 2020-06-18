@@ -292,24 +292,6 @@ SvgComposer.prototype.removeTileFeatures = function (tileKey) {
 	}
 };
 
-/*
-From LocationGeoJson
-
-	orig value adjust = 14
-
-	if ( z.inRange(0,5) ){
-		var adjust = 20;
-	}
-	else if ( z.inRange(6,10) ){
-	var adjust = 10;
-	}
-	else if ( z.inRange(11,15) ){
-		var adjust = 12;
-	}
-	else {
-		var adjust = 21;
-	}
-*/
 SvgComposer.prototype.defineScaleCriteria = function(z) {
 	var divi = 4;
 	switch (z) {
