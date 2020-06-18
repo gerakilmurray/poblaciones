@@ -17,3 +17,5 @@ thumbs.db
 .vscode/settings.json
 .ignore
 tags
+/startup/dbdefault-user.sql
+/startup/dbversion.sql
