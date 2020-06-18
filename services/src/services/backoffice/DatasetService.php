@@ -66,6 +66,7 @@ class DatasetService extends DbSession
 		$work = App::Orm()->find(entities\DraftWork::class, $workId);
 		$dataset->setWork($work);
 		$dataset->setType('L');
+		$dataset->setScaleSymbol(true);
 		$dataset->setShowInfo(true);
 		$dataset->setExportable(true);
 		$dataset->setGeoreferenceStatus(0);
@@ -132,7 +133,7 @@ class DatasetService extends DbSession
 		$this->DeleteFromErrors($table, $ids);
 		DatasetColumnCache::Cache()->Clear($datasetId);
 		// Marca work
-		DatasetService::DatasetChanged($dataset, true);
+		DatasetService::DatasetChanged($dataset);
 		Profiling::EndTimer();
 		return $ret;
 	}
@@ -167,7 +168,7 @@ class DatasetService extends DbSession
 
 		DatasetColumnCache::Cache()->Clear($datasetId);
 		// Marca work
-		DatasetService::DatasetChanged($dataset, true);
+		DatasetService::DatasetChanged($dataset);
 		Profiling::EndTimer();
 		return self::OK;
 	}
