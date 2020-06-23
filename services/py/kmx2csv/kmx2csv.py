@@ -29,7 +29,7 @@ def main():
         file_extesion = sys.argv[1]
         in_file = sys.argv[2]
         out_path = sys.argv[3]
-        out_file = in_file + '_out.csv'
+        out_file = in_file 
 
         if file_extesion == 'kml':
             process_kml(in_file, out_file)
@@ -47,16 +47,18 @@ def process_kmz(in_file, out_file, out_path):
     # Descomprimo el KMZ
     kmz = ZipFile(in_file, 'r')
     kmz.extractall(out_path)
-
+    
     for _, _, files in os.walk(out_path):
         for i, a_file in enumerate(files):
             _, extension = os.path.splitext(a_file)
             if extension == '.kml':
-                process_kml(a_file, out_file + str(i).zfill(3))
+                process_kml(a_file, out_file  + str(i).zfill(3))
+                
 
 
 def process_kml(in_file, out_file):
     ''' Procesa un archivo KML '''
+    out_file = out_file + '_out.csv'
     with io.open(in_file, 'r', encoding="utf8") as kml_file:
         kml_file = kml_file.read().replace("’","'").replace("“","\"").replace("”","\"")
         s = BeautifulSoup(kml_file, 'xml')
@@ -74,7 +76,10 @@ def process_kml(in_file, out_file):
                 for placemark in folder.get_placemarks():
                     for place in placemark.get_places():                     
                         writer.writerow(createRow(folder,placemark,place))
-    print (out_file)
+    if out_file.find('.csv') != -1:               
+        print ('Archivo '+ out_file[out_file.rfind('/')+1:len(out_file)] + " creado en: '\n'"+ out_file[0:out_file.rfind('/')+1])
+    else: print(out_file)
+
 
 def createTitle():
     title = [
