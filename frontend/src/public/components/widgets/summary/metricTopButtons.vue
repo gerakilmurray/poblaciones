@@ -22,7 +22,7 @@ font-size: 12px">
 				</button>
 
 				<span class="dropdown">
-					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbanidad">
+					<button type="button" class="close lightButton" data-toggle="dropdown" title="Urbano/Rural">
 						<i class="fas fa-users" v-text="getUrbanityTextActive()"/>
 					</button>
 					<ul class="dropdown-menu dropdownMargin">
@@ -30,16 +30,22 @@ font-size: 12px">
 							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('N')">Todo</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('U')">Urbano</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('UD')">Urbano</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('D')">Urbano disperso</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('U')">Urbano Agrupado</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('R')">Rural</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('D')">Urbano Disperso</button>
 						</li>
 						<li>
-							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('L')">Rural disperso</button>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('RL')">Rural</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('R')">Rural Agrupado</button>
+						</li>
+						<li>
+							<button type="button" class="close lightButton btn-full" v-on:click="changeUrbanity('L')">Rural Disperso</button>
 						</li>
 					</ul>
 				</span>
@@ -112,12 +118,16 @@ export default {
 		getUrbanityTextActive() {
 			if(this.urbanity === 'N') {
 				return '';
-			}else if(this.urbanity === 'U') {
+			}else if(this.urbanity === 'UD') {
 				return ' - U';
+			}else if(this.urbanity === 'U') {
+				return ' - UA';
 			}else if(this.urbanity === 'D') {
 				return ' - UD';
-			}else if(this.urbanity === 'R') {
+			}else if(this.urbanity === 'RL') {
 				return ' - R';
+			}else if(this.urbanity === 'R') {
+				return ' - RA';
 			}else if(this.urbanity === 'L') {
 				return ' - RD';
 			}

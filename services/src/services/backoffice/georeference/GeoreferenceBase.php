@@ -108,7 +108,14 @@ abstract class GeoreferenceBase
 
 		$sql = "INSERT INTO " . $this->state->ErrorsTable() . " (row_id, error_code) " .
 							" SELECT id, " . $errorCode . " FROM (SELECT * " . $fromWhere . ") as t WHERE " . $condition;
-
+		/*
+{
+echo $errorCode;
+echo '<br>';
+	echo $sql;
+echo '<br>----------------------------------------';
+//	throw new \Exception('stopped 2');
+}*/
 		$rows = App::Db()->exec($sql);
 		$this->state->IncrementErrors($rows);
 
@@ -147,7 +154,7 @@ abstract class GeoreferenceBase
 		App::Db()->exec($sql);
 
 		$sql = "UPDATE " . $table . " SET geometry_r1 = geometry,  geometry_r2 = geometry, geometry_r3 = geometry,
-							geometry_r4 = geometry, geometry_r5 = geometry, geometry_r6 = geometry, centroid = ST_CENTROID(geometry), area_m2 = st_area(geometry) * 10326905227 WHERE
+							geometry_r4 = geometry, geometry_r5 = geometry, geometry_r6 = geometry, centroid = GeometryCentroid(geometry), area_m2 = st_area(geometry) * 10326905227 WHERE
 								id IN (SELECT id FROM (SELECT id FROM " . $table . " WHERE ommit = 0 " . $limit . ") tmp)";
 
 		App::Db()->exec($sql);
