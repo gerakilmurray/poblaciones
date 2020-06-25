@@ -5,8 +5,6 @@
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PDF..." v-on:click="captureMapPdf(metrics)"><i class="fas fa-file-pdf"/></button>
-		<button type="button" class="btn btn-default btn-xs"
-						    title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()"><i class="fas fa-map-marked-alt"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
@@ -32,6 +30,13 @@
 					<a class="addthis_button_compact"></a>
 				</div>
 				<ul class="shareIt dropdown-menu">
+					<li>
+						<div class="dToolboxBox">
+							<button type="button" class="btn btn-default btn-xs" title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()">
+								<i class="fas fa-link"/>
+							</button>
+						</div>
+					</li>
 					<li>
 						<div class="dToolboxBox">
 							<div class="addthis_inline_share_toolbox"></div>
@@ -82,9 +87,9 @@ import a from '@/common/js/authentication';
 export default {
 	name: 'toolbar',
 	data() {
-			return {
-				currentGradientOpacity: 0.35
-			};
+		return {
+			currentGradientOpacity: 0.35
+		};
 	},
 	props: [
 		'frame',
@@ -94,9 +99,9 @@ export default {
 		'metrics'
 	],
 	components: {
-    tour,
-	HelpCircleIcon,
-	embedded,
+		tour,
+		HelpCircleIcon,
+		embedded,
 	},
 	methods: {
 		selectionModes() {
