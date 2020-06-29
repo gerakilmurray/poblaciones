@@ -74,8 +74,7 @@ class Institution
 		/**
      * @var \helena\entities\backoffice\File
      *
-     * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\File",
-													cascade={"persist", "remove"}, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\File", cascade={"persist", "remove"}, fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ins_watermark_id", referencedColumnName="fil_id", nullable=true)
      * })

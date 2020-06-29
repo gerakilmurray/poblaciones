@@ -33,12 +33,6 @@
 										</p>` }">
 							<works filter="P"></works>
 						</md-tab>
-						<md-tab class="transparentTab" id="config-tab" to="/userconfig" :md-active="isPath('/userconfig')" md-label="Configuración"
-										:md-template-data="{ help: `
-										<p>
-											Permite personalizar los colores e imágenes del usuario a usar en todas las cartografías. 
-										</p>` }">							
-						</md-tab>
 					</md-tabs>
 				</div>
 			</div>
