@@ -2,7 +2,8 @@ includes:
 	- src/framework/phpstan.neon
 
 parameters:
-	reportUnmatchedIgnoredErrors: false
+	reportUnmatchedIgnoredErrors:
+		false
 	excludes_analyse:
 		- vendor
 		- routes
