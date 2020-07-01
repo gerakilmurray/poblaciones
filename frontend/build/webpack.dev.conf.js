@@ -6,7 +6,6 @@ var merge = require('webpack-merge');
 var baseWebpackConfig = require('./webpack.base.conf');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 process.traceDeprecation = true;
 // add hot-reload related code to entry chunks
@@ -56,7 +55,6 @@ module.exports = merge(baseWebpackConfig, {
 			chunks: ['app'],
 			inject: true
 		}),
-		new FriendlyErrorsPlugin(),
-		new CaseSensitivePathsPlugin({debug: true})
+		new FriendlyErrorsPlugin()
 	]
 });
