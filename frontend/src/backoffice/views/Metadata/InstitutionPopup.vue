@@ -3,8 +3,6 @@
 		<md-dialog-title>
 			Institución
 		</md-dialog-title>
-		<attachment-popup ref="logoPopup">
-			</attachment-popup>
 		<md-dialog-content v-if="item">
 			<invoker ref="invoker"></invoker>
 
@@ -43,9 +41,8 @@
 									:maxlength="255" v-model="item.Web" />
 				</div>
 				<div class="md-layout-item md-size-35 md-small-size-100">
-					<md-field>Logo</md-field>
-					<div class="md-layout-item md-size-80">
-						<vue-dropzone style="float:left" ref="myVueDropzoneLogo" id="dropLogo"
+					<div class="md-layout-item md-size-100">
+						<vue-dropzone style="float:left" ref="myVueDropzoneLogo" id="dropzoneLogo"
 							@vdropzone-success="afterSuccess"
 							@vdropzone-complete="afterComplete"
 							@vdropzone-sending="beforeSending"
@@ -79,8 +76,9 @@
 
 <script>
 	import Context from '@/backoffice/classes/Context';
-	import vue2Dropzone from 'vue2-dropzone';
-	import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+    import vueDropzone from "vue2-dropzone";
+    import "vue2-dropzone/dist/vue2Dropzone.min.css";
+    import h from '@/public/js/helper';
 
 	export default {
 	name: 'InstitutionPopup',
@@ -89,14 +87,8 @@
 			item: null,
 			closeParentCallback: null,
 			openEditableInstitution: false,
-		};
-	},
-	dataLogo() {
-		var loc = this;
-		return {
 			list: null,
 			done: null,
-			item: null,
 			hasFiles: false,
 			bucketId: "",
 			localCaption: "",
@@ -105,13 +97,12 @@
 			openEditableAttach: false,
 			dropzoneOptions: {
 				url: this.getCreateFileUrl,
-				thumbnailWidth: 150,
-				acceptedFiles: "image/png, image/jpg",
+				thumbnailWidth: 270,
+				acceptedFiles: '.png,.jpg',
 				maxFiles: 1,
 				maxFilesize: 1, // File size in Mb,
 				withCredentials: true,
-				dictDefaultMessage:
-				"Arrastre su archivo aquí o haga click para examinar.",
+				dictDefaultMessage: "Agregar logo.",
 				forceChunking: true,
 				chunking: true,
 				chunkSize: 500000,
@@ -120,7 +111,7 @@
 				}
 			}
 		};
-    },
+	},
 	computed: {
 		Work() {
 			return window.Context.CurrentWork;
@@ -138,6 +129,9 @@
 	},
     methods: {
 		show(item, closeParentCallback) {
+            this.bucketId = new Date().getTime() * 10000;
+            this.sending = false;
+            this.hasFiles = false;
 			this.item = item;
 			if (closeParentCallback) {
 				this.closeParentCallback = closeParentCallback;
@@ -150,6 +144,21 @@
 				loc.$refs.datasetInput.focus();
 			}, 100);
 		},
+        beforeSending(file) {
+            this.extension = h.extractFileExtension(file.name);
+            this.filename = h.extractFilename(file.name);
+            this.sending = true;
+        },
+        afterSuccess(file, response) {
+            this.sending = false;
+            if (this.saveRequested) {
+                this.save();
+            }
+        },
+        afterComplete(file) {
+            this.sending = false;
+            this.hasFiles = true;
+        },
 		save() {
 			if (this.item.Caption === null || this.item.Caption.trim() === '') {
 				alert('Debe indicar un nombre.');
@@ -189,7 +198,7 @@
         container: Object
 	},
   	components: {
-  		vueDropzone: vue2Dropzone,
+  		vueDropzone: vueDropzone,
     }
 };
 </script>
@@ -214,8 +223,9 @@
     margin: 12px 0 30px !important;
 }
 
-#dropLogo {
-  padding: 6px;
+#dropzoneLogo {
+  padding: 6px !important;
+  margin-top: 20px !important;
 }
 
 .dz-preview {
@@ -224,7 +234,7 @@
 .dropzone {
 	min-height: unset ! important;
 	padding: 0px!important;
-  width: 200px;
+  width: 280px;
   margin-top: 6px;
 }
 

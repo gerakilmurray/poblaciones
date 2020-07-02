@@ -77,31 +77,31 @@ export default {
 	},
   data() {
     return {
-		openImport: false,
-		extension: "",
-		sending: false,
-		hasFiles: false,
-		bucketId: 0,
-		keepLabels: true,
-		saveRequested: false,
-		createdDataset: null,
-		forceCreateNewDataset: false,
-		dropzoneOptions: {
-		url: this.getCreateFileUrl,
-		thumbnailWidth: 150,
-		withCredentials: true,
-		maxFiles: 1,
-		acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
-		dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
-		forceChunking: true,
-		chunking: true,
-		chunkSize: 500000,
-		datasetname: null,
-		datasets: null,
-        chunksUploaded: function(file, done) {
-          done();
+        openImport: false,
+        extension: "",
+        sending: false,
+        hasFiles: false,
+        bucketId: 0,
+        keepLabels: true,
+        saveRequested: false,
+        createdDataset: null,
+        forceCreateNewDataset: false,
+        dropzoneOptions: {
+            url: this.getCreateFileUrl,
+            thumbnailWidth: 150,
+            withCredentials: true,
+            maxFiles: 1,
+            acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
+            dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
+            forceChunking: true,
+            chunking: true,
+            chunkSize: 500000,
+            datasetname: null,
+            datasets: null,
+            chunksUploaded: function(file, done) {
+                done();
+            }
         }
-      }
     };
   },
   computed: {
