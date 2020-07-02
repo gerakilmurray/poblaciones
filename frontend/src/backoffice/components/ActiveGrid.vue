@@ -207,16 +207,16 @@ export default {
 			this.$refs.confirmDialog.show();
 		},
 		getStartDownloadUrl() {
-			return '/services/backoffice/StartDownload';
+			return window.host + '/services/backoffice/StartDownload';
 		},
 		getStepDownloadUrl() {
-			return '/services/backoffice/StepDownload';
+			return window.host + '/services/backoffice/StepDownload';
 		},
 		urlArgs(type) {
 			return 't=' + type + '&d=' + this.Dataset.properties.Id + '&w=' + this.Work.properties.Id;
 		},
 		getFileUrl(type) {
-			return '/services/backoffice/GetFile?' + this.urlArgs(type);
+			return window.host + '/services/backoffice/GetFile?' + this.urlArgs(type);
 		},
 		sendFile(type) {
 			let a = document.createElement('a');
