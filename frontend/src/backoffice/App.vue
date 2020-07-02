@@ -160,7 +160,7 @@ html, body {
 	}
 
 	.always-print {
-		visibility: visible;
+		visible: visible;
 	}
 	.only-print {
 		display: block!important;

@@ -1,11 +1,11 @@
 # Poblaciones
-Esta guía detalla cómo generar a partir de los fuentes un entorno instalable.
+Esta guía detalla cómo generar a partir de los fuentes un entorno instalable. 
 
 ## 1. Armar el entorno de fuentes
 
 Seguir los pasos indicados para obtener los fuentes para el entorno de desarrollo: https://github.com/poblaciones/poblaciones/blob/master/startup/SOURCES.md.
 
-## 2. Compilar la versión
+## 2. Compilar la versión 
 
 Desde una consola de bash, ejecutar el script build.sh que se encuentra en /build indicando el parámetro vendor:
 
