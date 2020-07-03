@@ -155,7 +155,8 @@ class PdfCreator
 				$this->pdf->WriteDoubleIndentedMail($source['ins_email']);
 				$this->pdf->WriteDoubleIndentedPair('Teléfono', $source['ins_phone']);
 				$this->pdf->WriteDoubleIndentedPair('Dirección', $source['ins_address']);
-				$this->pdf->WriteDoubleIndentedPair('País', $source['ins_country']);
+        $this->pdf->WriteDoubleIndentedPair('País', $source['ins_country']);
+        $this->pdf->WriteDoubleIndentedPair('Logo', $source['ins_watermark_id']);
 			}
 		}
 	}
@@ -183,7 +184,8 @@ class PdfCreator
 		$this->pdf->WriteIndentedMail($this->metadata['ins_email']);
 		$this->WriteIndentedValuePair('Teléfono', 'ins_phone');
 		$this->WriteIndentedValuePair('Dirección', 'ins_address');
-		$this->WriteIndentedValuePair('País', 'ins_country');
+    $this->WriteIndentedValuePair('País', 'ins_country');
+    $this->WriteIndentedValuePair('Logo', 'ins_watermark_id');
 	}
 
 	private function WriteDataset()

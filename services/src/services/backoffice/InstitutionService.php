@@ -7,6 +7,7 @@ use helena\services\common\BaseService;
 use helena\entities\backoffice as entities;
 use minga\framework\Arr;
 use minga\framework\ErrorException;
+use helena\db\frontend\FileModel;
 use helena\classes\Session;
 
 class InstitutionService extends BaseService
@@ -56,6 +57,11 @@ class InstitutionService extends BaseService
 		return $records;
 	}
 
+  public function GetWatermarkImage($watermarkId)
+	{
+		$fileModel = new FileModel();
+		return $fileModel->SendFile($watermarkId);
+	}
 
 }
 

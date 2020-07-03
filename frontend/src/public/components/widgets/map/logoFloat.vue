@@ -1,14 +1,46 @@
 <template>
-  <div v-if="work.Current" class="logoDiv">
-    <img class="logoIcon" src="/static/img/rcr.png" />
+  <div v-if="image" class="logoDiv">
+    <img class="logoIcon" ref="watermarkImg" :src="image" />
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import err from "@/common/js/err";
+
 export default {
   name: "logoFloat",
   props: ["work"],
+  data() {
+    alert("1");
+    return {
+      image: null
+    };
+  },
+  mounted() {
+    alert("2");
+    // Obtiene el file de la Imagen
+    this.GetWatermarkImage();
+  },
   methods: {
+    GetWatermarkImage() {
+      const loc = this;
+      return axios
+        .get(/*window.host + */ "/services/backoffice/GetWatermarkImage", {
+          params: { wmi: loc.work.Current.WatermarkId }
+        })
+        .then(function(res) {
+          alert("3");
+          loc.image = res.data;
+        })
+        .catch(function(error) {
+          err.errDialog(
+            "GetWatermarkImage",
+            "obtener el logo de la institución"
+          );
+        });
+    }
+    /*
     onResize() {
       var visible = this.work.Current !== null;
       if (visible) {
@@ -29,7 +61,7 @@ export default {
           window.SegMap.TriggerResize();
         }
       }
-    }
+    }*/
   }
 };
 </script>
