@@ -9,10 +9,15 @@
 			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
-		<div id="panRight" class="split split-horizontal">
-			<SummaryPanel :metrics="metrics" :config="config"
-				:clipping="clipping" :frame="frame" :user="user"
-				:toolbarStates="toolbarStates"></SummaryPanel>
+		<div>
+			<div v-show='!collapsed' class="toolbar no-print right-panelPositionEnum" style="display: block">
+				<div id="panRight" class="split split-horizontal">
+					<SummaryPanel :metrics="metrics" :config="config"
+					:clipping="clipping" :frame="frame" :user="user"
+					:toolbarStates="toolbarStates"></SummaryPanel>
+				</div>
+			</div>
+			<collapseToolbarButton v-if='isMobile' :startRight='width' :collapsed='collapsed' @click="doToggle" />
 		</div>
 	</div>
 </template>
@@ -29,11 +34,13 @@ import Edit from '@/public/components/widgets/map/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/map/search';
 import LogoFloat from '@/public/components/widgets/map/logoFloat';
+import collapseToolbarButton from '@/public/components/controls/collapseToolbarButton';
 
 import Split from 'split.js';
 import axios from 'axios';
 import Vue from 'vue';
 import err from '@/common/js/err';
+import { isMobile, deviceDetect } from 'mobile-device-detect';
 
 export default {
 	name: 'app',
@@ -45,7 +52,8 @@ export default {
 		Fab,
 		LeftPanel,
 		WorkPanel,
-		LogoFloat
+		LogoFloat,
+		collapseToolbarButton,
 	},
 	created() {
 		window.Popups = {};
@@ -54,6 +62,7 @@ export default {
 	data() {
 		return {
 			workStartupSetter: null,
+			collapsed: isMobile,
 			toolbarStates: { selectionMode: null, tutorialOpened: 0 },
 			clipping: {
 				IsUpdating: false,
@@ -99,7 +108,7 @@ export default {
 	},
 	mounted() {
 		Split(['#panMain', '#panRight'], {
-			sizes: [75, 25],
+ 			sizes: deviceDetect.isMobile ? [100, 0] : [75, 25],
 			minSizes: 200,
 			gutterSize: 7
 		});
@@ -164,9 +173,14 @@ export default {
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
 			window.onerror = err.HandleError;
-		}
+		},
+		doToggle() {
+			this.collapsed = ! this.collapsed;
+		},
 	},
 };
+
+
 
 </script>
 
@@ -561,5 +575,21 @@ a:hover {
 	font-size: 10px;
 	white-space: nowrap;
 	vertical-align: middle;
+}
+.right-panelPositionEnum {
+	position:absolute;
+	height:100%;
+	left:0;
+	top:0;
+	overflow-y: auto;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+	z-index:1;
+	background-color: white;
+}
+.fade-enter-active, .fade-leave-active {
+	transition: opacity .35s;
+}
+.fade-enter, .fade-leave-to {
+	opacity: 0;
 }
 </style>
