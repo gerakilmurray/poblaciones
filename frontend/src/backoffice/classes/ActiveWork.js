@@ -277,8 +277,12 @@ ActiveWork.prototype.GetGeographyItems = function (geographyId) {
 	return axiosClient.getPromise('/services/backoffice/GetGeographyItems',
 		{ 'g': geographyId }, 'obtener los ítems de la geografía');
 };
-
-
+/*
+ActiveWork.prototype.GetWatermarkImage = function (watermarkId) {
+	return axiosClient.getPromise('/services/backoffice/GetWatermarkImage',
+		{ 'wm': watermarkId }, 'obtener el logo de la institución');
+};
+*/
 ActiveWork.prototype.UpdateMultilevelMatrix = function () {
 	var datasetMatrix = {};
 	for (var n = 0; n < this.Dataset.length; n++) {

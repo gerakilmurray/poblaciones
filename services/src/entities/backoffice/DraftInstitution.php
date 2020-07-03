@@ -188,7 +188,7 @@ class DraftInstitution
      *
      * @return DraftInstitution
      */
-    public function setWatermark($watermark)
+    public function setWatermark(\helena\entities\backoffice\DraftFile $watermark = null)
     {
         $this->Watermark = $watermark;
 

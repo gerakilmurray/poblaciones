@@ -80,6 +80,12 @@ App::$app->get('/services/backoffice/GetCurrentUserWorks', function (Request $re
 	return App::Json($controller->GetCurrentUserWorks());
 });
 
+App::$app->get('/services/backoffice/GetWatermarkImage', function (Request $request) {
+  $watermarkId = Params::GetIntMandatory('wmi');
+	$controller = new services\InstitutionService();
+	return $controller->GetWatermarkImage($watermarkId);
+});
+
 App::$app->get('/services/backoffice/GetWorkInfo', function (Request $request) {
 	$workId = Params::GetIntMandatory('w');
 	if ($denied = Session::CheckIsWorkReader($workId)) return $denied;

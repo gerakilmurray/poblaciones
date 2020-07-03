@@ -208,7 +208,7 @@ class Institution
      *
      * @return Institution
      */
-    public function setWatermark($watermark)
+    public function setWatermark(\helena\entities\backoffice\File $watermark = null)
     {
         $this->Watermark = $watermark;
 

@@ -6,7 +6,7 @@
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
-			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
+			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" :app="this" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
@@ -110,7 +110,7 @@ export default {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
 		});
-		window.Panels.Left = this.$refs.leftPanel;
+    window.Panels.Left = this.$refs.leftPanel;
 	},
 	methods: {
 		GetConfiguration() {
@@ -159,7 +159,7 @@ export default {
 			mapApi.SetSegmentedMap(segMap);
 			segMap.SaveRoute.DisableOnce = true;
 			mapApi.Initialize();
-			segMap.SetSelectionMode(0);
+      segMap.SetSelectionMode(0);
 		},
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
