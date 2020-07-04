@@ -2,13 +2,14 @@
 # fileencoding=utf8
 # lineends=linux
 
+git submodule update
+
 echo -e "\n### Installing NPM dependencies #############################################################################################"
 cd ~/ffg_dev/rcr_repo/frontend
 npm install
 
 echo -e "\n### Installing PHP dependencies #############################################################################################"
 cd ~/ffg_dev/rcr_repo/services
-php composer.phar update
 php composer.phar install
 
 echo -e "\n### Copying configuration files #############################################################################################"
