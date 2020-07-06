@@ -76,11 +76,10 @@ class DraftInstitution
      */
     private $IsEditableByCurrentUser = false;
 
-		/**
+	/**
      * @var \helena\entities\backoffice\DraftFile
      *
-     * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\DraftFile",
-													cascade={"persist", "remove"}, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="helena\entities\backoffice\DraftFile", cascade={"persist", "remove"}, fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ins_watermark_id", referencedColumnName="fil_id", nullable=true)
      * })
@@ -189,7 +188,7 @@ class DraftInstitution
      *
      * @return DraftInstitution
      */
-    public function setWatermark($watermark)
+    public function setWatermark(\helena\entities\backoffice\DraftFile $watermark = null)
     {
         $this->Watermark = $watermark;
 

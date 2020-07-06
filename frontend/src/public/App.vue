@@ -1,12 +1,12 @@
 <template>
 	<div id="holder" style="height: 100%;">
 		<div id="panMain" class="split split-horizontal" style="position: relative">
-			<Search/>
+			<Search id="search-bar"/>
 			<LeftPanel ref='leftPanel'/>
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" :work="work" />
-			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
+			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
+			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div>

@@ -2,6 +2,7 @@
 # fileencoding=utf8
 # lineends=linux
 
+echo -e "\n### Update Minga submodule dependency #######################################################################################"
 git submodule update
 
 echo -e "\n### Installing NPM dependencies #############################################################################################"
@@ -10,7 +11,6 @@ npm install
 
 echo -e "\n### Installing PHP dependencies #############################################################################################"
 cd ~/ffg_dev/rcr_repo/services
-php composer.phar update
 php composer.phar install
 
 echo -e "\n### Copying configuration files #############################################################################################"

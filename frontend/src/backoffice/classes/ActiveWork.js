@@ -147,6 +147,12 @@ ActiveWork.prototype.GetDatasetFileImportUrl = function (keepLabels) {
 	return '/services/backoffice/Dataset/CreateMultiImportFile?k=' + (keepLabels ? '1' : 0);
 };
 
+ActiveWork.prototype.VerifyDatasetsImportFile = function (bucketId, fileExtension) {
+	var args = { 'b': bucketId, 'fe': fileExtension };
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/Dataset/VerifyDatasetsImportFile', args,
+		'verificar si el archivo tiene múltiple datasets');
+};
+
 ActiveWork.prototype.GetStepDatasetFileImportUrl = function () {
 	return '/services/backoffice/Dataset/StepMultiImportFile';
 };
@@ -188,8 +194,8 @@ ActiveWork.prototype.GetLevelToUse = function (allVersions, metricVersion) {
 	}
 };
 
-ActiveWork.prototype.UpdateInstitution = function (institution, container) {
-	var args = { 'w': this.properties.Id, 'i': institution };
+ActiveWork.prototype.UpdateInstitution = function (institution, container, watermarkImage) {
+	var args = { 'w': this.properties.Id, 'i': institution, 'iwm': watermarkImage };
 	var loc = this;
 	this.WorkChanged();
 	return axiosClient.postPromise('/services/backoffice/UpdateInstitution', args,
@@ -272,6 +278,11 @@ ActiveWork.prototype.GetGeographyItems = function (geographyId) {
 		{ 'g': geographyId }, 'obtener los ítems de la geografía');
 };
 
+ActiveWork.prototype.GetInstitutionWatermark = function (institution) {
+    var args = { 'w': this.properties.Id, 'iwmid': institution.Watermark.Id };
+    return axiosClient.getPromise('/services/backoffice/GetInstitutionWatermark', args,
+      'obtener el logo de la institución');
+};
 
 ActiveWork.prototype.UpdateMultilevelMatrix = function () {
 	var datasetMatrix = {};

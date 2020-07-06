@@ -6,6 +6,7 @@ use minga\framework\CreativeCommons;
 use minga\framework\AttributeEntity;
 use minga\framework\Str;
 use helena\entities\frontend\geometries\Envelope;
+use helena\services\backoffice\InstitutionService;
 
 class PdfCreator
 {
@@ -149,13 +150,20 @@ class PdfCreator
 			// Institución
 			if ($source['ins_caption'] != '')
 			{
-				//$this->pdf->WriteIndentedSpace();
-				$this->pdf->WriteIndentedPair('Institución', $source['ins_caption']);
-				$this->pdf->WriteDoubleIndentedPair('Página web', $source['ins_web']);
+        //$this->pdf->WriteIndentedSpace();
+        $this->pdf->WriteIndentedText('Institución');
+        if ($source['ins_watermark_id'] != ''){
+          $controller = new InstitutionService();
+          $dataURL = $controller->GetInstitutionWatermark($source['ins_watermark_id'], false);
+          $html = "<img src='" .$dataURL . "' height='40' />";
+          $this->pdf->WriteDoubleIndentedText($html, false);
+        }
+        $this->pdf->WriteDoubleIndentedPair('Nombre', $source['ins_caption']);
+        $this->pdf->WriteDoubleIndentedPairLink('Página web', $source['ins_web']);
 				$this->pdf->WriteDoubleIndentedMail($source['ins_email']);
 				$this->pdf->WriteDoubleIndentedPair('Teléfono', $source['ins_phone']);
 				$this->pdf->WriteDoubleIndentedPair('Dirección', $source['ins_address']);
-				$this->pdf->WriteDoubleIndentedPair('País', $source['ins_country']);
+        $this->pdf->WriteDoubleIndentedPair('País', $source['ins_country']);
 			}
 		}
 	}
@@ -177,13 +185,19 @@ class PdfCreator
 	{
 		if ($this->metadata['ins_caption'] == '')
 			return;
-		$this->pdf->WriteHeading4('Institución');
-		$this->WriteIndentedValuePair('Nombre', 'ins_caption');
-		$this->WriteIndentedValuePair('Página web', 'ins_web');
+    $this->pdf->WriteHeading4('Institución');
+    if ($this->metadata['ins_watermark_id'] != ''){
+      $controller = new InstitutionService();
+      $dataURL = $controller->GetInstitutionWatermark($this->metadata['ins_watermark_id'], false);
+      $html = "<img src='" .$dataURL . "' height='50' />";
+      $this->pdf->WriteDoubleIndentedText($html, false);
+    }
+    $this->WriteIndentedValuePair('Nombre', 'ins_caption');
+    $this->pdf->WriteIndentedPairLink('Página web', $this->metadata['ins_web']);
 		$this->pdf->WriteIndentedMail($this->metadata['ins_email']);
 		$this->WriteIndentedValuePair('Teléfono', 'ins_phone');
 		$this->WriteIndentedValuePair('Dirección', 'ins_address');
-		$this->WriteIndentedValuePair('País', 'ins_country');
+    $this->WriteIndentedValuePair('País', 'ins_country');
 	}
 
 	private function WriteDataset()
@@ -201,7 +215,11 @@ class PdfCreator
 		$this->pdf->WriteIndentedPairTitle('Nombre', 'Etiqueta');
 		foreach($this->dataset['columns'] as $column)
 		{
-			$this->pdf->WriteIndentedPair($column['dco_variable'], $column['dco_label'], true, false);
+			$label = $column['dco_label'];
+			if ($label === null || trim($label) === '') {
+				$label = '-';
+			}
+			$this->pdf->WriteIndentedPair($column['dco_variable'], $label, true, false);
 			if (array_key_exists('values', $column) && $column['values'] != null)
 			{
 				foreach($column['values'] as $value)
