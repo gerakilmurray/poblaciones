@@ -24,12 +24,12 @@ export default {
     getInstitutionWatermark() {
       const loc = this;
       return axios
-        .get(
-          /*window.host + */ "/services/works/GetInstitutionWatermark",
-          {
-            params: { w: loc.work.Current.Id, iwmid: loc.work.Current.WatermarkId }
+        .get(window.host + "/services/works/GetInstitutionWatermark", {
+          params: {
+            w: loc.work.Current.Id,
+            iwmid: loc.work.Current.WatermarkId
           }
-        )
+        })
         .then(function(res) {
           loc.image = res.data;
         })
