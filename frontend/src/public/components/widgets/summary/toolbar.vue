@@ -5,8 +5,6 @@
 							title="Guardar como PNG..." v-on:click="captureFullPng()"><i class="fas fa-camera"/></button>
 		<button type="button" class="btn btn-default btn-xs"
 							title="Guardar como PDF..." v-on:click="captureMapPdf(metrics)"><i class="fas fa-file-pdf"/></button>
-		<button type="button" class="btn btn-default btn-xs"
-						    title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()"><i class="fas fa-map-marked-alt"/></button>
 		<button v-if="hasGeolocation()" type="button" class="btn btn-default btn-xs"
 							title="Ubicación actual" v-on:click="geolocate()"><i class="far fa-dot-circle"/></button>
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
@@ -34,6 +32,13 @@
 				<ul class="shareIt dropdown-menu">
 					<li>
 						<div class="dToolboxBox">
+							<button type="button" class="btn btn-default btn-xs" title="Embeber mapa actual" v-on:click="showEmbeddedMapPopUp()">
+								<i class="fas fa-link"/>
+							</button>
+						</div>
+					</li>
+					<li>
+						<div class="dToolboxBox">
 							<div class="addthis_inline_share_toolbox"></div>
 						</div>
 					</li>
@@ -42,7 +47,7 @@
 			<button type="button" class="btn btn-default btn-xs" title="Guía de uso" v-on:click="showTutorial()">
 				<help-circle-icon title="Guía de uso" />
 			</button>
-			<button v-if='user.Logged && this.useExtraToolbar()' type="button" class="btn btn-default btn-xs" title="Agregar a favoritos..." v-on:click="setFavorite()">
+			<button v-if='user.Logged && useExtraToolbar()' type="button" class="btn btn-default btn-xs" title="Agregar a favoritos..." v-on:click="setFavorite()">
 				<i class="far fa-heart" />
 			</button>
 
@@ -82,20 +87,21 @@ import a from '@/common/js/authentication';
 export default {
 	name: 'toolbar',
 	data() {
-			return {
-				currentGradientOpacity: 0.35
-			};
+		return {
+			currentGradientOpacity: 0.35
+		};
 	},
 	props: [
 		'frame',
 		'user',
 		'config',
-		'toolbarStates'
+		'toolbarStates',
+		'metrics'
 	],
 	components: {
-    tour,
-	HelpCircleIcon,
-	embedded,
+		tour,
+		HelpCircleIcon,
+		embedded,
 	},
 	methods: {
 		selectionModes() {
@@ -123,119 +129,104 @@ export default {
 			var loc = this;
 			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
 			window.setTimeout(function() {
-				var mapObj = document.getElementById('map');
-				mapObj.style.overflow = 'unset';
+				var mapObj = loc.changeOverflowById(document.getElementById('map'), 'unset');
 				html2canvas(mapObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
-					mapObj.style.overflow = 'hidden';
-					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
-					var a = document.createElement('a');
-					// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
-					a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-					a.download = 'mapa.png';
-					document.body.appendChild(a);
-					a.click();
-					a.parentNode.removeChild(a);
+					loc.changeOverflowById(mapObj, 'hidden');
+					loc.generatePng(canvas);
+				});
+			}, 100);
+		},
+		changeDisplayById(idObj, newValue) {
+			idObj.style.display = newValue;
+			return idObj;
+		},
+		changeDisplayByClass(classObjs, newValue) {
+			for (var i = 0; i < classObjs.length; i++) {
+				classObjs[i].style.display = newValue;
+			}
+			return classObjs;
+		},
+		removeClassAddText(classname, classToRemove, textToAdd){
+			var classObjs= document.getElementsByClassName(classname);
+			for (var i = 0; i < classObjs.length; i++) {
+				classObjs[i].classList.remove(classToRemove);
+				classObjs[i].innerHTML = textToAdd;
+			}
+			return classObjs;
+		},
+		addClassRemoveText(classObjs, classToAdd){
+			for (var i = 0; i < classObjs.length; i++) {
+				classObjs[i].classList.add(classToAdd);
+				classObjs[i].innerHTML = '';
+			}
+		},
+		changeOverflowById(idObj, newValue){
+			idObj.style.overflow = newValue;
+			return idObj;
+		},
+		generatePng(canvas, metrics){
+			window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
+			var a = document.createElement('a');
+			// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
+			a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+			a.download = 'mapa.png';
+			document.body.appendChild(a);
+			a.click();
+			a.parentNode.removeChild(a);
+		},
+		generatePdf(canvas, metrics) {
+			window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
+			var doc = new jsPDF({ orientation: 'landscape' });
+			var img = canvas.toDataURL('image/jpeg');
+			if(metrics.length > 0) {
+				doc.setFontSize(20);
+				doc.text(20, 20, 'Poblaciones');
+				var metricNames = metrics.map(m => m.properties.Metric.Name);
+				doc.setFontSize(10);
+				doc.text(20, 28, metricNames.join(' - '));
+			} else {
+				doc.setFontSize(30);
+				doc.text(20, 25, 'Poblaciones');
+			}
+			doc.addImage(img,'JPEG', 20, 35, 260, 155);
+			doc.setFontSize(10);
+			doc.text(20, 200, window.location.href);
+			doc.save("mapaPoblaciones.pdf");
+		},
+		prepareMapAndExport(exportFunction, metrics){
+			var loc = this;
+			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
+			window.setTimeout(function() {
+				var holderObj = loc.changeOverflowById(document.querySelector('#holder'), 'unset');
+				var toolbarTop = loc.changeDisplayById(document.querySelector('#toolbar-top'), 'none');
+				var searchBar = loc.changeDisplayById(document.querySelector('#search-bar'), 'none');
+				var fabPanel = loc.changeDisplayById(document.querySelector('#fab-panel'), 'none');
+				var dropdown = loc.changeDisplayByClass(document.getElementsByClassName('dropdown'), 'none');
+				var btnGroup = loc.changeDisplayByClass(document.getElementsByClassName('btn-group pull-right'), 'none');
+				var circulos= loc.removeClassAddText('circulo','fa-circle','&#9679;');
+				var gotas= loc.removeClassAddText('gotas','fa-tint', '&#9670;');
+				var contacto= loc.removeClassAddText('contacto','fa-comments', '&#128172;');
+
+				html2canvas(holderObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
+					loc.changeOverflowById(holderObj, 'hidden');
+					loc.changeDisplayById(toolbarTop, 'block');
+					loc.changeDisplayById(searchBar, 'unset');
+					loc.changeDisplayById(fabPanel, 'flex');
+					loc.changeDisplayByClass(dropdown, 'unset');
+					loc.changeDisplayByClass(btnGroup, 'unset');
+					loc.addClassRemoveText(circulos, 'fa-circle');
+					loc.addClassRemoveText(gotas, 'fa-tint');
+					loc.addClassRemoveText(contacto, 'fa-comments');
+
+					exportFunction(canvas, metrics);
 				});
 			}, 100);
 		},
 		captureFullPng() {
-			var loc = this;
-			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
-			window.setTimeout(function() {
-				var mapObj = document.querySelector("#holder");
-				mapObj.style.overflow = 'unset';
-				var toolbarTop = document.querySelector("#toolbar-top");
-				toolbarTop.style.display = 'none';
-				var searchBar = document.querySelector("#search-bar");
-				searchBar.style.display = 'none';
-				var fabPanel = document.querySelector("#fab-panel");
-				fabPanel.style.display = 'none';
-				var dropdown = document.getElementsByClassName("dropdown");
-				for (var i = 0; i < dropdown.length; i++) {
-					dropdown[i].style.display = 'none';
-				}
-				var btnGroup = document.getElementsByClassName("btn-group pull-right");
-				for (var i = 0; i < btnGroup.length; i++) {
-					btnGroup[i].style.display = 'none';
-				}
-				var circulos= document.getElementsByClassName("circulo");
-				for (var i = 0; i < circulos.length; i++) {
-					circulos[i].classList.remove('fa-circle');
-					circulos[i].innerHTML = '&#9679';
-				}
-				var gotas= document.getElementsByClassName("gotas");
-				for (var i = 0; i < gotas.length; i++) {
-					gotas[i].classList.remove('fa-tint');
-					gotas[i].innerHTML = '&#9670';
-				}
-				var panels= document.getElementsByClassName("split");
-				for (var i = 0; i < panels.length; i++) {
-					panels[i].style.overflow = 'unset';
-					panels[i].style.overflowY = 'unset';
-					panels[i].style.overflowX = 'unset';
-				}
-
-				html2canvas(mapObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
-					mapObj.style.overflow = 'hidden';
-					toolbarTop.style.display = 'block';
-					searchBar.style.display = 'unset';
-					fabPanel.style.display = 'flex';
-					for (var i = 0; i < dropdown.length; i++) {
-						dropdown[i].style.display = 'unset';
-					}
-					for (var i = 0; i < btnGroup.length; i++) {
-						btnGroup[i].style.display = 'unset';
-					}
-					for (var i = 0; i < circulos.length; i++) {
-						circulos[i].classList.add('fa-circle');
-						circulos[i].innerHTML = '';
-					}
-					for (var i = 0; i < gotas.length; i++) {
-						gotas[i].classList.add('fa-tint');
-						gotas[i].innerHTML = '';
-					}
-					for (var i = 0; i < panels.length; i++) {
-						panels[i].style.overflow = 'hidden auto';
-						panels[i].style.overflowY = 'hidden';
-						panels[i].style.overflowX = 'auto';
-					}
-					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
-					var a = document.createElement('a');
-					// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
-					a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-					a.download = 'mapa_full.png';
-					document.body.appendChild(a);
-					a.click();
-					a.parentNode.removeChild(a);
-				});
-			}, 100);
+			this.prepareMapAndExport(this.generatePng, []);
 		},
 		captureMapPdf(metrics) {
-			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
-			window.setTimeout(function() {
-				var doc = new jsPDF({ orientation: 'landscape' });
-				var mapObj = document.querySelector("#panMain");
-				mapObj.style.overflow = 'unset';
-				html2canvas(mapObj, { useCORS: true }).then(function(canvas) {
-					mapObj.style.overflow = 'hidden';
-					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
-					var img = canvas.toDataURL('image/jpeg');
-					if(metrics.length > 0) {
-						doc.setFontSize(20);
-						doc.text(20, 20, 'Poblaciones');
-						var metricNames = metrics.map(m => m.properties.Metric.Name);
-						doc.setFontSize(10);
-						doc.text(20, 28, metricNames.join(' - '));
-					} else {
-						doc.setFontSize(30);
-						doc.text(20, 25, 'Poblaciones');
-					}
-					doc.addImage(img,'JPEG', 20, 35, 260, 155);
-					doc.setFontSize(10);
-					doc.text(20, 200, window.location.href);
-    			doc.save("MapaPoblaciones.pdf");
-				});
-			}, 100);
+			this.prepareMapAndExport(this.generatePdf, metrics);
 		},
 		hasGeolocation() {
 			return navigator && navigator.geolocation;
