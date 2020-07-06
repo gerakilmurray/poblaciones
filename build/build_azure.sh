@@ -2,6 +2,7 @@
 # fileencoding=utf8
 # lineends=linux
 
+echo -e "\n### Update Minga submodule dependency #######################################################################################"
 git submodule update
 
 echo -e "\n### Installing NPM dependencies #############################################################################################"

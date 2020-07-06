@@ -77,31 +77,31 @@ export default {
 	},
   data() {
     return {
-		openImport: false,
-		extension: "",
-		sending: false,
-		hasFiles: false,
-		bucketId: 0,
-		keepLabels: true,
-		saveRequested: false,
-		createdDataset: null,
-		forceCreateNewDataset: false,
-		dropzoneOptions: {
-		url: this.getCreateFileUrl,
-		thumbnailWidth: 150,
-		withCredentials: true,
-		maxFiles: 1,
-		acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
-		dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
-		forceChunking: true,
-		chunking: true,
-		chunkSize: 500000,
-		datasetname: null,
-		datasets: null,
-        chunksUploaded: function(file, done) {
-          done();
+        openImport: false,
+        extension: "",
+        sending: false,
+        hasFiles: false,
+        bucketId: 0,
+        keepLabels: true,
+        saveRequested: false,
+        createdDataset: null,
+        forceCreateNewDataset: false,
+        dropzoneOptions: {
+            url: this.getCreateFileUrl,
+            thumbnailWidth: 150,
+            withCredentials: true,
+            maxFiles: 1,
+            acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
+            dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
+            forceChunking: true,
+            chunking: true,
+            chunkSize: 500000,
+            datasetname: null,
+            datasets: null,
+            chunksUploaded: function(file, done) {
+                done();
+            }
         }
-      }
     };
   },
   computed: {
@@ -168,7 +168,7 @@ export default {
 			loc.clear();
 		}
 	},
-    afterComplete(file) {
+  afterComplete(file) {
 		this.sending = false;
 		this.hasFiles = true;
 		if (this.extension == 'kml' || this.extension == 'kmz') {
@@ -180,11 +180,11 @@ export default {
       stepper.startUrl = this.Work.GetDatasetFileImportUrl(this.keepLabels);
       stepper.stepUrl = this.Work.GetStepDatasetFileImportUrl();
       let bucketId = this.getBucketId();
-	  let extension = this.extension;
-	  let datasetname = this.datasetname;
+      let extension = this.extension;
+      let datasetname = this.datasetname;
 			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
-						&& extension !== 'xls' && extension !== 'xlsx'
-						&& extension !== 'kml' && extension !== 'kmz') {
+          && extension !== 'xls' && extension !== 'xlsx'
+          && extension !== 'kml' && extension !== 'kmz') {
 				alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
 				return;
 			}
