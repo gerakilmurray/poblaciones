@@ -6,7 +6,7 @@
 			<MapPanel/>
 			<WorkPanel :work="work" ref="workPanel" />
 			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
-			<LogoFloat v-if="work.Current" :work="work" ref="logoFloatIcon"/>
+			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
 		<div id="panRight" class="split split-horizontal">

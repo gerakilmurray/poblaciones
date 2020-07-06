@@ -10,6 +10,7 @@ use helena\db\frontend\MetadataModel;
 use helena\services\frontend as services;
 use helena\controllers\frontend as controllers;
 use helena\services\common as commonServices;
+use helena\services\backoffice\InstitutionService;
 
 use helena\classes\GlobalTimer;
 use helena\classes\App;
@@ -73,7 +74,8 @@ App::RegisterControllerGet('/map/{any}', controllers\cMap::class)->assert("any",
 
 
 App::$app->get('/', function (Request $request) {
-		return App::Redirect(Links::GetMapUrl());});
+		return App::Redirect(Links::GetMapUrl());
+});
 
 // http://mapas.aacademica.org/services/download/CreateFile?t=ss&l=8&r=1692&a=X&k=
 // http://mapas.aacademica.org/services/download/CreateFile?k=e0UN2j
@@ -256,11 +258,18 @@ App::$app->get('/services/metadata/GetMetadataPdf', function (Request $request) 
 	return $controller->GetMetadataPdf($metadataId, $datasetId, false, $workId);
 });
 
+App::$app->get('/services/works/GetInstitutionWatermark', function (Request $request) {
+	$workId = Params::GetIntMandatory('w');
+	if ($denied = Session::CheckIsWorkPublicOrAccessible($workId)) return $denied;
+  $watermarkId = Params::GetIntMandatory('iwmid');
+	$controller = new InstitutionService();
+	return $controller->GetInstitutionWatermark($watermarkId, false);
+});
+
 // ej. http://mapas/services/works/GetWorkImage?w=12
 App::$app->get('/services/works/GetWorkImage', function (Request $request) {
 	$controller = new services\WorkService();
 	$workId = Params::GetInt('w');
-
 	if ($denied = Session::CheckIsWorkPublicOrAccessible($workId)) return $denied;
 
 	return $controller->GetWorkImage($workId);

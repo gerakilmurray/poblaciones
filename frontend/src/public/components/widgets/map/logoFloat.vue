@@ -1,34 +1,44 @@
 <template>
-  <div v-if="work.Current" class="logoDiv">
-    <img class="logoIcon" src="/static/img/rcr.png" />
+  <div v-if="image" class="logoDiv">
+    <img class="logoIcon" :src="image" />
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import err from "@/common/js/err";
+
 export default {
   name: "logoFloat",
   props: ["work"],
+  data() {
+    return {
+      image: null
+    };
+  },
+  mounted() {
+    // Obtiene el file de la Imagen
+    this.getInstitutionWatermark();
+  },
   methods: {
-    onResize() {
-      var visible = this.work.Current !== null;
-      if (visible) {
-        this.updateWork();
-      }
-    },
-    updateWork() {
-      var visible = this.work.Current !== null;
-      var logo = document.getElementById("logoFloatIcon");
-      if (visible) {
-        if (window.SegMap) {
-          window.SegMap.TriggerResize();
-        }
-      } else {
-        this.work.Current = null;
-        if (window.SegMap) {
-          window.SegMap.SaveRoute.RemoveWork();
-          window.SegMap.TriggerResize();
-        }
-      }
+    getInstitutionWatermark() {
+      const loc = this;
+      return axios
+        .get(window.host + "/services/works/GetInstitutionWatermark", {
+          params: {
+            w: loc.work.Current.Id,
+            iwmid: loc.work.Current.WatermarkId
+          }
+        })
+        .then(function(res) {
+          loc.image = res.data;
+        })
+        .catch(function(error) {
+          err.errDialog(
+            "GetInstitutionWatermark",
+            "obtener el logo de la institución"
+          );
+        });
     }
   }
 };
@@ -45,8 +55,8 @@ export default {
   z-index: 1;
   position: absolute;
   background: seashell;
-  border-radius: 21px;
-  padding: 0.25em;
+  border-radius: 15px;
+  padding: 0.3em;
 }
 .logoIcon {
   width: auto;
