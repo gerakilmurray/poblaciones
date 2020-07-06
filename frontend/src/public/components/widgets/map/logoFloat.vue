@@ -1,6 +1,6 @@
 <template>
   <div v-if="image" class="logoDiv">
-    <img class="logoIcon" ref="watermarkImg" :src="image" />
+    <img class="logoIcon" :src="image" />
   </div>
 </template>
 
@@ -12,56 +12,34 @@ export default {
   name: "logoFloat",
   props: ["work"],
   data() {
-    alert("1");
     return {
       image: null
     };
   },
   mounted() {
-    alert("2");
     // Obtiene el file de la Imagen
-    this.GetWatermarkImage();
+    this.getInstitutionWatermark();
   },
   methods: {
-    GetWatermarkImage() {
+    getInstitutionWatermark() {
       const loc = this;
       return axios
-        .get(/*window.host + */ "/services/backoffice/GetWatermarkImage", {
-          params: { wmi: loc.work.Current.WatermarkId }
-        })
+        .get(
+          /*window.host + */ "/services/works/GetInstitutionWatermark",
+          {
+            params: { w: loc.work.Current.Id, iwmid: loc.work.Current.WatermarkId }
+          }
+        )
         .then(function(res) {
-          alert("3");
           loc.image = res.data;
         })
         .catch(function(error) {
           err.errDialog(
-            "GetWatermarkImage",
+            "GetInstitutionWatermark",
             "obtener el logo de la institución"
           );
         });
     }
-    /*
-    onResize() {
-      var visible = this.work.Current !== null;
-      if (visible) {
-        this.updateWork();
-      }
-    },
-    updateWork() {
-      var visible = this.work.Current !== null;
-      var logo = document.getElementById("logoFloatIcon");
-      if (visible) {
-        if (window.SegMap) {
-          window.SegMap.TriggerResize();
-        }
-      } else {
-        this.work.Current = null;
-        if (window.SegMap) {
-          window.SegMap.SaveRoute.RemoveWork();
-          window.SegMap.TriggerResize();
-        }
-      }
-    }*/
   }
 };
 </script>
@@ -77,8 +55,8 @@ export default {
   z-index: 1;
   position: absolute;
   background: seashell;
-  border-radius: 21px;
-  padding: 0.25em;
+  border-radius: 15px;
+  padding: 0.3em;
 }
 .logoIcon {
   width: auto;

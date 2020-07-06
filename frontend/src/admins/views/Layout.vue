@@ -17,16 +17,16 @@
 							<users></users>
 						</md-tab>
 						<md-tab class="transparentTab" to="/works" id="works-tab" md-label="Cartografías" :md-active="isPath('/works')"
-										:md-template-data="{ help: `
-										<p>
+										:md-template-data="{ help: `<p>
 											Acceso al listado de cartografías del sitio.
-										</p>` }">
-							<works filter="R" :createEnabled="false" :offerAdminActions="true"></works>
+										</p>
+										` }">
+						<works filter="R" :createEnabled="false" :offerAdminActions="true"></works>
 						</md-tab>
 
 						<md-tab class="transparentTab" id="public-tab" v-if="showPublic" to="/public" :md-active="isPath('/public')" md-label="Datos públicos"
 										:md-template-data="{ help: `
-										<p>
+											<p>
 											Los datos públicos son las cartografías que se ofrecen a los usuarios
 											en el botón inferior (+) del visor.
 										</p>` }">

@@ -194,8 +194,8 @@ ActiveWork.prototype.GetLevelToUse = function (allVersions, metricVersion) {
 	}
 };
 
-ActiveWork.prototype.UpdateInstitution = function (institution, container) {
-	var args = { 'w': this.properties.Id, 'i': institution };
+ActiveWork.prototype.UpdateInstitution = function (institution, container, watermarkImage) {
+	var args = { 'w': this.properties.Id, 'i': institution, 'iwm': watermarkImage };
 	var loc = this;
 	this.WorkChanged();
 	return axiosClient.postPromise('/services/backoffice/UpdateInstitution', args,
@@ -277,12 +277,13 @@ ActiveWork.prototype.GetGeographyItems = function (geographyId) {
 	return axiosClient.getPromise('/services/backoffice/GetGeographyItems',
 		{ 'g': geographyId }, 'obtener los ítems de la geografía');
 };
-/*
-ActiveWork.prototype.GetWatermarkImage = function (watermarkId) {
-	return axiosClient.getPromise('/services/backoffice/GetWatermarkImage',
-		{ 'wm': watermarkId }, 'obtener el logo de la institución');
+
+ActiveWork.prototype.GetInstitutionWatermark = function (institution) {
+    var args = { 'w': this.properties.Id, 'iwmid': institution.Watermark.Id };
+    return axiosClient.getPromise('/services/backoffice/GetInstitutionWatermark', args,
+      'obtener el logo de la institución');
 };
-*/
+
 ActiveWork.prototype.UpdateMultilevelMatrix = function () {
 	var datasetMatrix = {};
 	for (var n = 0; n < this.Dataset.length; n++) {

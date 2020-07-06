@@ -1,5 +1,6 @@
 <template>
 	<md-dialog :md-active.sync="openEditableInstitution" style="min-height: 520px">
+    <invoker ref="invoker"></invoker>
 		<md-dialog-title>
 			Institución
 		</md-dialog-title>
@@ -41,24 +42,23 @@
 									:maxlength="255" v-model="item.Web" />
 				</div>
 				<div class="md-layout-item md-size-35 md-small-size-100">
-					<div class="md-layout-item md-size-100">
-						<vue-dropzone style="float:left" ref="myVueDropzoneLogo" id="dropzoneLogo"
-							@vdropzone-success="afterSuccess"
-							@vdropzone-complete="afterComplete"
-							@vdropzone-sending="beforeSending"
-							@vdropzone-max-files-exceeded="maxfilesexceeded"
-							:options="dropzoneOptions">
-						</vue-dropzone>
-						<md-button
-							style="float:left;background-color: #ececec;"
-							v-if="hasFiles"
-							title="Quitar"
-							class="md-icon-button"
-							v-on:click="clear">
-							<md-icon>close</md-icon>
-						</md-button>
-					</div>
-				</div>
+          <img class="imagen-preview" style="" :src="this.watermarkImage" alt="">
+          <md-button
+            style="float:right;background-color: #ececec;"
+            v-if="watermarkImage"
+            title="Quitar"
+            class="md-icon-button md-button-mini"
+            v-on:click="clear">
+            <md-icon>close</md-icon>
+          </md-button>
+          <label class="file-select">
+            <div class="select-button">
+              <md-icon>add_circle_outline</md-icon>
+              Agregar logo
+            </div>
+            <md-input @change="handleImage" class="file-select" type="file" accept="image/*"/>
+          </label>
+        </div>
 			</div>
 
 		</md-dialog-content>
@@ -76,9 +76,7 @@
 
 <script>
 	import Context from '@/backoffice/classes/Context';
-    import vueDropzone from "vue2-dropzone";
-    import "vue2-dropzone/dist/vue2Dropzone.min.css";
-    import h from '@/public/js/helper';
+  import h from '@/public/js/helper';
 
 	export default {
 	name: 'InstitutionPopup',
@@ -86,30 +84,10 @@
 		return {
 			item: null,
 			closeParentCallback: null,
-			openEditableInstitution: false,
-			list: null,
-			done: null,
-			hasFiles: false,
-			bucketId: "",
-			localCaption: "",
-			sending: false,
-			saveRequested: false,
-			openEditableAttach: false,
-			dropzoneOptions: {
-				url: this.getCreateFileUrl,
-				thumbnailWidth: 270,
-				acceptedFiles: '.png,.jpg',
-				maxFiles: 1,
-				maxFilesize: 1, // File size in Mb,
-				withCredentials: true,
-				dictDefaultMessage: "Agregar logo.",
-				forceChunking: true,
-				chunking: true,
-				chunkSize: 500000,
-				chunksUploaded: function(file, done) {
-					done();
-				}
-			}
+      openEditableInstitution: false,
+      watermarkImage: null,
+      imageHasChanged: false,
+      extension: null,
 		};
 	},
 	computed: {
@@ -122,17 +100,12 @@
 			} else {
 				return -1;
 			}
-		},
-		isNew() {
-			return this.item === null || this.item.Watermark === null || this.item.Watermark.Id === null;
 		}
 	},
-    methods: {
+  methods: {
 		show(item, closeParentCallback) {
-            this.bucketId = new Date().getTime() * 10000;
-            this.sending = false;
-            this.hasFiles = false;
-			this.item = item;
+      this.item = item;
+
 			if (closeParentCallback) {
 				this.closeParentCallback = closeParentCallback;
 			} else {
@@ -141,24 +114,36 @@
 			this.openEditableInstitution = true;
 			var loc = this;
 			setTimeout(() => {
-				loc.$refs.datasetInput.focus();
+        loc.$refs.datasetInput.focus();
+
 			}, 100);
-		},
-        beforeSending(file) {
-            this.extension = h.extractFileExtension(file.name);
-            this.filename = h.extractFilename(file.name);
-            this.sending = true;
-        },
-        afterSuccess(file, response) {
-            this.sending = false;
-            if (this.saveRequested) {
-                this.save();
-            }
-        },
-        afterComplete(file) {
-            this.sending = false;
-            this.hasFiles = true;
-        },
+    },
+    mounted(){
+      if (this.item.Watermark){
+        this.getInstitutionWatermark();
+      }
+    },
+    getInstitutionWatermark(){
+      var loc = this;
+      this.$refs.invoker.do(
+        this.Work, this.Work.GetInstitutionWatermark, this.item).then(
+          function (dataUrl) {
+            loc.watermarkImage = dataUrl;
+        });
+    },
+    handleImage(e) {
+      const selectedImage = e.target.files[0];
+      this.extension = h.extractFileExtension(selectedImage.name);
+      this.createBase64Image(selectedImage);
+    },
+    createBase64Image(fileObject) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.watermarkImage = e.target.result;
+        this.imageHasChanged = true;
+      };
+      reader.readAsDataURL(fileObject);
+    },
 		save() {
 			if (this.item.Caption === null || this.item.Caption.trim() === '') {
 				alert('Debe indicar un nombre.');
@@ -169,8 +154,8 @@
 				return;
 			}
 			var loc = this;
-		    this.$refs.invoker.do(
-				this.Work, this.Work.UpdateInstitution, this.item, this.container).then(
+		  this.$refs.invoker.do(
+				this.Work, this.Work.UpdateInstitution, this.item, this.container, this.imageHasChanged? this.watermarkImage: null).then(
 					function () {
 						loc.openEditableInstitution = false;
 						loc.$emit('onSelected', loc.container.Institution);
@@ -179,27 +164,16 @@
 						}
 				});
 		},
-		getCreateFileUrl() {
-			return this.Work.GetCreateFileUrl(this.getBucketId());
-		},
-		getBucketId() {
-			return this.bucketId;
-		},
 		clear() {
-			this.$refs.myVueDropzoneLogo.removeAllFiles();
-			this.hasFiles = false;
-		},
-		maxfilesexceeded(file) {
-			this.$refs.myVueDropzoneLogo.removeAllFiles();
-			this.$refs.myVueDropzoneLogo.addFile(file);
-		},
-    },
+      this.item.Watermark = null;
+      this.watermarkImage = null;
+      this.imageHasChanged = true;
+		}
+  },
  	props: {
-        container: Object
+    container: Object
 	},
-  	components: {
-  		vueDropzone: vueDropzone,
-    }
+  components: { }
 };
 </script>
 
@@ -223,29 +197,21 @@
     margin: 12px 0 30px !important;
 }
 
-#dropzoneLogo {
-  padding: 6px !important;
-  margin-top: 20px !important;
+.md-button-mini{
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  margin: 20px 2px;
 }
 
-.dz-preview {
-	margin: 0px !important;
-}
-.dropzone {
+.imagen-preview {
 	min-height: unset ! important;
-	padding: 0px!important;
-  width: 280px;
-  margin-top: 6px;
+	padding: 6px !important;
+  width: 80%;
+  margin-top: 20px;
 }
 
-.dropzone .dz-message {
-  text-align: left!important;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.dropzone .dz-preview {
-  background: #666;
-  height: 100px !important;
+.file-select > input[type="file"] {
+  display: none;
 }
 </style>

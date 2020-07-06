@@ -168,7 +168,7 @@ export default {
 			loc.clear();
 		}
 	},
-    afterComplete(file) {
+  afterComplete(file) {
 		this.sending = false;
 		this.hasFiles = true;
 		if (this.extension == 'kml' || this.extension == 'kmz') {
@@ -180,11 +180,11 @@ export default {
       stepper.startUrl = this.Work.GetDatasetFileImportUrl(this.keepLabels);
       stepper.stepUrl = this.Work.GetStepDatasetFileImportUrl();
       let bucketId = this.getBucketId();
-	  let extension = this.extension;
-	  let datasetname = this.datasetname;
+      let extension = this.extension;
+      let datasetname = this.datasetname;
 			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
-						&& extension !== 'xls' && extension !== 'xlsx'
-						&& extension !== 'kml' && extension !== 'kmz') {
+          && extension !== 'xls' && extension !== 'xlsx'
+          && extension !== 'kml' && extension !== 'kmz') {
 				alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
 				return;
 			}
