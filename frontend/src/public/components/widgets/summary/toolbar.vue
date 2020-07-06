@@ -144,8 +144,61 @@ export default {
 			window.setTimeout(function() {
 				var mapObj = document.querySelector("#holder");
 				mapObj.style.overflow = 'unset';
-				html2canvas(mapObj, { useCORS: true }).then(function(canvas) {
+				var toolbarTop = document.querySelector("#toolbar-top");
+				toolbarTop.style.display = 'none';
+				var searchBar = document.querySelector("#search-bar");
+				searchBar.style.display = 'none';
+				var fabPanel = document.querySelector("#fab-panel");
+				fabPanel.style.display = 'none';
+				var dropdown = document.getElementsByClassName("dropdown");
+				for (var i = 0; i < dropdown.length; i++) {
+					dropdown[i].style.display = 'none';
+				}
+				var btnGroup = document.getElementsByClassName("btn-group pull-right");
+				for (var i = 0; i < btnGroup.length; i++) {
+					btnGroup[i].style.display = 'none';
+				}
+				var circulos= document.getElementsByClassName("circulo");
+				for (var i = 0; i < circulos.length; i++) {
+					circulos[i].classList.remove('fa-circle');
+					circulos[i].innerHTML = '&#9679';
+				}
+				var gotas= document.getElementsByClassName("gotas");
+				for (var i = 0; i < gotas.length; i++) {
+					gotas[i].classList.remove('fa-tint');
+					gotas[i].innerHTML = '&#9670';
+				}
+				var panels= document.getElementsByClassName("split");
+				for (var i = 0; i < panels.length; i++) {
+					panels[i].style.overflow = 'unset';
+					panels[i].style.overflowY = 'unset';
+					panels[i].style.overflowX = 'unset';
+				}
+
+				html2canvas(mapObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
 					mapObj.style.overflow = 'hidden';
+					toolbarTop.style.display = 'block';
+					searchBar.style.display = 'unset';
+					fabPanel.style.display = 'flex';
+					for (var i = 0; i < dropdown.length; i++) {
+						dropdown[i].style.display = 'unset';
+					}
+					for (var i = 0; i < btnGroup.length; i++) {
+						btnGroup[i].style.display = 'unset';
+					}
+					for (var i = 0; i < circulos.length; i++) {
+						circulos[i].classList.add('fa-circle');
+						circulos[i].innerHTML = '';
+					}
+					for (var i = 0; i < gotas.length; i++) {
+						gotas[i].classList.add('fa-tint');
+						gotas[i].innerHTML = '';
+					}
+					for (var i = 0; i < panels.length; i++) {
+						panels[i].style.overflow = 'hidden auto';
+						panels[i].style.overflowY = 'hidden';
+						panels[i].style.overflowX = 'auto';
+					}
 					window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
 					var a = document.createElement('a');
 					// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
