@@ -182,16 +182,16 @@ export default {
       let bucketId = this.getBucketId();
       let extension = this.extension;
       let datasetname = this.datasetname;
-      if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
+			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
           && extension !== 'xls' && extension !== 'xlsx'
           && extension !== 'kml' && extension !== 'kmz') {
-        alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
-        return;
-      }
-      if (!this.Dataset && !this.createdDataset) {
-        this.RequestDataset();
-        return;
-      }
+				alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
+				return;
+			}
+			if (!this.Dataset && !this.createdDataset) {
+				this.RequestDataset();
+				return;
+			}
 			let datasetId = (this.Dataset ? this.Dataset.properties.Id : this.createdDataset.Id);
 			stepper.args = { b: bucketId, d: datasetId, fe: extension, dsn: datasetname};
 			let loc = this;
