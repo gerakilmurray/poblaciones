@@ -265,7 +265,7 @@ class ImportService extends BaseService
 		$p3 = '3';
 		if($python == null) {
 			$python = App::GetPythonPath();
-			$p3 = '';
+			$p3 = '3';
 		}
 		$conversor_py = Paths::GetPythonScriptsPath() .'/kmx2csv' . $p3 .'.py';
 
