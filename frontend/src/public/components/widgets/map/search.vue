@@ -3,7 +3,7 @@
 		<div class="input-group">
 			<input v-model='text' ref='sfield' id='sfield' autofocus v-on:keyup='doSearch' class="form-control formBorder" :class="getLoading()" type="text" placeholder="Buscar">
 			<span class="input-group-btn">
-				<button v-on:click="doSearch" class="btn btn-default" type="button"><i class="fa fa-search"></i>
+				<button v-on:click="doSearch" class="btn btn-default lupa-button" type="button"><i class="fa fa-search"></i>
 				</button>
 			</span>
 		</div>
@@ -197,25 +197,32 @@ export default {
 
 <style scoped>
 .searchBar {
-	top:13px;
-  left: 120px;
+  top: 11px;
+  left: 300px;
   z-index: 1;
-  width: 50%;
-  width: calc(100% - 150px);
+  width: calc(100% - 500px);
 	min-width: 200px;
-	z-index: 1;
-	position:absolute;
+	position: absolute;
 }
 
-
-/* condition for screen size minimum of 500px */
-@media (max-width:700px) {
+/* condition for screen size minimum of 1200px */
+@media (min-width:1200px) {
   .searchBar {
-	  left: 20px;
-	  top: 60px;
-		width: calc(100% - 35px);
+		top: 50px;
+		left: 10px;
+		min-width: 150px;
+	  width: calc(100% - 50px);
 	}
 }
+
+/* condition for screen size minimum of 1200px */
+@media (max-width:1200px) {
+	.lupa-button{
+		width: 40px;
+		padding-left: 6px;
+	}
+}
+
 .auto {
 	background: white;
 	border: 1px solid #ccc;

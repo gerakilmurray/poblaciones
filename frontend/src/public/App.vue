@@ -8,13 +8,13 @@
 			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
 			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
+			<CollapseButtonRight :collapsed='collapsed' @click="doToggle" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
 			<SummaryPanel :metrics="metrics" :config="config"
 				:clipping="clipping" :frame="frame" :user="user"
 				:toolbarStates="toolbarStates"></SummaryPanel>
 		</div>
-		<CollapseButtonRight v-if='isMobile' :startRight='0' :collapsed='collapsed' @click="doToggle" />
 	</div>
 </template>
 
@@ -119,6 +119,7 @@ export default {
 			loc.isMobile = loc.$isMobile();
 			loc.collapsed = loc.isMobile;
 			loc.SplitPanelsRefresh();
+			//loc.UpdateMapsControls();
 		});
 		window.Panels.Left = this.$refs.leftPanel;
 	},
@@ -141,6 +142,7 @@ export default {
 				if (event.state !== null) {
 					var start = new StartMap(loc.work, loc, loc.SetupMap);
 					start.Start();
+					//loc.UpdateMapsControls();
 				}
 			};
 			window.onresize = function(event) {
@@ -170,11 +172,24 @@ export default {
 			segMap.SaveRoute.DisableOnce = true;
 			mapApi.Initialize();
 			segMap.SetSelectionMode(0);
+			//this.UpdateMapsControls();
 		},
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
 			window.onerror = err.HandleError;
 		},
+		/*
+		UpdateMapsControls(){
+			if (this.$isMobile()){
+				window.SegMap.MapsApi.gMap.setOptions({
+					mapTypeControlOptions: {
+						style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+						position: google.maps.ControlPosition.LEFT_TOP
+					},
+					fullscreenControl: false
+				});
+			}
+		},*/
 		doToggle() {
 			this.collapsed = !this.collapsed;
 			this.SplitPanelsRefresh();
