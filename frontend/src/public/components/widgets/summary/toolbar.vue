@@ -199,6 +199,7 @@ export default {
 			window.setTimeout(function() {
 				var holderObj = loc.changeOverflowById(document.querySelector('#holder'), 'unset');
 				var toolbarTop = loc.changeDisplayById(document.querySelector('#toolbar-top'), 'none');
+				var collapseButtonRight = loc.changeDisplayById(document.querySelector('#collapseButtonRight'), 'none');
 				var searchBar = loc.changeDisplayById(document.querySelector('#search-bar'), 'none');
 				var fabPanel = loc.changeDisplayById(document.querySelector('#fab-panel'), 'none');
 				var dropdown = loc.changeDisplayByClass(document.getElementsByClassName('dropdown'), 'none');
@@ -210,6 +211,7 @@ export default {
 				html2canvas(holderObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
 					loc.changeOverflowById(holderObj, 'hidden');
 					loc.changeDisplayById(toolbarTop, 'block');
+					loc.changeDisplayById(collapseButtonRight, 'block');
 					loc.changeDisplayById(searchBar, 'unset');
 					loc.changeDisplayById(fabPanel, 'flex');
 					loc.changeDisplayByClass(dropdown, 'unset');

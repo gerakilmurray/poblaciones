@@ -8,6 +8,7 @@
 			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
 			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
+			<CollapseButtonRight :collapsed='collapsed' @click="doToggle" />
 		</div>
 		<div id="panRight" class="split split-horizontal">
 			<SummaryPanel :metrics="metrics" :config="config"
@@ -29,6 +30,7 @@ import Edit from '@/public/components/widgets/map/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/map/search';
 import LogoFloat from '@/public/components/widgets/map/logoFloat';
+import CollapseButtonRight from '@/public/components/controls/collapseButtonRight';
 
 import Split from 'split.js';
 import axios from 'axios';
@@ -45,7 +47,8 @@ export default {
 		Fab,
 		LeftPanel,
 		WorkPanel,
-		LogoFloat
+		LogoFloat,
+		CollapseButtonRight,
 	},
 	created() {
 		window.Popups = {};
@@ -54,6 +57,9 @@ export default {
 	data() {
 		return {
 			workStartupSetter: null,
+			collapsed: false,
+			isMobile: false,
+			splitPanels: null,
 			toolbarStates: { selectionMode: null, tutorialOpened: 0 },
 			clipping: {
 				IsUpdating: false,
@@ -98,10 +104,11 @@ export default {
 		};
 	},
 	mounted() {
-		Split(['#panMain', '#panRight'], {
+		this.splitPanels = Split(['#panMain', '#panRight'], {
 			sizes: [75, 25],
-			minSizes: 200,
-			gutterSize: 7
+			minSizes: [10, 300],
+			expandToMin: true,
+			gutterSize: 5
 		});
 
 		this.BindEvents();
@@ -109,6 +116,10 @@ export default {
 		this.GetConfiguration().then(function () {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
+			loc.isMobile = loc.$isMobile();
+			loc.collapsed = loc.isMobile;
+			loc.SplitPanelsRefresh();
+			//loc.UpdateMapsControls();
 		});
 		window.Panels.Left = this.$refs.leftPanel;
 	},
@@ -131,6 +142,7 @@ export default {
 				if (event.state !== null) {
 					var start = new StartMap(loc.work, loc, loc.SetupMap);
 					start.Start();
+					//loc.UpdateMapsControls();
 				}
 			};
 			window.onresize = function(event) {
@@ -160,13 +172,50 @@ export default {
 			segMap.SaveRoute.DisableOnce = true;
 			mapApi.Initialize();
 			segMap.SetSelectionMode(0);
+			//this.UpdateMapsControls();
 		},
 		RegisterErrorHandler() {
 			Vue.config.errorHandler = err.HandleError;
 			window.onerror = err.HandleError;
-		}
+		},
+		/*
+		UpdateMapsControls(){
+			if (this.$isMobile()){
+				window.SegMap.MapsApi.gMap.setOptions({
+					mapTypeControlOptions: {
+						style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+						position: google.maps.ControlPosition.LEFT_TOP
+					},
+					fullscreenControl: false
+				});
+			}
+		},*/
+		doToggle() {
+			this.collapsed = !this.collapsed;
+			this.SplitPanelsRefresh();
+		},
+		SplitPanelsRefresh() {
+			if (this.collapsed){
+				if (this.splitPanels !== null) {
+					this.splitPanels.destroy();
+					this.splitPanels = null;
+				}
+			}
+			else {
+				if (this.splitPanels === null) {
+					this.splitPanels = Split(['#panMain', '#panRight'], {
+						sizes: [75, 25],
+						minSizes: [10, 300],
+						expandToMin: true,
+						gutterSize: 5
+					});
+				}
+			}
+		},
 	},
 };
+
+
 
 </script>
 
@@ -261,6 +310,7 @@ html, body {
 
 .split.split-horizontal, .gutter.gutter-horizontal {
 	height: 100%;
+	width: 100%;
 	float: left;
 }
 
