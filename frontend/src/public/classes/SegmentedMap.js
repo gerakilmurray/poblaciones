@@ -322,7 +322,7 @@ SegmentedMap.prototype.AddMetricById = function (id) {
 
 SegmentedMap.prototype.doAddMetricById = function (id, versionSelector) {
 	const loc = this;
-	this.Get('/services/metrics/GetSelectedMetric', {
+	this.Get(/*window.host + */'/services/metrics/GetSelectedMetric', {
 		params: { l: id }
 	}).then(function (res) {
 		var activeSelectedMetric = new ActiveSelectedMetric(loc.AxiosClone(res.data), false);

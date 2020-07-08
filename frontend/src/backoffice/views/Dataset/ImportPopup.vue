@@ -1,39 +1,39 @@
 <template>
-  <div>
-    <md-dialog :md-active.sync="openImport">
-      <md-dialog-title>Importar datos</md-dialog-title>
+	<div>
+		<md-dialog :md-active.sync="openImport">
+			<md-dialog-title>Importar datos</md-dialog-title>
 
-      <stepper ref="stepper" title="Importando datos" @closed="onCloseStepper"></stepper>
-      <md-dialog-content>
-        <div>
-          <p>Seleccione el archivo que desea importar. Los tipos de archivo aceptados son:</p>
+			<stepper ref="stepper" title="Importando datos" @closed="onCloseStepper"></stepper>
+			<md-dialog-content>
+				<div>
+					<p>Seleccione el archivo que desea importar. Los tipos de archivo aceptados son:</p>
 					<ul>
 						<li>Archivos Excel (.xls, xlsx)</li>
 						<li>Archivos de datos de SPSS (.sav)</li>
 						<li>Archivos de texto separados por comas (.csv)</li>
-						<li>Archivos de texto estructurados en tags (.kml/.kmz). <a href="/static/download/kmx2csv.zip" download><blockquote>Haga click aquí si quiere descargar el conversor KML/KMZ a CSV</blockquote></a></li>
+						<li>Archivos de texto estructurados en tags (.kml/.kmz)</li>
 					</ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
 						-->
-        </div>
+				</div>
 
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-size-100">
-            <vue-dropzone style="float:left"
-              ref="myVueDropzone"
-              @vdropzone-success="afterSuccess"
-              @vdropzone-complete="afterComplete"
-              @vdropzone-sending="beforeSending"
+				<div class="md-layout md-gutter">
+					<div class="md-layout-item md-size-100">
+						<vue-dropzone style="float:left"
+							ref="myVueDropzone"
+							@vdropzone-success="afterSuccess"
+							@vdropzone-complete="afterComplete"
+							@vdropzone-sending="beforeSending"
 							@vdropzone-max-files-exceeded="maxfilesexceeded"
-              id="dropzone"
-              :options="dropzoneOptions"
-            >
+							id="dropzone"
+							:options="dropzoneOptions"
+						>
 						</vue-dropzone>
 						<md-button style="float:left;background-color: #ececec;" v-if="hasFiles" title="Quitar" class="md-icon-button" v-on:click="clear">
 							<md-icon>close</md-icon>
 						</md-button>
-          </div>
+					</div>
 					<div v-if="Dataset !== null && Dataset.Columns !== null && Dataset.Columns.length > 0" class="md-layout-item md-size-100" style="margin-top: -10px; margin-bottom: 12px;">
 						<p>
 							<md-switch class="md-primary" v-model="keepLabels">
@@ -48,17 +48,17 @@
 					</div>
 
 				</div>
-      </md-dialog-content>
+			</md-dialog-content>
 			<input-popup ref="datasetDialog" @selected="CreateDataset" />
 			<list-selection-popup ref="datasetSelectionDialog" @selected="SaveDatasetSelected" />
 			<invoker ref="invoker"></invoker>
 
-      <md-dialog-actions>
-        <md-button @click="openImport = false">Cancelar</md-button>
-        <md-button class="md-primary" :disabled="sending" @click="save()">Aceptar</md-button>
-      </md-dialog-actions>
-    </md-dialog>
-  </div>
+			<md-dialog-actions>
+				<md-button @click="openImport = false">Cancelar</md-button>
+				<md-button class="md-primary" :disabled="sending" @click="save()">Aceptar</md-button>
+			</md-dialog-actions>
+		</md-dialog>
+	</div>
 </template>
 
 <script>
@@ -69,64 +69,64 @@ import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import h from '@/public/js/helper';
 
 export default {
-  name: "General",
+	name: "General",
 	components: {
 		vueDropzone,
 		InputPopup,
 		ListSelectionPopup
 	},
-  data() {
-    return {
-        openImport: false,
-        extension: "",
-        sending: false,
-        hasFiles: false,
-        bucketId: 0,
-        keepLabels: true,
-        saveRequested: false,
-        createdDataset: null,
-        forceCreateNewDataset: false,
-        dropzoneOptions: {
-            url: this.getCreateFileUrl,
-            thumbnailWidth: 150,
-            withCredentials: true,
-            maxFiles: 1,
-            acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
-            dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
-            forceChunking: true,
-            chunking: true,
-            chunkSize: 500000,
-            datasetname: null,
-            datasets: null,
-            chunksUploaded: function(file, done) {
-                done();
-            }
-        }
-    };
-  },
-  computed: {
-    Work() {
-		return window.Context.CurrentWork;
-    },
-    Dataset() {
-		return (this.forceCreateNewDataset ? null : window.Context.CurrentDataset);
+	data() {
+		return {
+			openImport: false,
+			extension: "",
+			sending: false,
+			hasFiles: false,
+			bucketId: 0,
+			keepLabels: true,
+			saveRequested: false,
+			createdDataset: null,
+			forceCreateNewDataset: false,
+			dropzoneOptions: {
+				url: this.getCreateFileUrl,
+				thumbnailWidth: 150,
+				withCredentials: true,
+				maxFiles: 1,
+				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
+				dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
+				forceChunking: true,
+				chunking: true,
+				chunkSize: 500000,
+				sheetName: null,
+				datasets: null,
+				chunksUploaded: function(file, done) {
+					done();
+				}
+			}
+		};
 	},
-  },
-  methods: {
-    getCreateFileUrl() {
-      return this.Work.GetCreateFileUrl(this.getBucketId());
-    },
-    getBucketId() {
-      return this.bucketId;
-    },
-    beforeSending(file) {
+	computed: {
+		Work() {
+		return window.Context.CurrentWork;
+		},
+		Dataset() {
+			return (this.forceCreateNewDataset ? null : window.Context.CurrentDataset);
+		},
+	},
+	methods: {
+		getCreateFileUrl() {
+			return this.Work.GetCreateFileUrl(this.getBucketId());
+		},
+		getBucketId() {
+			return this.bucketId;
+		},
+		beforeSending(file) {
 			this.extension = h.extractFileExtension(file.name);
 			this.filename = h.extractFilename(file.name);
 			this.createdDataset = null;
 			this.datasets = null;
-			this.datasetname = null;
+			this.sheetName = null;
 			this.sending = true;
-    },
+		},
 		maxfilesexceeded(file) {
 			this.$refs.myVueDropzone.removeAllFiles();
 			this.$refs.myVueDropzone.addFile(file);
@@ -136,55 +136,55 @@ export default {
 			this.generateBucketId();
 			this.hasFiles = false;
 			this.datasets = null;
-			this.datasetname = null;
+			this.sheetName = null;
 		},
-    afterSuccess(file, response) {
-      this.sending = false;
-      if (this.saveRequested) {
-        this.save();
-      }
-	},
-	verifyDatasets(bucketId, fileExtension) {
-		var loc = this;
-		this.Work.VerifyDatasetsImportFile(bucketId, fileExtension).then(
-			function (list) {
-				if (list.length > 1) {
-					loc.datasets = list;
-					loc.RequestDatasetSelection();
-				}
-			});
-	},
-	RequestDatasetSelection() {
-		this.$refs.datasetSelectionDialog.show(
-			'Selección de dataset',
-			'Seleccione uno de los datasets dentro del archivo a importar',
-			this.datasetname,
-			this.datasets);
-	},
-	SaveDatasetSelected(name) {
-		var loc = this;
-		loc.datasetname = name;
-		if (loc.datasetname == ''){
-			loc.clear();
-		}
-	},
-  afterComplete(file) {
-		this.sending = false;
-		this.hasFiles = true;
-		if (this.extension == 'kml' || this.extension == 'kmz') {
-			this.verifyDatasets(this.getBucketId(), this.extension);
-		}
-    },
-	save() {
-      var stepper = this.$refs.stepper;
-      stepper.startUrl = this.Work.GetDatasetFileImportUrl(this.keepLabels);
-      stepper.stepUrl = this.Work.GetStepDatasetFileImportUrl();
-      let bucketId = this.getBucketId();
-      let extension = this.extension;
-      let datasetname = this.datasetname;
+		afterSuccess(file, response) {
+			this.sending = false;
+			if (this.saveRequested) {
+				this.save();
+			}
+		},
+		verifyDatasets(bucketId, fileExtension) {
+			var loc = this;
+			this.Work.VerifyDatasetsImportFile(bucketId, fileExtension).then(
+				function (list) {
+					if (list.length > 1) {
+						loc.datasets = list;
+						loc.RequestDatasetSelection();
+					}
+				});
+		},
+		RequestDatasetSelection() {
+			this.$refs.datasetSelectionDialog.show(
+				'Selección de dataset',
+				'Seleccione uno de los datasets dentro del archivo a importar',
+				this.sheetName,
+				this.datasets);
+		},
+		SaveDatasetSelected(name) {
+			var loc = this;
+			loc.sheetName = name;
+			if (loc.sheetName == ''){
+				loc.clear();
+			}
+		},
+		afterComplete(file) {
+			this.sending = false;
+			this.hasFiles = true;
+			if (this.extension == 'kml' || this.extension == 'kmz') {
+				this.verifyDatasets(this.getBucketId(), this.extension);
+			}
+		},
+		save() {
+			var stepper = this.$refs.stepper;
+			stepper.startUrl = this.Work.GetDatasetFileImportUrl(this.keepLabels);
+			stepper.stepUrl = this.Work.GetStepDatasetFileImportUrl();
+			let bucketId = this.getBucketId();
+			let extension = this.extension;
+			let sheetName = this.sheetName;
 			if (extension !== 'sav' && extension !== 'csv' && extension !== 'txt'
-          && extension !== 'xls' && extension !== 'xlsx'
-          && extension !== 'kml' && extension !== 'kmz') {
+					&& extension !== 'xls' && extension !== 'xlsx'
+					&& extension !== 'kml' && extension !== 'kmz') {
 				alert('La extensión del archivo debe ser SAV, XLS, XLSX, CSV, TXT, KML o KMZ.');
 				return;
 			}
@@ -193,7 +193,7 @@ export default {
 				return;
 			}
 			let datasetId = (this.Dataset ? this.Dataset.properties.Id : this.createdDataset.Id);
-			stepper.args = { b: bucketId, d: datasetId, fe: extension, dsn: datasetname};
+			stepper.args = { b: bucketId, d: datasetId, fe: extension, dsn: sheetName};
 			let loc = this;
 			stepper.Start().then(function() {
 				loc.Work.WorkChanged();
@@ -203,7 +203,6 @@ export default {
 				} else {
 					loc.$refs.invoker.do(window.Db, window.Db.RebindAndFocusLastDataset, loc.$router);
 				}
-
 			});
 		},
 		onCloseStepper(success) {
@@ -243,21 +242,21 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .md-layout-item .md-size-25 {
-  padding: 0 !important;
+	padding: 0 !important;
 }
 .hidden {
-  display: none;
+	display: none;
 }
 
 .visible {
-  display: inline;
+	display: inline;
 }
 </style>
 
 <style rel="stylesheet/scss" lang="scss">
 
 #drop1 {
-  padding: 6px;
+	padding: 6px;
 }
 
 .dz-preview {
@@ -266,11 +265,11 @@ export default {
 .dropzone {
 	min-height: unset ! important;
 	padding: 0px!important;
-  width: 164px;
+	width: 164px;
 }
 
 .dropzone .dz-preview {
-  background: #666;
-  height: 100px !important;
+	background: #666;
+	height: 100px !important;
 }
 </style>

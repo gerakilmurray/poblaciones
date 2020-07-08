@@ -97,7 +97,7 @@ export default {
 			return this.Work.Files[this.Work.Files.length - 1] === item;
 		},
 		getAttachUrl(item) {
-			return '/services/backoffice/GetMetadataFile?m=' + this.Work.properties.Metadata.Id + '&f=' + item.File.Id;
+			return /*window.host + */'/services/backoffice/GetMetadataFile?m=' + this.Work.properties.Metadata.Id + '&f=' + item.File.Id;
 		},
 		openEdition(item) {
 			this.$refs.editPopup.show(item);

@@ -114,7 +114,7 @@ ScaleGenerator.prototype.HasData = function (variable) {
 
 ScaleGenerator.prototype.GetColumnDistributions = function (variable) {
 	// Trae los grupos calculados para ese par de variables y escalas
-	let url = '/services/backoffice/GetColumnDistributions';
+	let url = /*window.host + */'/services/backoffice/GetColumnDistributions';
 	return axiosClient.getPromise(url, {
 		'k': this.Dataset.properties.Id,
 		'c': variable.Data,
@@ -147,7 +147,7 @@ ScaleGenerator.prototype.RegenVariableCategories = function (level, variable) {
 	} else {
 		loc.RegenPending[key] = variable;
 		// Trae los grupos calculados para ese par de variables y escalas
-		let url = '/services/backoffice/GetColumnDistributions';
+		let url = /*window.host + */'/services/backoffice/GetColumnDistributions';
 		return loc.GetColumnDistributions(variable).then(function (data) {
 				loc.InfoCache[key] = data;
 				var varPending = loc.RegenPending[key];

@@ -255,13 +255,13 @@ export default {
 			});
 		},
 		getFileUrl(type) {
-			return '/services/download/GetFile?' + this.urlArgs(type);
+			return /*window.host + */'/services/download/GetFile?' + this.urlArgs(type);
 		},
 		startDownloadUrl(type) {
-			return '/services/download/StartDownload?' + this.urlArgs(type);
+			return /*window.host + */'/services/download/StartDownload?' + this.urlArgs(type);
 		},
 		stepDownloadUrl() {
-			return '/services/download/StepDownload';
+			return /*window.host + */'/services/download/StepDownload';
 		},
 		urlArgs(type) {
 			var cliId = 0;

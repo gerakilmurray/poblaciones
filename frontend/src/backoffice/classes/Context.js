@@ -17,13 +17,13 @@ function Context() {
 	this.ErrorSignaled = { value: 0 };
 	this.CurrentDataset = null;
 	this.CurrentWork = null;
-	this.Factory = new AsyncCatalog('/services/backoffice/GetFactories');
-	this.Sources = new AsyncCatalog('/services/backoffice/GetAllSourcesByCurrentUser');
-	this.Geographies = new AsyncCatalog('/services/backoffice/GetAllGeographies');
-	this.Institutions = new AsyncCatalog('/services/backoffice/GetAllInstitutionsByCurrentUser');
-	this.PublicMetrics = new AsyncCatalog('/services/backoffice/GetPublicMetrics');
-	this.CartographyMetrics = new AsyncCatalog('/services/backoffice/GetCartographyMetrics');
-	this.MetricGroups = new AsyncCatalog('/services/backoffice/GetAllMetricGroups');
+	this.Factory = new AsyncCatalog(/*window.host + */'/services/backoffice/GetFactories');
+	this.Sources = new AsyncCatalog(/*window.host + */'/services/backoffice/GetAllSourcesByCurrentUser');
+	this.Geographies = new AsyncCatalog(/*window.host + */'/services/backoffice/GetAllGeographies');
+	this.Institutions = new AsyncCatalog(/*window.host + */'/services/backoffice/GetAllInstitutionsByCurrentUser');
+	this.PublicMetrics = new AsyncCatalog(/*window.host + */'/services/backoffice/GetPublicMetrics');
+	this.CartographyMetrics = new AsyncCatalog(/*window.host + */'/services/backoffice/GetCartographyMetrics');
+	this.MetricGroups = new AsyncCatalog(/*window.host + */'/services/backoffice/GetAllMetricGroups');
 	this.CurrentMetricVersionLevel = null;
 	this.EditableMetricVersionLevel = null;
 }

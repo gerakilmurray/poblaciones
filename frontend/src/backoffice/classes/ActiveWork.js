@@ -13,7 +13,7 @@ function ActiveWork(workInfo, workListMetadata) {
 	this.Bounded = false;
 	window.Context.BooleanKeys.WorkTopBarPublish = 0;
 	this.Sources = workInfo.Sources;
-	this.MetricVersions = new AsyncCatalog('/services/backoffice/GetWorkMetricVersions?w=' + workInfo.Work.Id);
+	this.MetricVersions = new AsyncCatalog(/*window.host + */'/services/backoffice/GetWorkMetricVersions?w=' + workInfo.Work.Id);
 	this.MetricVersions.Refresh();
 	this.Files = workInfo.Files;
 	this.Permissions = workInfo.Permissions;
@@ -35,7 +35,7 @@ function ActiveWork(workInfo, workListMetadata) {
 };
 
 ActiveWork.prototype.CreateNewDataset = function (caption) {
-	let url = '/services/backoffice/CreateDataset';
+	let url = /*window.host + */'/services/backoffice/CreateDataset';
 	this.WorkChanged();
 	return axiosClient.getPromise(url, { 'w': this.properties.Id, 't': caption },
 		'crear el dataset').then(function (data) {
@@ -127,24 +127,23 @@ ActiveWork.prototype.SelectedDataset = function () {
 };
 
 ActiveWork.prototype.GetStartWorkTestUrl = function () {
-	return '/services/backoffice/StartTestWork?w=' + this.properties.Id;
+	return /*window.host + */'/services/backoffice/StartTestWork?w=' + this.properties.Id;
 };
 
 ActiveWork.prototype.GetStepWorkTestUrl = function () {
-	return '/services/backoffice/StepTestWork';
+	return /*window.host + */'/services/backoffice/StepTestWork';
 };
 
 ActiveWork.prototype.GetUploadUrl = function () {
-	return '/services/backoffice/UploadFile';
+	return /*window.host + */'/services/backoffice/UploadFile';
 };
 
-
 ActiveWork.prototype.GetCreateFileUrl = function (bucketId) {
-	return '/services/backoffice/PostImportChunk?b=' + bucketId;
+	return /*window.host + */'/services/backoffice/PostImportChunk?b=' + bucketId;
 };
 
 ActiveWork.prototype.GetDatasetFileImportUrl = function (keepLabels) {
-	return '/services/backoffice/Dataset/CreateMultiImportFile?k=' + (keepLabels ? '1' : 0);
+	return /*window.host + */'/services/backoffice/Dataset/CreateMultiImportFile?k=' + (keepLabels ? '1' : 0);
 };
 
 ActiveWork.prototype.VerifyDatasetsImportFile = function (bucketId, fileExtension) {
@@ -154,7 +153,7 @@ ActiveWork.prototype.VerifyDatasetsImportFile = function (bucketId, fileExtensio
 };
 
 ActiveWork.prototype.GetStepDatasetFileImportUrl = function () {
-	return '/services/backoffice/Dataset/StepMultiImportFile';
+	return /*window.host + */'/services/backoffice/Dataset/StepMultiImportFile';
 };
 
 ActiveWork.prototype.GetHighestLevelForVersion = function(metricVersion) {
@@ -165,7 +164,7 @@ ActiveWork.prototype.GetHighestLevelForVersion = function(metricVersion) {
 			var level = loc.GetLevelToUse(allVersions, metricVersion);
 			// Trae sus variables
 			var args = { 'w': loc.properties.Id, l: level.Id };
-			return axiosClient.getPromise('/services/backoffice/GetMetricVersionLevelVariables', args,
+			return axiosClient.getPromise(/*window.host + */'/services/backoffice/GetMetricVersionLevelVariables', args,
 				'obtener variables del nivel').then(function (data) {
 					level.Variables = data;
 					return level;
@@ -198,7 +197,7 @@ ActiveWork.prototype.UpdateInstitution = function (institution, container, water
 	var args = { 'w': this.properties.Id, 'i': institution, 'iwm': watermarkImage };
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.postPromise('/services/backoffice/UpdateInstitution', args,
+	return axiosClient.postPromise(/*window.host + */'/services/backoffice/UpdateInstitution', args,
 		'actualizar la institución').then(function (savedInstitution) {
 			// se fija si tiene que actualizar el institution
 			container.Institution = savedInstitution;
@@ -210,7 +209,7 @@ ActiveWork.prototype.UpdateSource = function (source) {
 	var args = { 'w': this.properties.Id, 's': source };
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.postPromise('/services/backoffice/UpdateWorkSource', args,
+	return axiosClient.postPromise(/*window.host + */'/services/backoffice/UpdateWorkSource', args,
 		'actualizar la fuente').then(function (savedSource) {
 			// se fija si tiene que actualizar el institution
 			if (source.Id === null || source.Id === 0) {
@@ -269,19 +268,19 @@ ActiveWork.prototype.UpdateMetadata = function () {
 	var args = { 'w': this.properties.Id, 'm': this.properties.Metadata };
 	this.WorkChanged();
 	// Guarda en el servidor lo que esté en this.properties.Metadata
-	return axiosClient.postPromise('/services/backoffice/UpdateMetadata', args,
+	return axiosClient.postPromise(/*window.host + */'/services/backoffice/UpdateMetadata', args,
 		'actualizar los atributos indicados');
 };
 
 ActiveWork.prototype.GetGeographyItems = function (geographyId) {
-	return axiosClient.getPromise('/services/backoffice/GetGeographyItems',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/GetGeographyItems',
 		{ 'g': geographyId }, 'obtener los ítems de la geografía');
 };
 
 ActiveWork.prototype.GetInstitutionWatermark = function (institution) {
-    var args = { 'w': this.properties.Id, 'iwmid': institution.Watermark.Id };
-    return axiosClient.getPromise('/services/backoffice/GetInstitutionWatermark', args,
-      'obtener el logo de la institución');
+		var args = { 'w': this.properties.Id, 'iwmid': institution.Watermark.Id };
+		return axiosClient.getPromise(/*window.host + */'/services/backoffice/GetInstitutionWatermark', args,
+			'obtener el logo de la institución');
 };
 
 ActiveWork.prototype.UpdateMultilevelMatrix = function () {
@@ -290,13 +289,13 @@ ActiveWork.prototype.UpdateMultilevelMatrix = function () {
 		datasetMatrix[this.Dataset[n].properties.Id] = this.Dataset[n].properties.MultilevelMatrix;
 	}
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/UpdateMultilevelMatrix',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/UpdateMultilevelMatrix',
 		{ 'w': this.properties.Id, 'd': datasetMatrix }, 'actualizar las relaciones de multinivel');
 };
 
 ActiveWork.prototype.AddPermission = function (user, permission) {
 	var loc = this;
-	return axiosClient.getPromise('/services/backoffice/AddWorkPermission',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/AddWorkPermission',
 		{ 'u': user, 'w': this.properties.Id, 'p': permission }, 'agregar el permiso')
 		.then(function (data) {
 			loc.Permissions.push(data);
@@ -305,7 +304,7 @@ ActiveWork.prototype.AddPermission = function (user, permission) {
 
 ActiveWork.prototype.RequestReview = function () {
 	var loc = this;
-	return axiosClient.getPromise('/services/backoffice/RequestReview',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/RequestReview',
 		{ 'w': this.properties.Id }, 'solicitar la revisión');
 };
 
@@ -320,7 +319,7 @@ ActiveWork.prototype.UpdateVisibility = function () {
 
 ActiveWork.prototype.DeletePermission = function (permission) {
 	var loc = this;
-	return axiosClient.getPromise('/services/backoffice/RemoveWorkPermission',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/RemoveWorkPermission',
 		{ 'p': permission.Id, 'w': this.properties.Id }, 'quitar el permiso').then(function (data) {
 			arr.Remove(loc.Permissions, permission);
 		});
@@ -330,7 +329,7 @@ ActiveWork.prototype.DeletePermission = function (permission) {
 ActiveWork.prototype.AddSource = function (source) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/AddWorkSource',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/AddWorkSource',
 		{ 'w': this.properties.Id, 's': source.Id }, 'agregar la fuente')
 		.then(function (data) {
 			loc.Sources.push(source);
@@ -340,7 +339,7 @@ ActiveWork.prototype.AddSource = function (source) {
 ActiveWork.prototype.RemoveSource = function (source) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/RemoveSourceFromWork',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/RemoveSourceFromWork',
 		{ 's': source.Id, 'w': this.properties.Id }, 'quitar la fuente').then(function (data) {
 			arr.Remove(loc.Sources, source);
 		});
@@ -349,7 +348,7 @@ ActiveWork.prototype.RemoveSource = function (source) {
 ActiveWork.prototype.UpdateFile = function (item, bucketId) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.postPromise('/services/backoffice/UpdateMetadataFile',
+	return axiosClient.postPromise(/*window.host + */'/services/backoffice/UpdateMetadataFile',
 		{ 'f': item, 'w': this.properties.Id, 'b': bucketId }, 'actualizar el adjunto')
 		.then(function (data) {
 			// recibe el id y se lo pone
@@ -378,7 +377,7 @@ ActiveWork.prototype.GetAttachmentById = function (id) {
 ActiveWork.prototype.DeleteFile = function (item) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/DeleteMetadataFile',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/DeleteMetadataFile',
 		{ 'f': item.Id, 'w': this.properties.Id }, 'eliminar el adjunto')
 		.then(function (data) {
 			arr.Remove(loc.Files, item);
@@ -388,7 +387,7 @@ ActiveWork.prototype.DeleteFile = function (item) {
 ActiveWork.prototype.MoveFileUp = function (item) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/MoveMetadataFileUp',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/MoveMetadataFileUp',
 		{ 'f': item.Id, 'w': this.properties.Id }, 'cambiar la ubicación del adjunto')
 		.then(function (data) {
 			arr.MoveUp(loc.Files, item);
@@ -398,7 +397,7 @@ ActiveWork.prototype.MoveFileUp = function (item) {
 ActiveWork.prototype.MoveFileDown = function (item) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/MoveMetadataFileDown',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/MoveMetadataFileDown',
 		{ 'f': item.Id, 'w': this.properties.Id }, 'cambiar la ubicación del adjunto')
 		.then(function (data) {
 			arr.MoveDown(loc.Files, item);
@@ -409,7 +408,7 @@ ActiveWork.prototype.MoveFileDown = function (item) {
 ActiveWork.prototype.MoveSourceUp = function (item) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/MoveSourceUp',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/MoveSourceUp',
 		{ 's': item.Id, 'w': this.properties.Id }, 'cambiar la ubicación de la fuente')
 		.then(function (data) {
 			arr.MoveUp(loc.Sources, item);
@@ -419,7 +418,7 @@ ActiveWork.prototype.MoveSourceUp = function (item) {
 ActiveWork.prototype.MoveSourceDown = function (item) {
 	var loc = this;
 	this.WorkChanged();
-	return axiosClient.getPromise('/services/backoffice/MoveSourceDown',
+	return axiosClient.getPromise(/*window.host + */'/services/backoffice/MoveSourceDown',
 		{ 's': item.Id, 'w': this.properties.Id }, 'cambiar la ubicación de la fuente')
 		.then(function (data) {
 			arr.MoveDown(loc.Sources, item);
