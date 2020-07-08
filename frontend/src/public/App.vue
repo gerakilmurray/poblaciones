@@ -9,16 +9,12 @@
 			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
-		<div>
-			<div v-show='!collapsed' class="toolbar no-print right-panelPositionEnum" style="display: block">
-				<div id="panRight" class="split split-horizontal">
-					<SummaryPanel :metrics="metrics" :config="config"
-					:clipping="clipping" :frame="frame" :user="user"
-					:toolbarStates="toolbarStates"></SummaryPanel>
-				</div>
-			</div>
-			<collapseToolbarButton v-if='isMobile' :startRight='width' :collapsed='collapsed' @click="doToggle" />
-		</div>
+    <div id="panRight" class="split split-horizontal" style="display: block">
+      <SummaryPanel :metrics="metrics" :config="config"
+      :clipping="clipping" :frame="frame" :user="user"
+      :toolbarStates="toolbarStates"></SummaryPanel>
+    </div>
+    <CollapseButtonRight v-if='isMobile' :startRight='0' :collapsed='collapsed' @click="doToggle" />
 	</div>
 </template>
 
@@ -34,13 +30,12 @@ import Edit from '@/public/components/widgets/map/editButton';
 import SummaryPanel from '@/public/components/panels/summaryPanel';
 import Search from '@/public/components/widgets/map/search';
 import LogoFloat from '@/public/components/widgets/map/logoFloat';
-import collapseToolbarButton from '@/public/components/controls/collapseToolbarButton';
+import CollapseButtonRight from '@/public/components/controls/collapseButtonRight';
 
 import Split from 'split.js';
 import axios from 'axios';
 import Vue from 'vue';
 import err from '@/common/js/err';
-import { isMobile, deviceDetect } from 'mobile-device-detect';
 
 export default {
 	name: 'app',
@@ -53,7 +48,7 @@ export default {
 		LeftPanel,
 		WorkPanel,
 		LogoFloat,
-		collapseToolbarButton,
+		CollapseButtonRight,
 	},
 	created() {
 		window.Popups = {};
@@ -62,7 +57,9 @@ export default {
 	data() {
 		return {
 			workStartupSetter: null,
-			collapsed: isMobile,
+      collapsed: false,
+      isMobile: false,
+      splitPanels: null,
 			toolbarStates: { selectionMode: null, tutorialOpened: 0 },
 			clipping: {
 				IsUpdating: false,
@@ -107,19 +104,22 @@ export default {
 		};
 	},
 	mounted() {
-		Split(['#panMain', '#panRight'], {
- 			sizes: deviceDetect.isMobile ? [100, 0] : [75, 25],
-			minSizes: 200,
-			gutterSize: 7
-		});
+    this.isMobile = this.$isMobile();
+    this.collapsed = this.isMobile;
+    this.splitPanels = Split(['#panMain', '#panRight'], {
+      sizes: [75, 25],
+      minSizes: [300, 200],
+      expandToMin: true,
+      gutterSize: 6
+    });
 
 		this.BindEvents();
 		var loc = this;
 		this.GetConfiguration().then(function () {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
-		});
-		window.Panels.Left = this.$refs.leftPanel;
+    });
+    window.Panels.Left = this.$refs.leftPanel;
 	},
 	methods: {
 		GetConfiguration() {
@@ -175,7 +175,14 @@ export default {
 			window.onerror = err.HandleError;
 		},
 		doToggle() {
-			this.collapsed = ! this.collapsed;
+      this.collapsed = !this.collapsed;
+      if (this.collapsed){
+        this.splitPanels.setSizes([100, 0]);
+        this.splitPanels.collapse(1);
+      }
+      else{
+        this.splitPanels.setSizes([75, 25]);
+      }
 		},
 	},
 };
@@ -575,21 +582,5 @@ a:hover {
 	font-size: 10px;
 	white-space: nowrap;
 	vertical-align: middle;
-}
-.right-panelPositionEnum {
-	position:absolute;
-	height:100%;
-	left:0;
-	top:0;
-	overflow-y: auto;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-	z-index:1;
-	background-color: white;
-}
-.fade-enter-active, .fade-leave-active {
-	transition: opacity .35s;
-}
-.fade-enter, .fade-leave-to {
-	opacity: 0;
 }
 </style>

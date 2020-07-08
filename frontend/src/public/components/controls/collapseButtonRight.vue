@@ -8,7 +8,7 @@
 
 <script>
 export default {
-	name: 'collapseToolbarButton',
+	name: 'collapseButtonRight',
 	props: [
 		'collapsed',
 		'startRight',
@@ -19,7 +19,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.right = this.startRight;
+		this.right = 0;
 	},
 	computed: {
 		onLoc() {
