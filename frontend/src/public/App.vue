@@ -9,12 +9,12 @@
 			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
 			<Edit v-if="work.Current" ref="editPanel" :work="work" />
 		</div>
-    <div id="panRight" class="split split-horizontal" style="display: block">
-      <SummaryPanel :metrics="metrics" :config="config"
-      :clipping="clipping" :frame="frame" :user="user"
-      :toolbarStates="toolbarStates"></SummaryPanel>
-    </div>
-    <CollapseButtonRight v-if='isMobile' :startRight='0' :collapsed='collapsed' @click="doToggle" />
+		<div id="panRight" class="split split-horizontal">
+			<SummaryPanel :metrics="metrics" :config="config"
+				:clipping="clipping" :frame="frame" :user="user"
+				:toolbarStates="toolbarStates"></SummaryPanel>
+		</div>
+		<CollapseButtonRight v-if='isMobile' :startRight='0' :collapsed='collapsed' @click="doToggle" />
 	</div>
 </template>
 
@@ -57,9 +57,9 @@ export default {
 	data() {
 		return {
 			workStartupSetter: null,
-      collapsed: false,
-      isMobile: false,
-      splitPanels: null,
+			collapsed: false,
+			isMobile: false,
+			splitPanels: null,
 			toolbarStates: { selectionMode: null, tutorialOpened: 0 },
 			clipping: {
 				IsUpdating: false,
@@ -104,22 +104,22 @@ export default {
 		};
 	},
 	mounted() {
-    this.isMobile = this.$isMobile();
-    this.collapsed = this.isMobile;
-    this.splitPanels = Split(['#panMain', '#panRight'], {
-      sizes: [75, 25],
-      minSizes: [300, 200],
-      expandToMin: true,
-      gutterSize: 6
-    });
+		this.isMobile = this.$isMobile();
+		this.collapsed = this.isMobile;
+		this.splitPanels = Split(['#panMain', '#panRight'], {
+			sizes: [75, 25],
+			minSizes: [300, 200],
+			expandToMin: true,
+			gutterSize: 6
+		});
 
 		this.BindEvents();
 		var loc = this;
 		this.GetConfiguration().then(function () {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
-    });
-    window.Panels.Left = this.$refs.leftPanel;
+		});
+		window.Panels.Left = this.$refs.leftPanel;
 	},
 	methods: {
 		GetConfiguration() {
@@ -175,14 +175,14 @@ export default {
 			window.onerror = err.HandleError;
 		},
 		doToggle() {
-      this.collapsed = !this.collapsed;
-      if (this.collapsed){
-        this.splitPanels.setSizes([100, 0]);
-        this.splitPanels.collapse(1);
-      }
-      else{
-        this.splitPanels.setSizes([75, 25]);
-      }
+			this.collapsed = !this.collapsed;
+			if (this.collapsed){
+				this.splitPanels.setSizes([100, 0]);
+				this.splitPanels.collapse(1);
+			}
+			else{
+				this.splitPanels.setSizes([75, 25]);
+			}
 		},
 	},
 };
