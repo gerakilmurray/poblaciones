@@ -202,6 +202,7 @@ export default {
   z-index: 1;
   width: calc(100% - 500px);
 	min-width: 200px;
+	max-width: 800px;
 	position: absolute;
 }
 
