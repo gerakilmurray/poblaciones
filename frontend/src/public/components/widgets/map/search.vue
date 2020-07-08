@@ -206,17 +206,14 @@ export default {
 }
 
 /* condition for screen size minimum of 1200px */
-@media (min-width:1200px) {
+@media (max-width:1200px) {
   .searchBar {
 		top: 50px;
 		left: 10px;
 		min-width: 150px;
 	  width: calc(100% - 50px);
 	}
-}
 
-/* condition for screen size minimum of 1200px */
-@media (max-width:1200px) {
 	.lupa-button{
 		width: 40px;
 		padding-left: 6px;
