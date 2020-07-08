@@ -197,11 +197,11 @@ export default {
 
 <style scoped>
 .searchBar {
-	top:20px;
-  left: 300px;
+	top:13px;
+  left: 120px;
   z-index: 1;
   width: 50%;
-  width: calc(100% - 500px);
+  width: calc(100% - 150px);
 	min-width: 200px;
 	z-index: 1;
 	position:absolute;
@@ -214,11 +214,6 @@ export default {
 	  left: 20px;
 	  top: 60px;
 		width: calc(100% - 35px);
-	}
-}
-@media (max-width:350px) {
-  .searchBar {
-	  top: 90px;
 	}
 }
 .auto {

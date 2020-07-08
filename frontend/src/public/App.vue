@@ -104,13 +104,11 @@ export default {
 		};
 	},
 	mounted() {
-		this.isMobile = this.$isMobile();
-		this.collapsed = this.isMobile;
 		this.splitPanels = Split(['#panMain', '#panRight'], {
 			sizes: [75, 25],
-			minSizes: [300, 200],
+			minSizes: [10, 300],
 			expandToMin: true,
-			gutterSize: 6
+			gutterSize: 5
 		});
 
 		this.BindEvents();
@@ -118,6 +116,9 @@ export default {
 		this.GetConfiguration().then(function () {
 			var start = new StartMap(loc.work, loc, loc.SetupMap);
 			start.Start();
+			loc.isMobile = loc.$isMobile();
+			loc.collapsed = loc.isMobile;
+			loc.SplitPanelsRefresh();
 		});
 		window.Panels.Left = this.$refs.leftPanel;
 	},
@@ -176,12 +177,24 @@ export default {
 		},
 		doToggle() {
 			this.collapsed = !this.collapsed;
+			this.SplitPanelsRefresh();
+		},
+		SplitPanelsRefresh() {
 			if (this.collapsed){
-				this.splitPanels.setSizes([100, 0]);
-				this.splitPanels.collapse(1);
+				if (this.splitPanels !== null) {
+					this.splitPanels.destroy();
+					this.splitPanels = null;
+				}
 			}
-			else{
-				this.splitPanels.setSizes([75, 25]);
+			else {
+				if (this.splitPanels === null) {
+					this.splitPanels = Split(['#panMain', '#panRight'], {
+						sizes: [75, 25],
+						minSizes: [10, 300],
+						expandToMin: true,
+						gutterSize: 5
+					});
+				}
 			}
 		},
 	},
@@ -282,6 +295,7 @@ html, body {
 
 .split.split-horizontal, .gutter.gutter-horizontal {
 	height: 100%;
+	width: 100%;
 	float: left;
 }
 

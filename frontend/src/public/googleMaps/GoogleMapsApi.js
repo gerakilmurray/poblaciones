@@ -69,10 +69,12 @@ GoogleMapsApi.prototype.Initialize = function () {
 
 	var myMapOptions = {
 		mapTypeControlOptions: {
-			style: this.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+			style: this.google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+			position: google.maps.ControlPosition.LEFT_TOP,
 			mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'blank'],
 		},
 		scaleControl: true,
+		fullscreenControl: false,
 		styles: [{
 			featureType: 'landscape.natural',
 			elementType: 'labels',

@@ -49,18 +49,19 @@ export default {
 
 <style scoped>
 .right-arrow {
-  position: absolute;
-  height: 48px;
-  width: 23px;
-  margin-left: 1px;
-  top: 50px;
-  font-size: 14px;
-  padding-top: 17px;
-  padding-right: 2px;
+	position: absolute;
+	height: 30px;
+	width: 17px;
+	border-radius: 10px 0px 0px 10px;
+	margin-left: 1px;
+	top: 6px;
+	font-size: 14px;
+	padding-top: 9px;
+	padding-right: 0px;
   color: #666;
-  background: rgba(255, 255, 255, 0.9);
+	background: rgba(255,255,255,0.9);
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
-  z-index: 1;
+	z-index: 1;
 }
 .border-left {
   position: absolute;
