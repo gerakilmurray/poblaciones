@@ -242,21 +242,21 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .md-layout-item .md-size-25 {
-	padding: 0 !important;
+  padding: 0 !important;
 }
 .hidden {
-	display: none;
+  display: none;
 }
 
 .visible {
-	display: inline;
+  display: inline;
 }
 </style>
 
 <style rel="stylesheet/scss" lang="scss">
 
 #drop1 {
-	padding: 6px;
+  padding: 6px;
 }
 
 .dz-preview {
@@ -265,11 +265,11 @@ export default {
 .dropzone {
 	min-height: unset ! important;
 	padding: 0px!important;
-	width: 164px;
+  width: 164px;
 }
 
 .dropzone .dz-preview {
-	background: #666;
-	height: 100px !important;
+  background: #666;
+  height: 100px !important;
 }
 </style>

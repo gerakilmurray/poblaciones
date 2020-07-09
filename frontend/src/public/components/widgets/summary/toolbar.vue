@@ -10,7 +10,6 @@
 		<button v-if="useGradients" type="button" class="btn btn-default btn-xs"
 							:title="'Máscara poblacional ' + currentGradientOpacity" v-on:click="changeGradientOpacity(.25)"><i class="fas fa-satellite"/></button>
 	</div>
-
 		<div class="btn-group">
 			<button v-for="(mode, index) in selectionModes()" :key="mode.Name" type="button"
 							v-on:click="setMode(index)" v-on:mouseup="setMode(index)"
@@ -71,7 +70,7 @@
 		</div>
 		<div style="clear: both"></div>
     <tour ref="Tour"></tour>
-	<embedded ref="Embedded"></embedded>
+    <embedded ref="Embedded"></embedded>
   </div>
 </template>
 

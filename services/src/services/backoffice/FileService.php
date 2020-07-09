@@ -10,9 +10,9 @@ use minga\framework\FileBucket;
 
 class FileService extends BaseService
 {
-  const PAGESIZE = 1024 * 1024;
+	const PAGESIZE = 1024 * 1024;
 
-  public function SaveFile($fileObject, $tempFilename, $toDrafts, $fileType)
+	public function SaveFile($fileObject, $tempFilename, $toDrafts, $fileType)
 	{
 		// Tiene que insertar en la base de datos
 		$fileId = $fileObject->getId();
@@ -24,19 +24,20 @@ class FileService extends BaseService
 		if ($tempFilename != null)
 		{
 			// resuelve type
-      $fileObject->setType($fileType);
-      $pages = null;
-      if ($fileType === 'application/pdf')
-  			// resuelve páginas
-	  		$pages = PdfReader::GetPageCount($tempFilename);
-		  	if ($pages == 0) $pages = null;
-      $fileObject->setPages($pages);
+			$fileObject->setType($fileType);
+			$pages = null;
+			if ($fileType === 'application/pdf') {
+				// resuelve páginas
+				$pages = PdfReader::GetPageCount($tempFilename);
+				if ($pages == 0) $pages = null;
+			}
+			$fileObject->setPages($pages);
 			App::Orm()->save($fileObject);
 			// Graba
 			$this->saveChunks($fileId, $tempFilename, $toDrafts);
 		}
 		return $fileObject;
-  }
+	}
 
 	protected function makeTableName($table, $fromDraft)
 	{
@@ -46,7 +47,7 @@ class FileService extends BaseService
 			return $table;
 	}
 
-  private function saveChunks($fileId, $tempFilename, $toDrafts)
+	private function saveChunks($fileId, $tempFilename, $toDrafts)
 	{
 		App::Db()->exec("DELETE FROM " . $this->makeTableName('file_chunk', $toDrafts) . " WHERE chu_file_id = ?", array($fileId));
 		$unread = filesize($tempFilename);
@@ -64,34 +65,34 @@ class FileService extends BaseService
 		fclose($handle);
 	}
 
-  public function ConvertBase64toFile($base64_string)
-  {
-    $bucket = FileBucket::Create();
-    $path = $bucket->path;
-    $output_file = $path . '/file.dat';
+	public function ConvertBase64toFile($base64_string)
+	{
+		$bucket = FileBucket::Create();
+		$path = $bucket->path;
+		$output_file = $path . '/file.dat';
 
-    // open the output file for writing
-    $ifp = fopen($output_file, 'wb');
+		// open the output file for writing
+		$ifp = fopen($output_file, 'wb');
 
-    // split the string on commas
-    // $data[ 0 ] == "data:image/png;base64"
-    // $data[ 1 ] == <actual base64 string>
-    $data = explode(',', $base64_string);
+		// split the string on commas
+		// $data[ 0 ] == "data:image/png;base64"
+		// $data[ 1 ] == <actual base64 string>
+		$data = explode(',', $base64_string);
 
-    // we could add validation here with ensuring count( $data ) > 1
-    fwrite($ifp, base64_decode($data[1]));
+		// we could add validation here with ensuring count( $data ) > 1
+		fwrite($ifp, base64_decode($data[1]));
 
-    // clean up the file resource
-    fclose($ifp);
+		// clean up the file resource
+		fclose($ifp);
 
-    return $bucket;
-  }
+		return $bucket;
+	}
 
-  public function ConvertFiletoBase64($file_path)
-  {
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $type = finfo_file($finfo, $file_path);
-    return 'data:'.$type.';base64,'.base64_encode(file_get_contents($file_path));
-  }
+	public function ConvertFiletoBase64($file_path)
+	{
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$type = finfo_file($finfo, $file_path);
+		return 'data:'.$type.';base64,'.base64_encode(file_get_contents($file_path));
+	}
 }
 

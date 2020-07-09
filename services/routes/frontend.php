@@ -261,7 +261,7 @@ App::$app->get('/services/metadata/GetMetadataPdf', function (Request $request) 
 App::$app->get('/services/works/GetInstitutionWatermark', function (Request $request) {
 	$workId = Params::GetIntMandatory('w');
 	if ($denied = Session::CheckIsWorkPublicOrAccessible($workId)) return $denied;
-  $watermarkId = Params::GetIntMandatory('iwmid');
+	$watermarkId = Params::GetIntMandatory('iwmid');
 	$controller = new InstitutionService();
 	return $controller->GetInstitutionWatermark($watermarkId, false);
 });
@@ -270,6 +270,7 @@ App::$app->get('/services/works/GetInstitutionWatermark', function (Request $req
 App::$app->get('/services/works/GetWorkImage', function (Request $request) {
 	$controller = new services\WorkService();
 	$workId = Params::GetInt('w');
+
 	if ($denied = Session::CheckIsWorkPublicOrAccessible($workId)) return $denied;
 
 	return $controller->GetWorkImage($workId);

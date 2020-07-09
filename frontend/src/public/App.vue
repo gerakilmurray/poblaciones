@@ -215,8 +215,6 @@ export default {
 	},
 };
 
-
-
 </script>
 
 <style>

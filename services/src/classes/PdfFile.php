@@ -162,8 +162,8 @@ class PdfFile
 		if ($text == "")
 			return;
 		Profiling::BeginTimer();
-    if ($addDots && Str::EndsWith($text, ".") == false) $text .= ".";
-    if ($addDots) $label .= ":";
+		if ($addDots && Str::EndsWith($text, ".") == false) $text .= ".";
+		if ($addDots) $label .= ":";
 		$this->WriteIndenterTable($label, $text, "2", $escape);
 		Profiling::EndTimer();
 	}
@@ -209,8 +209,8 @@ class PdfFile
 		$label = trim($label) . ':';
 		$link = $this->FormatLink($url, $url);
 		$this->WriteIndentedPair($label, $link, false, false);
-  }
-  public function WriteDoubleIndentedPairLink($label, $url, $escape = true)
+	}
+	public function WriteDoubleIndentedPairLink($label, $url, $escape = true)
 	{
 		$label = trim($label) . ':';
 		$link = $this->FormatLink($url, $url);
@@ -227,8 +227,8 @@ class PdfFile
 		$text = Str::Replace($text, "\n", "<br>");
 
 		if (Str::StartsWith($text, 'http'))
-      $text = "<a class='link' href='" . $text . "'>" . $text . '</a>';
-    elseif (Str::EndsWith($text, ".") == false) $text .= ".";
+			$text = "<a class='link' href='" . $text . "'>" . $text . '</a>';
+		elseif (Str::EndsWith($text, ".") == false) $text .= ".";
 		$this->WriteIndentedText($text, false);
 		Profiling::EndTimer();
 	}
