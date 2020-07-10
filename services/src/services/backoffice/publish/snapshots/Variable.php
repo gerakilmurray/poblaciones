@@ -142,7 +142,8 @@ class Variable
 	public function CalculateVersionValueLabelId($valueField)
 	{
 		$values = $this->attributes['values'];
-		if (is_array($values) && sizeof($values) == 0)
+		if (sizeof($values) == 0)
+		// TODO Bugfix: if (is_array($values) && sizeof($values) == 0)
 			throw new ErrorException("La variable '" . $this->attributes['mvv_caption']. "' de la métrica "
 				. $this->GetVariableMetricErrorCaption() . " no tiene valores. Revise la symbología de la variable.");
 		//

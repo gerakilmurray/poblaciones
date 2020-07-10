@@ -36,13 +36,13 @@ class WorkInfo extends BaseMapModel
 			'met_url' => 'Url',
 			'met_abstract' => 'Abstract',
 			'met_coverage_caption' => 'Coverage',
-      'ins_caption' => 'Institution',
-      'ins_watermark_id' => 'WatermarkId',
+			'ins_caption' => 'Institution',
+			'ins_watermark_id' => 'WatermarkId',
 
 			'wrk_type' => 'Type',
 			'wrk_is_private' => 'IsPrivate',
 			'met_online_since' => 'ReleaseDate'
-			);
+		);
 	}
 
 	public function FillMetrics($rows)

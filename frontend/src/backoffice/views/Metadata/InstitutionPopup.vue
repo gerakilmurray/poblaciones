@@ -1,6 +1,6 @@
 <template>
 	<md-dialog :md-active.sync="openEditableInstitution" style="min-height: 520px">
-    <invoker ref="invoker"></invoker>
+	<invoker ref="invoker"></invoker>
 		<md-dialog-title>
 			Institución
 		</md-dialog-title>
@@ -11,8 +11,8 @@
 				<div class="md-layout-item md-size-80 md-small-size-100">
 					<mp-simple-text :canEdit="Work.CanEdit()"
 						label="Nombre de la institución" ref="datasetInput" helper="Indique el nombre de la institución,
-			evitando siglas o acrónimos. Ej. Instituto de Estadística Nacional." @enter="save"
-							:maxlength="200" v-model="item.Caption" />
+						evitando siglas o acrónimos. Ej. Instituto de Estadística Nacional." @enter="save"
+						:maxlength="200" v-model="item.Caption" />
 				</div>
 
 				<div class="md-layout-item md-size-50 md-small-size-100">
@@ -42,23 +42,23 @@
 									:maxlength="255" v-model="item.Web" />
 				</div>
 				<div class="md-layout-item md-size-35 md-small-size-100">
-          <img class="imagen-preview" style="" :src="this.watermarkImage" alt="">
-          <md-button
-            style="float:right;background-color: #ececec;"
-            v-if="watermarkImage"
-            title="Quitar"
-            class="md-icon-button md-button-mini"
-            v-on:click="clear">
-            <md-icon>close</md-icon>
-          </md-button>
-          <label class="file-select">
-            <div class="select-button">
-              <md-icon>add_circle_outline</md-icon>
-              Agregar logo
-            </div>
-            <md-input @change="handleImage" class="file-select" type="file" accept="image/*"/>
-          </label>
-        </div>
+					<img class="imagen-preview" style="" :src="this.watermarkImage" alt="">
+					<md-button
+						style="float:right;background-color: #ececec;"
+						v-if="watermarkImage"
+						title="Quitar"
+						class="md-icon-button md-button-mini"
+						v-on:click="clear">
+							<md-icon>close</md-icon>
+					</md-button>
+					<label class="file-select">
+						<div class="select-button">
+							<md-icon>add_circle_outline</md-icon>
+							Agregar logo
+						</div>
+						<md-input @change="handleImage" class="file-select" type="file" accept="image/*"/>
+					</label>
+				</div>
 			</div>
 
 		</md-dialog-content>
@@ -84,10 +84,10 @@
 		return {
 			item: null,
 			closeParentCallback: null,
-      openEditableInstitution: false,
-      watermarkImage: null,
-      imageHasChanged: false,
-      extension: null,
+			openEditableInstitution: false,
+			watermarkImage: null,
+			imageHasChanged: false,
+			extension: null,
 		};
 	},
 	computed: {
@@ -96,16 +96,15 @@
 		},
 		institutionSelected() {
 			if (this.item && this.item.Institution) {
-					return this.item.Institution.Id;
+				return this.item.Institution.Id;
 			} else {
 				return -1;
 			}
 		}
 	},
-  methods: {
+	methods: {
 		show(item, closeParentCallback) {
-      this.item = item;
-
+			this.item = item;
 			if (closeParentCallback) {
 				this.closeParentCallback = closeParentCallback;
 			} else {
@@ -114,36 +113,35 @@
 			this.openEditableInstitution = true;
 			var loc = this;
 			setTimeout(() => {
-        loc.$refs.datasetInput.focus();
-
+				loc.$refs.datasetInput.focus();
 			}, 100);
-    },
-    mounted(){
-      if (this.item.Watermark){
-        this.getInstitutionWatermark();
-      }
-    },
-    getInstitutionWatermark(){
-      var loc = this;
-      this.$refs.invoker.do(
-        this.Work, this.Work.GetInstitutionWatermark, this.item).then(
-          function (dataUrl) {
-            loc.watermarkImage = dataUrl;
-        });
-    },
-    handleImage(e) {
-      const selectedImage = e.target.files[0];
-      this.extension = h.extractFileExtension(selectedImage.name);
-      this.createBase64Image(selectedImage);
-    },
-    createBase64Image(fileObject) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.watermarkImage = e.target.result;
-        this.imageHasChanged = true;
-      };
-      reader.readAsDataURL(fileObject);
-    },
+		},
+		mounted(){
+			if (this.item.Watermark){
+				this.getInstitutionWatermark();
+			}
+		},
+		getInstitutionWatermark(){
+			var loc = this;
+			this.$refs.invoker.do(
+			this.Work, this.Work.GetInstitutionWatermark, this.item).then(
+			function (dataUrl) {
+				loc.watermarkImage = dataUrl;
+			});
+		},
+		handleImage(e) {
+			const selectedImage = e.target.files[0];
+			this.extension = h.extractFileExtension(selectedImage.name);
+			this.createBase64Image(selectedImage);
+		},
+		createBase64Image(fileObject) {
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				this.watermarkImage = e.target.result;
+				this.imageHasChanged = true;
+			};
+			reader.readAsDataURL(fileObject);
+		},
 		save() {
 			if (this.item.Caption === null || this.item.Caption.trim() === '') {
 				alert('Debe indicar un nombre.');
@@ -154,7 +152,7 @@
 				return;
 			}
 			var loc = this;
-		  this.$refs.invoker.do(
+			this.$refs.invoker.do(
 				this.Work, this.Work.UpdateInstitution, this.item, this.container, this.imageHasChanged? this.watermarkImage: null).then(
 					function () {
 						loc.openEditableInstitution = false;
@@ -165,15 +163,16 @@
 				});
 		},
 		clear() {
-      this.item.Watermark = null;
-      this.watermarkImage = null;
-      this.imageHasChanged = true;
+			this.item.Watermark = null;
+			this.watermarkImage = null;
+			this.imageHasChanged = true;
 		}
-  },
- 	props: {
-    container: Object
 	},
-  components: { }
+ 	props: {
+		container: Object
+	},
+	components: {
+	}
 };
 </script>
 
@@ -194,7 +193,7 @@
 }*/
 
 .md-field {
-    margin: 12px 0 30px !important;
+  margin: 12px 0 30px !important;
 }
 
 .md-button-mini{

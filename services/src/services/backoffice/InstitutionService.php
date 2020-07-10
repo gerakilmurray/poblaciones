@@ -56,24 +56,24 @@ class InstitutionService extends BaseService
 	{
 		$records = App::Orm()->findAll(entities\DraftInstitution::class, array('Caption' => 'ASC'));
 		return $records;
-  }
+	}
 
-  public function GetInstitutionWatermark($watermarkId, $fromDraft=true)
-  {
-    $fileModel = new FileModel($fromDraft);
-    $outFile = IO::GetTempFilename() . '.tmp';
-    $fileModel->ReadFileToFile($watermarkId, $outFile);
-    $fileController = new FileService();
-    $dataURL = $fileController->ConvertFiletoBase64($outFile);
-    IO::Delete($outFile);
-    return $dataURL;
-  }
+	public function GetInstitutionWatermark($watermarkId, $fromDraft=true)
+	{
+		$fileModel = new FileModel($fromDraft);
+		$outFile = IO::GetTempFilename() . '.tmp';
+		$fileModel->ReadFileToFile($watermarkId, $outFile);
+		$fileController = new FileService();
+		$dataURL = $fileController->ConvertFiletoBase64($outFile);
+		IO::Delete($outFile);
+		return $dataURL;
+	}
 
 	public function GetNewWatermark($institution)
 	{
-    $new = new entities\DraftFile(true);
-    $new->setName('watermark_'. uniqid());
-    $new->setType('image/*');
+		$new = new entities\DraftFile(true);
+		$new->setName('watermark_'. uniqid());
+		$new->setType('image/*');
 		$institution->setWatermark($new);
 		return $institution;
 	}
