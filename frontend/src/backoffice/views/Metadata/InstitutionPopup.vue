@@ -94,8 +94,7 @@
 		Work() {
 			return window.Context.CurrentWork;
 		},
-		institutionSelected()
-		{
+		institutionSelected() {
 			if (this.item && this.item.Institution) {
 				return this.item.Institution.Id;
 			} else {

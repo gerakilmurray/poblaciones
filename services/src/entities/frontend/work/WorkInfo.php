@@ -42,7 +42,7 @@ class WorkInfo extends BaseMapModel
 			'wrk_type' => 'Type',
 			'wrk_is_private' => 'IsPrivate',
 			'met_online_since' => 'ReleaseDate'
-			);
+		);
 	}
 
 	public function FillMetrics($rows)
