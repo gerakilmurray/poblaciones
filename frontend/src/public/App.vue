@@ -1,19 +1,21 @@
 <template>
-	<div id="holder" style="height: 100%;">
-		<div id="panMain" class="split split-horizontal" style="position: relative">
-			<Search id="search-bar"/>
-			<LeftPanel ref='leftPanel'/>
-			<MapPanel/>
-			<WorkPanel :work="work" ref="workPanel" />
-			<Fab ref="fabPanel" :work="work" id="fab-panel"/>
-			<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
-			<Edit v-if="work.Current" ref="editPanel" :work="work" />
-			<CollapseButtonRight :collapsed='collapsed' @click="doToggle" />
-		</div>
-		<div id="panRight" class="split split-horizontal">
-			<SummaryPanel :metrics="metrics" :config="config"
-				:clipping="clipping" :frame="frame" :user="user"
-				:toolbarStates="toolbarStates"></SummaryPanel>
+	<div>
+		<WorkPanel :work="work" ref="workPanel" />
+		<div id="holder">
+			<div id="panMain" class="split split-horizontal" style="position: relative">
+				<Search id="search-bar"/>
+				<LeftPanel ref='leftPanel'/>
+				<MapPanel/>
+				<Fab ref="fabPanel" :work="work" id="fab-panel"/>
+				<LogoFloat v-if="work.Current && work.Current.WatermarkId" :work="work" ref="logoFloatIcon"/>
+				<Edit v-if="work.Current" ref="editPanel" :work="work" />
+				<CollapseButtonRight :collapsed='collapsed' @click="doToggle" />
+			</div>
+			<div id="panRight" class="split split-horizontal">
+				<SummaryPanel :metrics="metrics" :config="config"
+					:clipping="clipping" :frame="frame" :user="user"
+					:toolbarStates="toolbarStates"></SummaryPanel>
+			</div>
 		</div>
 	</div>
 </template>
@@ -609,5 +611,12 @@ a:hover {
 	font-size: 10px;
 	white-space: nowrap;
 	vertical-align: middle;
+}
+
+#holder{
+	top: 0px;
+	height: 100%;
+	width: 100%;
+	position: absolute;
 }
 </style>

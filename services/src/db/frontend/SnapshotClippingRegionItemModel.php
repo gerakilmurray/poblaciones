@@ -55,7 +55,7 @@ class SnapshotClippingRegionItemModel extends BaseModel
 		if ($includeName)
 		{
 			$nameFields = ", cli_caption Name, met_id, met_title, met_abstract,
-												met_publication_date, met_license, met_authors, ins_caption, ins_watermark_id ";
+							met_publication_date, met_license, met_authors, ins_caption, ins_watermark_id ";
 			 $nameJoins = " JOIN clipping_region_item ON cli_id = cgv_clipping_region_item_id
 											JOIN clipping_region ON clr_id = cli_clipping_region_id
 											LEFT JOIN metadata ON met_id = clr_metadata_id
@@ -95,7 +95,7 @@ class SnapshotClippingRegionItemModel extends BaseModel
 		$sql = "SELECT cli_caption Name, clr_caption Type, cli_centroid Location, ".
 			"T2.Population, T2.Households, T2.Children, T2.AreaM2,
 			 met_id, met_title, met_abstract, met_publication_date, met_license,
-								met_authors, ins_caption, ins_watermark_id " .
+			 met_authors, ins_caption, ins_watermark_id " .
 			"FROM clipping_region JOIN clipping_region_item ON clr_id = cli_clipping_region_id " .
 			"LEFT JOIN metadata ON met_id = clr_metadata_id ".
 			"LEFT JOIN institution ON ins_id = met_institution_id ".

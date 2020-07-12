@@ -208,22 +208,30 @@ export default {
 
 <style scoped>
 .searchBar {
-  top: 11px;
-  left: 300px;
-  z-index: 1;
-  width: calc(100% - 500px);
+	top: 11px;
+	left: 300px;
+	z-index: 1;
+	width: calc(100% - 500px);
 	min-width: 200px;
 	max-width: 800px;
 	position: absolute;
 }
 
-/* condition for screen size minimum of 1200px */
-@media (max-width:1200px) {
+/* condition for screen size minimum of 1300px */
+@media (max-width:1300px) {
+  .searchBar {
+		min-width: 150px;
+		width: calc(100% - 375px);
+	}
+}
+
+/* condition for screen size minimum of 1000px */
+@media (max-width:1000px) {
   .searchBar {
 		top: 50px;
 		left: 10px;
 		min-width: 150px;
-	  width: calc(100% - 50px);
+		width: calc(100% - 50px);
 	}
 
 	.lupa-button{

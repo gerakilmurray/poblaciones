@@ -1,5 +1,5 @@
 <template>
-	<nav id="workPanel" class="navbar-fixed-top workPanel">
+	<nav id="workPanel" class="workPanel">
 		<div>
 			<div v-if="work.Current !== null" ref="barBody" class="panel card workPanelBody" id="barBody" :style="work.Current.Styles">
 				<!--button title="Cerrar" type="button" v-on:click="work.Current = null" class="close">
@@ -92,13 +92,17 @@ export default {
 				if (visible) {
 					bar.style.height = calculatedHeight;
 					bar.style.display = 'block';
-					document.body.style.paddingTop = calculatedHeight;
+					holder = document.querySelector('#holder');
+					holder.style.height = `calc(100% - ${calculatedHeight}px)`;
+					holder.style.top = calculatedHeight + 'px';
 					if (window.SegMap) {
 						window.SegMap.TriggerResize();
 					}
 				} else {
 					bar.style.display = 'none';
-					document.body.style.paddingTop = '0px';
+					holder = document.querySelector('#holder');
+					holder.style.height = '100%';
+					holder.style.top = '0px';
 					this.work.Current = null;
 					if (window.SegMap) {
 						window.SegMap.SaveRoute.RemoveWork();
@@ -115,7 +119,9 @@ export default {
 				loc.updateWork();
 				// hack por problemas en chrome y firefox con navbar-fixed-top en la inicialización
 				var height = (loc.work.Current && loc.$refs.barBody ? loc.$refs.barBody.offsetHeight : 0);
-				document.body.style.paddingTop = height + "px";
+				holder = document.querySelector('#holder');
+				holder.style.height = `calc(100% - ${height}px)`;
+				holder.style.top = height + 'px';
 			}, 50);
 		}
 	}
@@ -123,35 +129,35 @@ export default {
 </script>
 
 <style scoped>
-
 .workPanel {
 	display: none;
 	background-color: white;
 	z-index: 1;
+	position: initial;
+	width: 100%;
 }
 .littleRow {
 	width: 100%;
-  text-overflow: ellipsis;
-  color: white;
-  margin-left: 1px;
+	text-overflow: ellipsis;
+	color: white;
+	margin-left: 1px;
 	font-size: 11px;
 }
 .sourceInfo
 {
 	margin-left: 10px;
-  font-size: 12.5px;
-  margin-top: 9px;
+	font-size: 12.5px;
+	margin-top: 9px;
 }
 .preTitleRow {
-  text-transform: uppercase;
-  margin-bottom: 3px;
-  margin-top: -4px;
+	text-transform: uppercase;
+	margin-bottom: 3px;
+	margin-top: -4px;
 }
 .postTitleRow {
-  margin-bottom: -2px;
-  margin-top: -2px;
+	margin-bottom: -2px;
+	margin-top: -2px;
 }
-
 .titleRow {
 	line-height: 1.1em;
 	padding-bottom: 7px;
@@ -167,19 +173,17 @@ export default {
 }
 .smallButton {
 	color: white;
-  padding: 4px 14px;
-  border-color: white;
+	padding: 4px 14px;
+	border-color: white;
 }
 .spaceNext {
 	margin-right: 8px;
 }
-
 .workPanelBody {
 	background-color: #00A0D2;
-  color: #fff!important;
+	color: #fff!important;
 	border-radius: 1px;
-  padding: 12px 15px 6px 15px;
+	padding: 12px 15px 6px 15px;
 	box-shadow: 0 1px 4px 0 rgba(90,90,90,.32);
 }
-
 </style>

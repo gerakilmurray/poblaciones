@@ -21,7 +21,7 @@ class SnapshotMetricVersionModel
 		$sql .= "SELECT mvr_id, mvr_metric_id, mtr_revision, mtr_caption, mtr_metric_group_id, mvr_caption,
 						GROUP_CONCAT(DISTINCT IFNULL(mvl_partial_coverage, geo_partial_coverage) ORDER BY geo_id SEPARATOR ','),
 						GROUP_CONCAT(geo_caption ORDER BY geo_id SEPARATOR ','),
-						wrk_id, met_title, met_authors, ins_caption, ins_watermark_id
+						wrk_id, met_title, met_authors, ins_caption,
 						wrk_type, wrk_is_private,
 						wrk_is_indexed, wrk_access_link, ";
 						// Hace un subselect con los nombres de variables
