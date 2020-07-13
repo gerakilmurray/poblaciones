@@ -9,18 +9,16 @@
 
 			<div class="md-layout md-gutter">
 				<div class="md-layout-item md-size-80 md-small-size-100">
-					<mp-simple-text :canEdit="Work.CanEdit()"
-						label="Nombre de la institución" ref="datasetInput" helper="Indique el nombre de la institución,
-						evitando siglas o acrónimos. Ej. Instituto de Estadística Nacional." @enter="save"
-						:maxlength="200" v-model="item.Caption" />
+					<mp-simple-text :canEdit="Work.CanEdit()" @enter="save"
+									label="Nombre de la institución" ref="datasetInput"
+									helper="Indique el nombre de la institución, evitando siglas o acrónimos. Ej. Instituto de Estadística Nacional."
+									:maxlength="200" v-model="item.Caption" />
 				</div>
-
 				<div class="md-layout-item md-size-50 md-small-size-100">
 					<mp-simple-text :canEdit="Work.CanEdit()" @enter="save"
 									label="Correo electrónico" helper="Dirección de correo electrónico institucional."
 									:maxlength="50" v-model="item.Email" />
 				</div>
-
 				<div class="md-layout-item md-size-50 md-small-size-100">
 					<mp-simple-text :canEdit="Work.CanEdit()" @enter="save"
 									label="Teléfono" helper="Teléfono institucional, incluyendo códigos de área. (Ej. +54 11 524-1124.)"
@@ -42,21 +40,25 @@
 									:maxlength="255" v-model="item.Web" />
 				</div>
 				<div class="md-layout-item md-size-35 md-small-size-100">
+					<div class="helper" style="margin-top: 30px;">Selección de color primario</div>
+					<mp-color-picker :canEdit="Work.CanEdit()" :ommitHexaSign="true"
+									vertical-align="top" v-model="item.Color" />
+				</div>
+				<div class="md-layout-item md-size-65 md-small-size-100">
 					<img class="imagen-preview" style="" :src="this.watermarkImage" alt="">
-					<md-button
-						style="float:right;background-color: #ececec;"
-						v-if="watermarkImage"
-						title="Quitar"
-						class="md-icon-button md-button-mini"
-						v-on:click="clear">
-							<md-icon>close</md-icon>
+					<md-button style="float: right; background-color: #ececec;"
+								v-if="watermarkImage"
+								title="Quitar"
+								class="md-icon-button md-button-mini"
+								v-on:click="clear">
+						<md-icon>close</md-icon>
 					</md-button>
 					<label class="file-select">
 						<div class="select-button">
 							<md-icon>add_circle_outline</md-icon>
 							Agregar logo
 						</div>
-						<md-input @change="handleImage" class="file-select" type="file" accept="image/*"/>
+						<md-input @change="handleImage" class="file-select" type="file" accept="image/*"></md-input>
 					</label>
 				</div>
 			</div>
@@ -76,7 +78,7 @@
 
 <script>
 	import Context from '@/backoffice/classes/Context';
-  import h from '@/public/js/helper';
+  	import h from '@/public/js/helper';
 
 	export default {
 	name: 'InstitutionPopup',
@@ -124,10 +126,12 @@
 		getInstitutionWatermark(){
 			var loc = this;
 			this.$refs.invoker.do(
-			this.Work, this.Work.GetInstitutionWatermark, this.item).then(
-			function (dataUrl) {
-				loc.watermarkImage = dataUrl;
-			});
+				this.Work, this.Work.GetInstitutionWatermark, this.item
+			).then(
+				function (dataUrl) {
+					loc.watermarkImage = dataUrl;
+				}
+			);
 		},
 		handleImage(e) {
 			const selectedImage = e.target.files[0];
@@ -153,14 +157,16 @@
 			}
 			var loc = this;
 			this.$refs.invoker.do(
-				this.Work, this.Work.UpdateInstitution, this.item, this.container, this.imageHasChanged? this.watermarkImage: null).then(
-					function () {
-						loc.openEditableInstitution = false;
-						loc.$emit('onSelected', loc.container.Institution);
-						if (loc.closeParentCallback !== null) {
-							loc.closeParentCallback();
-						}
-				});
+				this.Work, this.Work.UpdateInstitution, this.item, this.container, this.imageHasChanged? this.watermarkImage: null
+			).then(
+				function () {
+					loc.openEditableInstitution = false;
+					loc.$emit('onSelected', loc.container.Institution);
+					if (loc.closeParentCallback !== null) {
+						loc.closeParentCallback();
+					}
+				}
+			);
 		},
 		clear() {
 			this.item.Watermark = null;

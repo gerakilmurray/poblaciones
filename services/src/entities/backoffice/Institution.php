@@ -79,7 +79,14 @@ class Institution
      *   @ORM\JoinColumn(name="ins_watermark_id", referencedColumnName="fil_id", nullable=true)
      * })
      */
-    private $Watermark;
+	private $Watermark;
+
+	/**
+	 * @var string
+	 *
+	 * @ORM\Column(name="ins_color", type="string", length=6, precision=0, scale=0, nullable=true, unique=false)
+	 */
+	private $Color;
 
     /**
      * Get id
@@ -223,7 +230,31 @@ class Institution
     public function getWatermark()
     {
         return $this->Watermark;
-    }
+	}
+
+	/**
+	 * Set color
+	 *
+	 * @param string $color
+	 *
+	 * @return Institution
+	 */
+	public function setColor($color)
+	{
+		$this->Color = $color;
+
+		return $this;
+	}
+
+	/**
+	 * Get color
+	 *
+	 * @return string
+	 */
+	public function getColor()
+	{
+		return $this->Color;
+	}
 
     /**
      * Set address

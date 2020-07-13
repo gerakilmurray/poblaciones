@@ -25,6 +25,7 @@ class Institution extends BaseMapModelLabeled
 			array('ins_address', 'Address', 'Dirección postal'),
 			array('ins_phone', 'Phone', 'Teléfono'),
 			array('ins_country', 'Country', 'País'),
-			array('ins_watermark_id', 'WatermarkId', 'Logo'));
+			array('ins_watermark_id', 'WatermarkId', 'Logo'),
+			array('ins_color', 'PrimaryColor', 'Color'));
 	}
 }
