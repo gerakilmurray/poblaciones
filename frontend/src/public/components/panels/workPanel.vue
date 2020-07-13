@@ -1,7 +1,7 @@
 <template>
 	<nav id="workPanel" class="workPanel">
 		<div>
-			<div v-if="work.Current !== null" ref="barBody" class="panel card workPanelBody" id="barBody" :style="work.Current.Styles">
+			<div v-if="work.Current !== null" ref="barBody" class="panel card workPanelBody" id="barBody" :style="bgColor">
 				<!--button title="Cerrar" type="button" v-on:click="work.Current = null" class="close">
 					<span aria-hidden="true">&times;</span>
 				</button -->
@@ -48,6 +48,7 @@ export default {
 		return {
 			showZones: false,
 			showPresentation: false,
+			bgColor: {},
 		};
 	},
 	methods: {
@@ -87,7 +88,11 @@ export default {
 				calculatedHeight = workPanelBody.offsetHeight + 'px';
 			}
 			var currentHeight = bar.style.height;
-
+			if (this.work.Current.PrimaryColor){
+				this.bgColor = {
+					'background-color': '#' + this.work.Current.PrimaryColor
+				};
+			}
 			if (visible !== currentVisible || (visible && currentHeight !== calculatedHeight)) {
 				if (visible) {
 					bar.style.height = calculatedHeight;

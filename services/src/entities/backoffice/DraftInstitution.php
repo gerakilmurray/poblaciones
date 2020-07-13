@@ -91,7 +91,7 @@ class DraftInstitution
 	 *
 	 * @ORM\Column(name="ins_color", type="string", length=6, precision=0, scale=0, nullable=true, unique=false)
 	 */
-	private $Color;
+	private $PrimaryColor;
 
     /**
      * Get id
@@ -210,30 +210,30 @@ class DraftInstitution
     public function getWatermark()
     {
         return $this->Watermark;
-    }
+	}
 
 	/**
-	 * Set color
+	 * Set PrimaryColor
 	 *
-	 * @param string $color
+	 * @param string $primaryColor
 	 *
-	 * @return Institution
+	 * @return DraftInstitution
 	 */
-	public function setColor($color)
+	public function setPrimaryColor($primaryColor)
 	{
-		$this->Color = $color;
+		$this->PrimaryColor = $primaryColor;
 
 		return $this;
 	}
 
 	/**
-	 * Get color
+	 * Get primary color
 	 *
 	 * @return string
 	 */
-	public function getColor()
+	public function getPrimaryColor()
 	{
-		return $this->Color;
+		return $this->PrimaryColor;
 	}
 
     /**

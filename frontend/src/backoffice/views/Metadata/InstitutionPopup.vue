@@ -1,6 +1,5 @@
 <template>
 	<md-dialog :md-active.sync="openEditableInstitution" style="min-height: 520px">
-	<invoker ref="invoker"></invoker>
 		<md-dialog-title>
 			Institución
 		</md-dialog-title>
@@ -40,9 +39,8 @@
 									:maxlength="255" v-model="item.Web" />
 				</div>
 				<div class="md-layout-item md-size-35 md-small-size-100">
-					<div class="helper" style="margin-top: 30px;">Selección de color primario</div>
-					<mp-color-picker :canEdit="Work.CanEdit()" :ommitHexaSign="true"
-									vertical-align="top" v-model="item.Color" />
+					<div class="label-primary-color">Selección de color primario</div>
+					<mp-color-picker :canEdit="Work.CanEdit()" :ommitHexaSign="true" v-model="item.PrimaryColor" />
 				</div>
 				<div class="md-layout-item md-size-65 md-small-size-100">
 					<img class="imagen-preview" style="" :src="this.watermarkImage" alt="">
@@ -58,7 +56,7 @@
 							<md-icon>add_circle_outline</md-icon>
 							Agregar logo
 						</div>
-						<md-input @change="handleImage" class="file-select" type="file" accept="image/*"></md-input>
+						<input @change="handleImage" class="file-select" type="file" accept="image/*"/>
 					</label>
 				</div>
 			</div>
@@ -113,19 +111,18 @@
 				this.closeParentCallback = null;
 			}
 			this.openEditableInstitution = true;
+
 			var loc = this;
 			setTimeout(() => {
 				loc.$refs.datasetInput.focus();
+				if (this.item && this.item.Watermark){
+					loc.getInstitutionWatermark();
+				}
 			}, 100);
-		},
-		mounted(){
-			if (this.item.Watermark){
-				this.getInstitutionWatermark();
-			}
 		},
 		getInstitutionWatermark(){
 			var loc = this;
-			this.$refs.invoker.do(
+			loc.$refs.invoker.do(
 				this.Work, this.Work.GetInstitutionWatermark, this.item
 			).then(
 				function (dataUrl) {
@@ -218,5 +215,11 @@
 
 .file-select > input[type="file"] {
   display: none;
+}
+
+.label-primary-color{
+	font-size: 16px;
+	color: black;
+	margin-top: 30px;
 }
 </style>
