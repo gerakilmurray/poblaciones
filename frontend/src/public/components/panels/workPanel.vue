@@ -97,7 +97,7 @@ export default {
 				if (visible) {
 					bar.style.height = calculatedHeight;
 					bar.style.display = 'block';
-					holder = document.querySelector('#holder');
+					var holder = document.querySelector('#holder');
 					holder.style.height = `calc(100% - ${calculatedHeight}px)`;
 					holder.style.top = calculatedHeight + 'px';
 					if (window.SegMap) {
@@ -105,7 +105,7 @@ export default {
 					}
 				} else {
 					bar.style.display = 'none';
-					holder = document.querySelector('#holder');
+					var holder = document.querySelector('#holder');
 					holder.style.height = '100%';
 					holder.style.top = '0px';
 					this.work.Current = null;
@@ -124,8 +124,9 @@ export default {
 				loc.updateWork();
 				// hack por problemas en chrome y firefox con navbar-fixed-top en la inicialización
 				var height = (loc.work.Current && loc.$refs.barBody ? loc.$refs.barBody.offsetHeight : 0);
-				holder = document.querySelector('#holder');
+				var holder = document.querySelector('#holder');
 				holder.style.height = `calc(100% - ${height}px)`;
+				holder.style.offsetHeight = `calc(100% - ${height}px)`;
 				holder.style.top = height + 'px';
 			}, 50);
 		}

@@ -274,7 +274,7 @@ html, body {
 	margin-bottom: 12px;
 }
 
-// settings de split
+/* settings de split */
 .split p, .split-flex p {
 	padding: 20px;
 }
@@ -317,7 +317,7 @@ html, body {
 .split.split-vertical, .gutter.gutter-vertical {
 	width: 100%;
 }
-// fin de settings de split
+/* fin de settings de split */
 
 .drop {
 	font-size: 11px;
