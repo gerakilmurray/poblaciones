@@ -29,12 +29,8 @@ class Db
 		if (Context::Settings()->Db()->ForceOnlyFullGroupBy)
 			$this->db->executeQuery("SET sql_mode =(SELECT CONCAT(@@session.sql_mode,',ONLY_FULL_GROUP_BY'));");
 		/*else
-			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY,',''));");
-		// TODO Bugfix:
-		if (Context::Settings()->Db()->ForceOnlyFullGroupBy)
-			$this->db->executeQuery("SET sql_mode =(SELECT CONCAT(@@session.sql_mode,',STRICT_TRANS_TABLES'));");
-		else
-			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'STRICT_TRANS_TABLES,',''));");*/
+			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY',''));");
+		*/
 		if (Profiling::IsProfiling())
 		{
 			$profiler = new SqlLogger();
