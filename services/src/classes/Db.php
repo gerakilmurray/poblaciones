@@ -29,12 +29,8 @@ class Db
 		if (Context::Settings()->Db()->ForceOnlyFullGroupBy)
 			$this->db->executeQuery("SET sql_mode =(SELECT CONCAT(@@session.sql_mode,',ONLY_FULL_GROUP_BY'));");
 		/*else
-			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY,',''));");
-		// TODO Bugfix:
-		if (Context::Settings()->Db()->ForceOnlyFullGroupBy)
-			$this->db->executeQuery("SET sql_mode =(SELECT CONCAT(@@session.sql_mode,',STRICT_TRANS_TABLES'));");
-		else
-			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'STRICT_TRANS_TABLES,',''));");*/
+			$this->db->executeQuery("SET sql_mode=(SELECT REPLACE(@@session.sql_mode,'ONLY_FULL_GROUP_BY',''));");
+		*/
 		if (Profiling::IsProfiling())
 		{
 			$profiler = new SqlLogger();
@@ -162,8 +158,7 @@ class Db
 		$ret = $this->db->fetchAssoc($sql, $params);
 		Performance::EndDbWait();
 		Profiling::EndTimer();
-		if (sizeof($ret) == 0 || $ret == null)
-		// TODO Bugfix: if ($ret == null || (is_array($ret) && sizeof($ret) == 0))
+		if ((is_array($ret) && sizeof($ret) == 0) || $ret == null)
 			return null;
 		return $ret[array_keys($ret)[0]];
 	}
@@ -175,7 +170,7 @@ class Db
 		$ret = $this->db->fetchAssoc($sql, $params);
 		Performance::EndDbWait();
 		Profiling::EndTimer();
-		if (sizeof($ret) == 0 || $ret == null)
+		if ((is_array($ret) && sizeof($ret) == 0) || $ret == null)
 			throw new ErrorException("Scalar query returned no results.");
 		return $ret[array_keys($ret)[0]];
 	}

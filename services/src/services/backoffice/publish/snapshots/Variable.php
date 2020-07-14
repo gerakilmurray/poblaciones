@@ -146,7 +146,7 @@ class Variable
 		// TODO Bugfix: if (is_array($values) && sizeof($values) == 0)
 			throw new ErrorException("La variable '" . $this->attributes['mvv_caption']. "' de la métrica "
 				. $this->GetVariableMetricErrorCaption() . " no tiene valores. Revise la symbología de la variable.");
-		//
+
 		if (sizeof($values) == 1 && $values[0]['vvl_value'] == null)
 		// TODO Bugfix (is_array($values) && sizeof($values) == 1 && is_array($values[0]['vvl_value']) && sizeof($values[0]['vvl_value']) == null)
 			return $values[0]['vvl_id'];

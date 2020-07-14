@@ -84,7 +84,14 @@ class DraftInstitution
      *   @ORM\JoinColumn(name="ins_watermark_id", referencedColumnName="fil_id", nullable=true)
      * })
      */
-    private $Watermark;
+	private $Watermark;
+
+	/**
+	 * @var string
+	 *
+	 * @ORM\Column(name="ins_color", type="string", length=6, precision=0, scale=0, nullable=true, unique=false)
+	 */
+	private $PrimaryColor;
 
     /**
      * Get id
@@ -203,8 +210,31 @@ class DraftInstitution
     public function getWatermark()
     {
         return $this->Watermark;
-    }
+	}
 
+	/**
+	 * Set PrimaryColor
+	 *
+	 * @param string $primaryColor
+	 *
+	 * @return DraftInstitution
+	 */
+	public function setPrimaryColor($primaryColor)
+	{
+		$this->PrimaryColor = $primaryColor;
+
+		return $this;
+	}
+
+	/**
+	 * Get primary color
+	 *
+	 * @return string
+	 */
+	public function getPrimaryColor()
+	{
+		return $this->PrimaryColor;
+	}
 
     /**
      * Set email

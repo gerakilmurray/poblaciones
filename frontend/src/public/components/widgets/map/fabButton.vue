@@ -6,7 +6,7 @@
 					 z-index="1000000095"
 					 :enable-rotation="false"
 					 :position="position"
-					 :bg-color="getCustomBgColor() || bgColor"
+					 :bg-color="bgColor"
 					 :actions="fabActions"
 					 @selected0="selected(0)"
 					 @selected1="selected(1)"
@@ -39,7 +39,6 @@ export default {
 	},
 	data() {
 		return {
-			bgColor: '#00A0D2',
 			action: {
 				Metrics: []
 			},
@@ -63,16 +62,18 @@ export default {
 				ret.push(fabAction);
 			}
 			return ret;
+		},
+		bgColor(){
+			if (this.work && this.work.Current && this.work.Current.PrimaryColor){
+				return '#' + this.work.Current.PrimaryColor;
+			}
+			return '#00A0D2';
 		}
 	},
 	props: [
 		'work',
 	],
 	methods: {
-		getCustomBgColor() {
-			const work = this.work.Current;
-			return work && work.Styles && work.Styles['background-color'];
-		},
 		loadFabMetrics() {
 			const loc = this;
 			axios.get(window.host + '/services/metrics/GetFabMetrics', {

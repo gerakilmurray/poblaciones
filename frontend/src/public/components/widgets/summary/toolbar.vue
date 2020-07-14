@@ -167,7 +167,7 @@ export default {
 			window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
 			var a = document.createElement('a');
 			// toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
-			a.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+			a.href = canvas.toDataURL('image/png');
 			a.download = 'mapa.png';
 			document.body.appendChild(a);
 			a.click();
@@ -176,43 +176,57 @@ export default {
 		generatePdf(canvas, metrics) {
 			window.SegMap.MapsApi.gMap.set('disableDefaultUI', false);
 			var doc = new jsPDF({ orientation: 'landscape' });
-			var img = canvas.toDataURL('image/jpeg');
+			var img = canvas.toDataURL('image/png');
+			var imgHeightMax = 175;
+			var imgWidthMax = 270;
+			var imgPosition = 25;
+
+			doc.setFontSize(20);
+			doc.text(15, 15, 'Poblaciones');
 			if(metrics.length > 0) {
-				doc.setFontSize(20);
-				doc.text(20, 20, 'Poblaciones');
 				var metricNames = metrics.map(m => m.properties.Metric.Name);
 				doc.setFontSize(10);
-				doc.text(20, 28, metricNames.join(' - '));
+				doc.text(15, 20, metricNames.join(' - '));
 			} else {
-				doc.setFontSize(30);
-				doc.text(20, 25, 'Poblaciones');
+				imgPosition = 20;
+				imgHeightMax = 180;
 			}
-			doc.addImage(img,'JPEG', 20, 35, 260, 155);
-			doc.setFontSize(10);
-			doc.text(20, 200, window.location.href);
+			var imgHeight = imgHeightMax;
+			var imgWidth =  parseInt(imgHeight * (canvas.width / canvas.height), 10);
+			if (imgWidth > imgWidthMax){
+				imgWidth = imgWidthMax;
+				imgHeight =  parseInt(imgWidth * (canvas.height / canvas.width), 10);
+			}
+			doc.addImage(img,'PNG', 15, imgPosition, imgWidth, imgHeight, 'map', 'NONE');
+			doc.setFontSize(8);
+			doc.text(15, 205, window.location.href);
 			doc.save("mapaPoblaciones.pdf");
 		},
 		prepareMapAndExport(exportFunction, metrics){
 			var loc = this;
 			window.SegMap.MapsApi.gMap.set('disableDefaultUI', true);
 			window.setTimeout(function() {
-				var holderObj = loc.changeOverflowById(document.querySelector('#holder'), 'unset');
+				var bodyObj = loc.changeOverflowById(document.body, 'visible');
+				var holderObj = loc.changeOverflowById(document.querySelector('#holder'), 'visible');
 				var toolbarTop = loc.changeDisplayById(document.querySelector('#toolbar-top'), 'none');
 				var collapseButtonRight = loc.changeDisplayById(document.querySelector('#collapseButtonRight'), 'none');
 				var searchBar = loc.changeDisplayById(document.querySelector('#search-bar'), 'none');
 				var fabPanel = loc.changeDisplayById(document.querySelector('#fab-panel'), 'none');
+				var editButton = loc.changeDisplayById(document.querySelector('#edit-button'), 'none');
 				var dropdown = loc.changeDisplayByClass(document.getElementsByClassName('dropdown'), 'none');
 				var btnGroup = loc.changeDisplayByClass(document.getElementsByClassName('btn-group pull-right'), 'none');
 				var circulos= loc.removeClassAddText('circulo','fa-circle','&#9679;');
 				var gotas= loc.removeClassAddText('gotas','fa-tint', '&#9670;');
 				var contacto= loc.removeClassAddText('contacto','fa-comments', '&#128172;');
 
-				html2canvas(holderObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
+				html2canvas(bodyObj, { useCORS: true, ignoreElements: loc.ignore }).then(function(canvas) {
+					loc.changeOverflowById(bodyObj, 'hidden');
 					loc.changeOverflowById(holderObj, 'hidden');
 					loc.changeDisplayById(toolbarTop, 'block');
 					loc.changeDisplayById(collapseButtonRight, 'block');
-					loc.changeDisplayById(searchBar, 'unset');
+					loc.changeDisplayById(searchBar, 'block');
 					loc.changeDisplayById(fabPanel, 'flex');
+					loc.changeDisplayById(editButton, 'unset');
 					loc.changeDisplayByClass(dropdown, 'unset');
 					loc.changeDisplayByClass(btnGroup, 'unset');
 					loc.addClassRemoveText(circulos, 'fa-circle');

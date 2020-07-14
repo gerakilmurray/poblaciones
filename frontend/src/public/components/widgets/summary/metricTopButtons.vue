@@ -1,12 +1,11 @@
 <template>
 	<div>
 		<div class="btn-group pull-right" style="clear:both">
-			<h4 class="title">
+			<h5 class="title">
 				<mp-close-button v-on:click="clickQuitar" />
 
 				<button title="Opciones" type="button" class="close "
-								v-on:click="clickCustomize" style="margin-right: 7px; margin-left: -2px; margin-top: 4px;
-font-size: 12px">
+								v-on:click="clickCustomize" style="margin-right: 7px; margin-left: -2px; margin-top: 3px; font-size: 0.8rem">
 					<i class="fas fa-sliders-h"></i>
 				</button>
 
@@ -50,7 +49,7 @@ font-size: 12px">
 					</ul>
 				</span>
 
-			</h4>
+			</h5>
 		</div>
 	</div>
 </template>

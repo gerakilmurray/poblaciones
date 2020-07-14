@@ -47,20 +47,28 @@ export default {
 <style scoped>
 .logoDiv {
   opacity: 75%;
-  height: 5.5rem;
-  overflow: hidden;
   bottom: 2.5rem;
   right: 46px;
-  min-height: 40px;
   z-index: 1;
   position: absolute;
   background: seashell;
-  border-radius: 15px;
-  padding: 0.3em;
+  border-radius: 0.8rem;
+  padding: 0.3rem;
+  display: flex;
+  height: 100%;
+  width: auto;
+  max-width: 50%;
+  max-height: 6rem;
+  overflow: hidden;
+  object-fit: scale-down;
+  justify-content: center;
 }
 .logoIcon {
+  height: auto;
   width: auto;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
 }
 </style>
 
