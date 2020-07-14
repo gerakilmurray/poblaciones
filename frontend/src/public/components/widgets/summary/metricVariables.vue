@@ -91,15 +91,15 @@ export default {
 <style scoped>
 .variableRow
 {
-	padding: 2px 0px 0px 0px;
+	padding: 0.2rem 0rem 0rem 0rem;
 }
 .variableBlock
 {
-	padding: 4px 0px 4px 0px;
+	padding: 0.2rem 0rem 0.2rem 0rem;
 }
 .variablesBlock
 {
-	padding: 6px 0px 10px 0px;
+	padding: 0.3rem 0rem 0.4rem 0rem;
 }
 .fa-left
 {

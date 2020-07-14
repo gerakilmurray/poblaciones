@@ -270,8 +270,8 @@ html, body {
 }
 
 .moderateHr {
-	margin-top: 12px;
-	margin-bottom: 12px;
+	margin-top: 0.7rem;
+	margin-bottom: 1rem;
 }
 
 /* settings de split */
@@ -423,7 +423,7 @@ a:hover {
 
 .sourceRow {
 	position: relative;
-	padding: 4px 0px 0px 0px;
+	padding: 0.2rem 0rem 0rem 0rem;
 }
 
 .coverageBox {
@@ -562,12 +562,12 @@ a:hover {
 }
 
 .summaryRow {
-	padding: 0px 0px 6px 0px;
-	font-size: 0.9em;
+	padding: 0rem 0rem 0.3rem 0rem;
+	font-size: 0.75em;
 	color: #777;
 }
 .summaryBlock {
-	padding: 2px 0px 4px 0px;
+	padding: 0.2rem 0rem 0.3rem 0rem;
 }
 
 @media print {

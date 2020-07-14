@@ -65,7 +65,7 @@ export default {
 
 	#edit-button {
 		left: 15px!important;
-		top: 195px;
+		top: 25rem;
 		cursor: pointer;
 		position: fixed;
 	}

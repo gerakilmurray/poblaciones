@@ -5,7 +5,7 @@
 				<!--button title="Cerrar" type="button" v-on:click="work.Current = null" class="close">
 					<span aria-hidden="true">&times;</span>
 				</button -->
-				<div class="title pull-right" style="margin-top: -1px">
+				<div class="title pull-right" style="margin-top: -2px">
 					<button type="button" class="btn smallButton spaceNext" @click="showMetrics">Indicadores</button>
 					<button v-show="false" type="button" class="btn smallButton" @click="showZones = true">Zonas destacadas</button>
 					<button type="button" v-show="false" class="btn smallButton" @click="showPresentation = true">Presentación</button>
@@ -147,13 +147,13 @@ export default {
 	text-overflow: ellipsis;
 	color: white;
 	margin-left: 1px;
-	font-size: 11px;
+	font-size: 1.1rem;
 }
 .sourceInfo
 {
-	margin-left: 10px;
-	font-size: 12.5px;
-	margin-top: 9px;
+	margin-left: 20px;
+	font-size: 1.1rem;
+	margin-top: 5px;
 }
 .preTitleRow {
 	text-transform: uppercase;
@@ -171,7 +171,7 @@ export default {
 	width: 100%;
 	text-overflow: ellipsis;
 	color: white;
-	font-size: 27px;
+	font-size: 2.2rem;
 }
 .infoRow {
 	padding: 7px 0px 0px 0px;
@@ -189,7 +189,7 @@ export default {
 	background-color: #00A0D2;
 	color: #fff!important;
 	border-radius: 1px;
-	padding: 12px 15px 6px 15px;
+	padding: 12px 2px 6px 12px;
 	box-shadow: 0 1px 4px 0 rgba(90,90,90,.32);
 }
 </style>
