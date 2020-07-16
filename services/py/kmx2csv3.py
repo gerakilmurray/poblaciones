@@ -72,7 +72,7 @@ def process_kml(in_file, out_file, tmp_dir, generate_files, folder_name):
     files_kml = []
     with io.open(in_file, 'r', encoding='utf8') as kml_file:
         kml_file = kml_file.read().replace('’', "'").replace('“', "'").replace('”', "'").replace('<br><br>', '<br>').replace(
-            '<br>', ' ||| ').replace('descripción: ', 'Descripción: ').replace('nombre: ', 'Nombre: ')
+            '<br>', ' /// ').replace('descripción: ', 'Descripción: ').replace('nombre: ', 'Nombre: ')
         kml_as_xml = BeautifulSoup(kml_file, 'xml')
         doc = Document(kml_as_xml)
         if len(doc.get_folders()) > 1:
@@ -389,14 +389,14 @@ class ExtendedData:
         extData = ''
         for key in self.data:
             extData = extData + capwords(key) + \
-                ': ' + self.data[key] + ' ||| '
+                ': ' + self.data[key] + ' /// '
         return extData
 
     def get_row(self):
         extData = ''
         for key in self.data:
             extData = extData + capwords(key) + \
-                ': ' + self.data[key] + ' ||| '
+                ': ' + self.data[key] + ' /// '
         return extData
 
 
