@@ -136,7 +136,9 @@ export default {
 			}, 100);
 		},
 		changeDisplayById(idObj, newValue) {
-			idObj.style.display = newValue;
+			if (idObj !== null){
+				idObj.style.display = newValue;
+			}
 			return idObj;
 		},
 		changeDisplayByClass(classObjs, newValue) {
