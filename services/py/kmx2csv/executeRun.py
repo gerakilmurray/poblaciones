@@ -11,7 +11,7 @@ class Procesador:
         root.title("Kmx2Csv")
         # Icono de la ventana, en ico o xbm en Linux
         if sys.platform.startswith('win'):
-            root.iconbitmap('@ico.ico')
+            root.iconbitmap('ico.ico')
         else:
             root.iconbitmap('@ico.xbm')
         # root.resizable(0, 0) # Desactivar redimensión de ventana
@@ -32,8 +32,8 @@ class Procesador:
         try:
             print(self.ruta['text'])
             params = self.ruta['text'].split('.')
-            comando = "python3 kmx2csv.py " + \
-                params[1] + " " + self.ruta['text'] + " ."
+            comando = "py kmx2csv.py " + \
+                params[1] + " " + self.ruta['text'] + " . true all"
             print(comando)
             os.system(comando)
             test = subprocess.check_output(comando, shell=True)
