@@ -1,7 +1,7 @@
 # setup.py build
 import os
 import sys
-from cx_freeze import setup, Executable
+from cx_Freeze import setup, Executable
 
 PY_PATH = 'C:/Users/Fernando/AppData/Local/Programs/Python/Python37'
 
