@@ -11,7 +11,7 @@
 						<li>Archivos Excel (.xls, xlsx)</li>
 						<li>Archivos de datos de SPSS (.sav)</li>
 						<li>Archivos de texto separados por comas (.csv)</li>
-						<li>Archivos de texto estructurados en tags (.kml/.kmz)</li>
+						<li v-if="UseKmz">Archivos de texto estructurados en tags (.kml/.kmz)</li>
 					</ul>
 					<!--
 					https://poblaciones.org/wp-content/uploads/2019/11/Poblaciones-Como-convertir-shapefiles-a-CSV-con-QGIS.pdf
@@ -75,51 +75,54 @@ export default {
 		InputPopup,
 		ListSelectionPopup
 	},
-	data() {
-		return {
-			openImport: false,
-			extension: "",
-			sending: false,
-			hasFiles: false,
-			bucketId: 0,
-			keepLabels: true,
-			saveRequested: false,
-			createdDataset: null,
-			forceCreateNewDataset: false,
-			dropzoneOptions: {
-				url: this.getCreateFileUrl,
-				thumbnailWidth: 150,
-				withCredentials: true,
-				maxFiles: 1,
-				acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
-				dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
-				forceChunking: true,
-				chunking: true,
-				chunkSize: 500000,
-				sheetName: null,
-				datasets: null,
-				chunksUploaded: function(file, done) {
-					done();
-				}
-			}
-		};
-	},
-	computed: {
-		Work() {
-		return window.Context.CurrentWork;
+  data() {
+    return {
+      openImport: false,
+      extension: "",
+      sending: false,
+      hasFiles: false,
+      bucketId: 0,
+      keepLabels: true,
+      saveRequested: false,
+      createdDataset: null,
+      forceCreateNewDataset: false,
+      dropzoneOptions: {
+        url: this.getCreateFileUrl,
+        thumbnailWidth: 150,
+        withCredentials: true,
+        maxFiles: 1,
+        acceptedFiles: '.csv,.txt,.sav,.kml,.kmz,.xls,.xlsx',
+        dictDefaultMessage: "Arrastre su archivo aquí o haga click para examinar.",
+        forceChunking: true,
+        chunking: true,
+        chunkSize: 500000,
+        sheetName: null,
+        datasets: null,
+        chunksUploaded: function(file, done) {
+          done();
+        }
+      }
+    };
+  },
+  computed: {
+    Work() {
+      return window.Context.CurrentWork;
+    },
+    Dataset() {
+      return (this.forceCreateNewDataset ? null : window.Context.CurrentDataset);
 		},
-		Dataset() {
-			return (this.forceCreateNewDataset ? null : window.Context.CurrentDataset);
-		},
-	},
-	methods: {
-		getCreateFileUrl() {
-			return this.Work.GetCreateFileUrl(this.getBucketId());
-		},
-		getBucketId() {
-			return this.bucketId;
-		},
-		beforeSending(file) {
+		UseKmz() {
+			return window.Context.Configuration.UseKmz;
+		}
+  },
+  methods: {
+    getCreateFileUrl() {
+      return this.Work.GetCreateFileUrl(this.getBucketId());
+    },
+    getBucketId() {
+      return this.bucketId;
+    },
+    beforeSending(file) {
 			this.extension = h.extractFileExtension(file.name);
 			this.filename = h.extractFilename(file.name);
 			this.createdDataset = null;
