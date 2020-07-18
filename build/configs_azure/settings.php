@@ -13,7 +13,8 @@ Context::Settings()->Servers()->RegisterServers("https://desa-poblaciones.eastus
 
 // **** Opcionales
 Context::Settings()->Map()->UseTileBlocks = true;
-Context::Settings()->Map()->UseGradients = true;
+//Context::Settings()->Map()->UseGradients = true;
+Context::Settings()->Map()->UseKmz = true;
 
 // **** Keys de terceros
 Context::Settings()->Keys()->GoogleMapsKey = "AIzaSyCvwo3r7L_WUENLJQgqlwQT3D4XUyvIpSc";
