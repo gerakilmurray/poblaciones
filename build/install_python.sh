@@ -6,10 +6,10 @@ echo -e "\n### Installing Python Pip ###########################################
 sudo apt install python-pip python3-pip
 
 echo -e "\n### Installing dependencies ################################################################################################"
-sudo pip install savReaderWriter ijson numpy bs4 lxml unicodecsv
-sudo pip3 install savReaderWriter ijson numpy bs4 lxml unicodecsv
-pip install savReaderWriter ijson numpy bs4 lxml unicodecsv
-pip3 install savReaderWriter ijson numpy bs4 lxml unicodecsv
+sudo pip install savReaderWriter ijson numpy bs4 lxml unicodecsv pandas pyreadstat
+sudo pip3 install savReaderWriter ijson numpy bs4 lxml unicodecsv pandas pyreadstat
+pip install savReaderWriter ijson numpy bs4 lxml unicodecsv pandas pyreadstat
+pip3 install savReaderWriter ijson numpy bs4 lxml unicodecsv pandas pyreadstat
 
 echo -e "\n### Installed dependencies Python 2.7 ######################################################################################"
 pip freeze

@@ -190,7 +190,9 @@ ActiveDataset.prototype.UpdateVariable = function (level, variable) {
 	// Establece caption
 	var column = this.fromTwoColumnVariable(variable.Data, variable.DataColumn);
 	var columnText = '';
-	if (variable.Data !== 'N') {
+	if (variable.DataColumnIsCategorical) {
+		columnText = 'Conteo';
+	} else if (variable.Data !== 'N') {
 		columnText = f.formatColumnText(column);
 	}
 	// Agrega criterio de corte
@@ -624,6 +626,15 @@ ActiveDataset.prototype.GetRichColumns = function () {
 									{	Id: -5, Caption: 'Area m2', Code: 'M' },
 									{	Id: -10, Caption: 'Conteo', Code: 'N' }];
 	return columns;
+};
+
+
+ActiveDataset.prototype.ColumnHasLabels = function (column) {
+	var labels = this.Labels[column.Id];
+	if (!labels)
+		return false;
+	else
+		return (labels.length > 0);
 };
 
 

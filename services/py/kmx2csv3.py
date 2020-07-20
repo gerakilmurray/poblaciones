@@ -26,7 +26,7 @@ def main():
         sys.argv.append('true')
     if len(sys.argv) == 5:
         sys.argv.append('all')
-    # print(f'Args: {sys.argv[0]} - {sys.argv[1]} - {sys.argv[2]} - {sys.argv[3]} - {sys.argv[4]} - {sys.argv[5]}')
+    #print(f'Args: {sys.argv[0]} - {sys.argv[1]} - {sys.argv[2]} - {sys.argv[3]} - {sys.argv[4]} - {sys.argv[5]}')
     try:
         file_extesion = sys.argv[1]
         in_file = sys.argv[2]
@@ -47,7 +47,7 @@ def main():
     except:
         print('Error: ', sys.exc_info())
         traceback.print_exc()
-        os._exit(1)
+        sys.exit(1)
 
 
 def process_kmz(in_file, out_file, out_path, generate_files, folder_name):
